@@ -1,8 +1,8 @@
 <?php
 
-namespace Lagdo\Adminer\Driver;
+namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\Adminer\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 interface AdminerDbInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Lagdo\Adminer\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\Adminer\Driver\AdminerDbInterface;
-use Lagdo\Adminer\Driver\AdminerUtilInterface;
+use Lagdo\DbAdmin\Driver\AdminerDbInterface;
+use Lagdo\DbAdmin\Driver\AdminerUtilInterface;
 
 abstract class Server implements ServerInterface
 {

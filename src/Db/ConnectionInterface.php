@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\Adminer\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Db;
 
 interface ConnectionInterface
 {

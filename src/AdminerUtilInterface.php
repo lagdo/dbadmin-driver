@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\Adminer\Driver;
+namespace Lagdo\DbAdmin\Driver;
 
 interface AdminerUtilInterface
 {

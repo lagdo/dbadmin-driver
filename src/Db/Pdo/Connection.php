@@ -1,9 +1,9 @@
 <?php
 
-namespace Lagdo\Adminer\Driver\Db\Pdo;
+namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
-use Lagdo\Adminer\Driver\Db\Connection as AbstractConnection;
-use Lagdo\Adminer\Driver\Db\Exception\AuthException;
+use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
+use Lagdo\DbAdmin\Driver\Db\Exception\AuthException;
 
 use PDO;
 use Exception;

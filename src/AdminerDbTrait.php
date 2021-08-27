@@ -1,10 +1,10 @@
 <?php
 
-namespace Lagdo\Adminer\Driver;
+namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\Adminer\Driver\Db\ServerInterface;
-use Lagdo\Adminer\Driver\Db\DriverInterface;
-use Lagdo\Adminer\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\ServerInterface;
+use Lagdo\DbAdmin\Driver\Db\DriverInterface;
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 trait AdminerDbTrait
 {

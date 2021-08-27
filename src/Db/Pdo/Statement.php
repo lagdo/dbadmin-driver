@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\Adminer\Driver\Db\Pdo;
+namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
 use PDOStatement;
 use PDO;
