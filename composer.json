@@ -9,7 +9,7 @@
         }
     ],
     "homepage": "https://github.com/lagdo/dbadmin-driver",
-    "license": "Apache 2.0",
+    "license": "Apache-2.0",
     "keywords": ["Adminer", "Database", "Admin", "Dashboard", "Sql"],
     "support": {
         "issues": "https://github.com/lagdo/dbadmin-driver/issues",
