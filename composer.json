@@ -10,15 +10,14 @@
     ],
     "homepage": "https://github.com/lagdo/dbadmin-driver",
     "license": "Apache 2.0",
-    "keywords": ["Adminer", "PostgreSQL", "MySQL", "Oracle", "MsSQL", "Sqlite",
-        "MondoDb", "ElasticSearch", "Sql", "Dashboard", "Jaxon", "Ajax"],
+    "keywords": ["Adminer", "Database", "Admin", "Dashboard", "Sql"],
     "support": {
         "issues": "https://github.com/lagdo/dbadmin-driver/issues",
         "source": "https://github.com/lagdo/dbadmin-driver"
     },
     "autoload": {
         "psr-4": {
-            "Lagdo\\Adminer\\Driver": "src/"
+            "Lagdo\\Adminer\\Driver\\": "src/"
         }
     }
 }
