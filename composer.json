@@ -1,0 +1,24 @@
+{
+    "name": "lagdo/dbadmin-driver",
+    "type": "library",
+    "description": "Common classes for DbAdmin drivers.",
+    "authors": [
+        {
+            "name": "Thierry Feuzeu",
+            "email": "thierry.feuzeu@gmail.com"
+        }
+    ],
+    "homepage": "https://github.com/lagdo/dbadmin-driver",
+    "license": "Apache 2.0",
+    "keywords": ["Adminer", "PostgreSQL", "MySQL", "Oracle", "MsSQL", "Sqlite",
+        "MondoDb", "ElasticSearch", "Sql", "Dashboard", "Jaxon", "Ajax"],
+    "support": {
+        "issues": "https://github.com/lagdo/dbadmin-driver/issues",
+        "source": "https://github.com/lagdo/dbadmin-driver"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lagdo\\Adminer\\Driver": "src/"
+        }
+    }
+}
