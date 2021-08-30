@@ -227,7 +227,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function set_schema($schema, $connection2 = null)
+    public function set_schema($schema, $connection = null)
     {
         return true;
     }
@@ -527,17 +527,17 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function min_version($version, $maria_db = "", $connection2 = null)
+    public function min_version($version, $maria_db = "", $connection = null)
     {
-        if (!$connection2) {
-            $connection2 = $this->connection;
+        if (!$connection) {
+            $connection = $this->connection;
         }
-        $server_info = $connection2->server_info;
-        if ($maria_db && preg_match('~([\d.]+)-MariaDB~', $server_info, $match)) {
-            $server_info = $match[1];
+        $info = $connection->getServerInfo();
+        if ($maria_db && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
+            $info = $match[1];
             $version = $maria_db;
         }
-        return (version_compare($server_info, $version) >= 0);
+        return (version_compare($info, $version) >= 0);
     }
 
     /**

@@ -17,13 +17,6 @@ abstract class Connection implements ConnectionInterface
     public $_result;
 
     /**
-     * The server description
-     *
-     * @var string
-     */
-    public $server_info;
-
-    /**
      * Undocumented variable
      *
      * @var int

@@ -12,6 +12,13 @@ interface ConnectionInterface
     public function getClient();
 
     /**
+     * Get the server description
+     *
+     * @return string
+     */
+    public function getServerInfo();
+
+    /**
      * Set the current database
      *
      * @param string $database

@@ -27,7 +27,14 @@ abstract class Connection extends AbstractConnection
         }
         $this->client->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(Statement::class));
-        $this->server_info = @$this->client->getAttribute(PDO::ATTR_SERVER_VERSION);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getServerInfo()
+    {
+        return @$this->client->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     public function quote($string)

@@ -212,7 +212,7 @@ interface ServerInterface
      * @param string ConnectionInterface to use
      * @return array array($key_name => array("type" => , "columns" => [], "lengths" => [], "descs" => []))
      */
-    public function indexes($table, $connection2 = null);
+    public function indexes($table, $connection = null);
 
     /**
      * Get foreign keys in table
@@ -432,7 +432,7 @@ interface ServerInterface
      * @param ConnectionInterface
      * @return bool
      */
-    public function set_schema($schema, $connection2 = null);
+    public function set_schema($schema, $connection = null);
 
     /**
      * Get SQL command to create table
@@ -522,10 +522,10 @@ interface ServerInterface
      * Check if connection has at least the given version
      * @param string $version required version
      * @param string $maria_db required MariaDB version
-     * @param ConnectionInterface|null $connection2
+     * @param ConnectionInterface|null $connection
      * @return bool
      */
-    public function min_version($version, $maria_db = "", ConnectionInterface $connection2 = null);
+    public function min_version($version, $maria_db = "", ConnectionInterface $connection = null);
 
     /**
      * Kill a process
