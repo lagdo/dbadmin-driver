@@ -55,6 +55,39 @@ interface ConnectionInterface
     public function result($query, $field = 1);
 
     /**
+     * Get the next row set of the last query
+     *
+     * @return mixed
+     */
+    public function next_result();
+
+    /**
+     * Execute a query on the current database and ??
+     *
+     * @param string $query
+     *
+     * @return mixed
+     */
+    public function multi_query($query);
+
+    /**
+     * Get the result saved by the multi_query() method
+     *
+     * @param mixed $result
+     *
+     * @return mixed
+     */
+    public function store_result($result = null);
+
+    /**
+     * Convert value returned by database to actual value
+     * @param string
+     * @param array
+     * @return string
+     */
+    public function value($val, $field);
+
+    /**
      * Get warnings about the last command
      * @return string
      */
@@ -82,14 +115,6 @@ interface ConnectionInterface
      * @return integer
      */
     public function defaultField();
-
-    /**
-     * Convert value returned by database to actual value
-     * @param string
-     * @param array
-     * @return string
-     */
-    public function value($val, $field);
 
     /**
      * Return a quoted string

@@ -7,7 +7,34 @@ use Lagdo\DbAdmin\Driver\UtilInterface;
 
 abstract class Connection implements ConnectionInterface
 {
-    use ConnectionTrait;
+    /**
+     * @var DbInterface
+     */
+    protected $db;
+
+    /**
+     * @var UtilInterface
+     */
+    protected $util;
+
+    /**
+     * @var ServerInterface
+     */
+    protected $server;
+
+    /**
+     * The extension name
+     *
+     * @var string
+     */
+    public $extension;
+
+    /**
+     * The client object used to query the database server
+     *
+     * @var mixed
+     */
+    protected $client;
 
     /**
      * Undocumented variable
@@ -33,11 +60,7 @@ abstract class Connection implements ConnectionInterface
     }
 
     /**
-     * Return a quoted string
-     *
-     * @param string $string
-     *
-     * @return string
+     * @inheritDoc
      */
     public function quote($string)
     {
@@ -49,6 +72,49 @@ abstract class Connection implements ConnectionInterface
      */
     public function set_charset($charset)
     {
+    }
+
+    /**
+     * Get the client
+     *
+     * @return mixed
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function quoteBinary($string)
+    {
+        return $this->quote($string);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function value($val, $field)
+    {
+        return (is_resource($val) ? stream_get_contents($val) : $val);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defaultField()
+    {
+        return 0;
+    }
+
+    /**
+     * Get warnings about the last command
+     * @return string
+     */
+    public function warnings()
+    {
+        return '';
     }
 
     /**
