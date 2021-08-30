@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
-interface AdminerDbInterface
+interface DbInterface
 {
     /**
      * Get the database server options
@@ -65,7 +65,7 @@ interface AdminerDbInterface
      * @param bool
      * @return array
      */
-    public function get_key_vals($query, $connection2 = null, $set_keys = true);
+    public function get_key_vals($query, $connection = null, $set_keys = true);
 
     /**
      * Get all rows of result
@@ -74,7 +74,7 @@ interface AdminerDbInterface
      * @param string
      * @return array of associative arrays
      */
-    public function get_rows($query, $connection2 = null);
+    public function get_rows($query, $connection = null);
 
     /**
      * Get default value clause

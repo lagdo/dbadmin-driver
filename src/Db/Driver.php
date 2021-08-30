@@ -2,18 +2,18 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\AdminerDbInterface;
-use Lagdo\DbAdmin\Driver\AdminerUtilInterface;
+use Lagdo\DbAdmin\Driver\DbInterface;
+use Lagdo\DbAdmin\Driver\UtilInterface;
 
 abstract class Driver implements DriverInterface
 {
     /**
-     * @var AdminerDbInterface
+     * @var DbInterface
      */
     protected $db;
 
     /**
-     * @var AdminerUtilInterface
+     * @var UtilInterface
      */
     protected $util;
 
@@ -30,12 +30,12 @@ abstract class Driver implements DriverInterface
     /**
      * The constructor
      *
-     * @param AdminerDbInterface $db
-     * @param AdminerUtilInterface $util
+     * @param DbInterface $db
+     * @param UtilInterface $util
      * @param ServerInterface $server
      * @param ConnectionInterface $connection
      */
-    public function __construct(AdminerDbInterface $db, AdminerUtilInterface $util,
+    public function __construct(DbInterface $db, UtilInterface $util,
         ServerInterface $server, ConnectionInterface $connection)
     {
         $this->db = $db;

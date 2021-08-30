@@ -2,18 +2,18 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\AdminerDbInterface;
-use Lagdo\DbAdmin\Driver\AdminerUtilInterface;
+use Lagdo\DbAdmin\Driver\DbInterface;
+use Lagdo\DbAdmin\Driver\UtilInterface;
 
 trait ConnectionTrait
 {
     /**
-     * @var AdminerDbInterface
+     * @var DbInterface
      */
     protected $db;
 
     /**
-     * @var AdminerUtilInterface
+     * @var UtilInterface
      */
     protected $util;
 

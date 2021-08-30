@@ -6,7 +6,7 @@ use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Db\DriverInterface;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
-trait AdminerDbTrait
+trait DbTrait
 {
     /**
      * @var ServerInterface
@@ -26,12 +26,12 @@ trait AdminerDbTrait
     /**
      * Connect to a given server
      *
-     * @param AdminerUtilInterface $util
+     * @param UtilInterface $util
      * @param string $server The server class name
      *
      * @return void
      */
-    public function connect(AdminerUtilInterface $util, string $server)
+    public function connect(UtilInterface $util, string $server)
     {
         $this->server = new $server($this, $util);
         $this->connection = $this->server->getConnection();

@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-interface AdminerUtilInterface
+interface UtilInterface
 {
     /**
      * Get the request inputs
