@@ -21,6 +21,68 @@ interface DbInterface
     public function connectSsl();
 
     /**
+     * Set the error message
+     *
+     * @param string $error
+     *
+     * @return void
+     */
+    public function setError(string $error = '');
+
+    /**
+     * Get the raw error message
+     *
+     * @return string
+     */
+    public function error();
+
+    /**
+     * Check if the last query returned an error message
+     *
+     * @return bool
+     */
+    public function hasError();
+
+    /**
+     * Set the error number
+     *
+     * @param string $errno
+     *
+     * @return void
+     */
+    public function setErrno($errno);
+
+    /**
+     * Get the last error number
+     *
+     * @return string
+     */
+    public function errno();
+
+    /**
+     * Check if the last query returned an error number
+     *
+     * @return bool
+     */
+    public function hasErrno();
+
+    /**
+     * Set the number of rows affected by the last query
+     *
+     * @param integer $affected_rows
+     *
+     * @return void
+     */
+    public function setAffectedRows($affected_rows);
+
+    /**
+     * Get the number of rows affected by the last query
+     *
+     * @return integer
+     */
+    public function affectedRows();
+
+    /**
      * Select data from table
      *
      * @param array $select

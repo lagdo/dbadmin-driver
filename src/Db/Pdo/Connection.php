@@ -45,12 +45,11 @@ abstract class Connection extends AbstractConnection
     public function query($query, $unbuffered = false)
     {
         $result = $this->client->query($query);
-        $this->error = "";
+        $this->db->setError();
         if (!$result) {
-            list(, $this->errno, $this->error) = $this->client->errorInfo();
-            if (!$this->error) {
-                $this->error = $this->util->lang('Unknown error.');
-            }
+            list(, $errno, $error) = $this->client->errorInfo();
+            $this->db->setErrno($errno);
+            $this->db->setError(($error) ? $error : $this->util->lang('Unknown error.'));
             return false;
         }
         $this->store_result($result);
@@ -74,7 +73,7 @@ abstract class Connection extends AbstractConnection
             $result->num_rows = $result->rowCount(); // is not guaranteed to work with all drivers
             return $result;
         }
-        $this->affected_rows = $result->rowCount();
+        $this->db->setAffectedRows($result->rowCount());
         return true;
     }
 

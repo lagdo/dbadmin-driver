@@ -138,14 +138,6 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function error()
-    {
-        return $this->util->h($this->connection->error);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function idf_escape($idf)
     {
         return $idf;

@@ -17,27 +17,6 @@ abstract class Connection implements ConnectionInterface
     public $_result;
 
     /**
-     * Undocumented variable
-     *
-     * @var int
-     */
-    public $affected_rows;
-
-    /**
-     * Undocumented variable
-     *
-     * @var int
-     */
-    public $errno;
-
-    /**
-     * Undocumented variable
-     *
-     * @var string
-     */
-    public $error;
-
-    /**
      * The constructor
      *
      * @param DbInterface $db
