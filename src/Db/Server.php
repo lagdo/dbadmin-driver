@@ -114,7 +114,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function currentDatabase()
+    public function selectedDatabase()
     {
         return $this->database;
     }
@@ -122,7 +122,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function currentSchema()
+    public function selectedSchema()
     {
         return $this->schema;
     }
