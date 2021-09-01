@@ -52,16 +52,16 @@ abstract class Connection extends AbstractConnection
             $this->db->setError(($error) ? $error : $this->util->lang('Unknown error.'));
             return false;
         }
-        $this->store_result($result);
+        $this->storedResult($result);
         return $result;
     }
 
-    public function multi_query($query)
+    public function multiQuery($query)
     {
         return $this->_result = $this->query($query);
     }
 
-    public function store_result($result = null)
+    public function storedResult($result = null)
     {
         if (!$result) {
             $result = $this->_result;
@@ -77,7 +77,7 @@ abstract class Connection extends AbstractConnection
         return true;
     }
 
-    public function next_result()
+    public function nextResult()
     {
         if (!$this->_result) {
             return false;

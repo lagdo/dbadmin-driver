@@ -41,13 +41,13 @@ abstract class Server implements ServerInterface
      * From bootstrap.inc.php
      * @var string
      */
-    public $on_actions = "RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT"; ///< @var string used in foreign_keys()
+    public $onActions = "RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT"; ///< @var string used in foreignKeys()
 
     /**
      * From index.php
      * @var string
      */
-    public $enum_length = "'(?:''|[^'\\\\]|\\\\.)*'";
+    public $enumLength = "'(?:''|[^'\\\\]|\\\\.)*'";
 
     /**
      * From index.php
@@ -67,16 +67,16 @@ abstract class Server implements ServerInterface
         $this->util = $util;
 
         // From bootstrap.inc.php
-        $config = $this->driver_config();
-        $this->possible_drivers = $config['possible_drivers'];
+        $config = $this->driverConfig();
+        $this->possibleDrivers = $config['possibleDrivers'];
         $this->jush = $config['jush'];
         $this->types = $config['types'];
-        $this->structured_types = $config['structured_types'];
+        $this->structuredTypes = $config['structuredTypes'];
         $this->unsigned = $config['unsigned'];
         $this->operators = $config['operators'];
         $this->functions = $config['functions'];
         $this->grouping = $config['grouping'];
-        $this->edit_functions = $config['edit_functions'];
+        $this->editFunctions = $config['editFunctions'];
 
         $this->createConnection();
     }
@@ -104,9 +104,9 @@ abstract class Server implements ServerInterface
         $this->database = $database;
         $this->schema = $schema;
         if ($database !== '') {
-            $this->connection->select_db($database);
+            $this->connection->selectDatabase($database);
             if ($schema !== '') {
-                $this->set_schema($schema);
+                $this->selectSchema($schema);
             }
         }
     }
@@ -114,7 +114,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function current_db()
+    public function currentDatabase()
     {
         return $this->database;
     }
@@ -122,7 +122,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function current_schema()
+    public function currentSchema()
     {
         return $this->schema;
     }
@@ -130,7 +130,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function primary()
+    public function primaryIdName()
     {
         return '';
     }
@@ -138,7 +138,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function idf_escape($idf)
+    public function escapeId($idf)
     {
         return $idf;
     }
@@ -146,7 +146,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function idf_unescape($idf)
+    public function unescapeId($idf)
     {
         $last = substr($idf, -1);
         return str_replace($last . $last, $last, substr($idf, 1, -1));
@@ -157,7 +157,7 @@ abstract class Server implements ServerInterface
      */
     public function table($idf)
     {
-        return $this->idf_escape($idf);
+        return $this->escapeId($idf);
     }
 
     /**
@@ -187,7 +187,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function db_collation($db, $collations)
+    public function databaseCollation($db, $collations)
     {
         return "";
     }
@@ -195,7 +195,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function user_types()
+    public function userTypes()
     {
         return [];
     }
@@ -211,7 +211,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function get_schema()
+    public function schema()
     {
         return "";
     }
@@ -219,7 +219,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function set_schema($schema, $connection = null)
+    public function selectSchema($schema, $connection = null)
     {
         return true;
     }
@@ -227,7 +227,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function information_schema($db)
+    public function isInformationSchema($db)
     {
         return false;
     }
@@ -235,7 +235,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function is_view($table_status)
+    public function isView($tableStatus)
     {
         return false;
     }
@@ -243,7 +243,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function foreign_keys($table)
+    public function foreignKeys($table)
     {
         return [];
     }
@@ -251,7 +251,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function fk_support($table_status)
+    public function supportForeignKeys($tableStatus)
     {
         return false;
     }
@@ -259,14 +259,14 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function convert_field(array $field)
+    public function convertField(array $field)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function unconvert_field(array $field, $return)
+    public function unconvertField(array $field, $return)
     {
         return $return;
     }
@@ -274,7 +274,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function show_variables()
+    public function variables()
     {
         return [];
     }
@@ -282,7 +282,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function show_status()
+    public function statusVariables()
     {
         return [];
     }
@@ -290,7 +290,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function process_list()
+    public function processes()
     {
         return [];
     }
@@ -306,7 +306,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function create_sql($table, $auto_increment, $style)
+    public function createTableSql($table, $auto_increment, $style)
     {
         return '';
     }
@@ -314,7 +314,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function move_tables($tables, $views, $target)
+    public function moveTables($tables, $views, $target)
     {
         return false;
     }
@@ -322,7 +322,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function copy_tables($tables, $views, $target)
+    public function copyTables($tables, $views, $target)
     {
         return false;
     }
@@ -346,7 +346,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function trigger_options()
+    public function triggerOptions()
     {
         return [];
     }
@@ -370,7 +370,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function routine_languages()
+    public function routineLanguages()
     {
         return [];
     }
@@ -378,7 +378,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function routine_id($name, $row)
+    public function routineId($name, $row)
     {
         return '';
     }
@@ -386,7 +386,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function use_sql($database)
+    public function useDatabaseSql($database)
     {
         return "";
     }
@@ -394,7 +394,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function foreign_keys_sql($table)
+    public function foreignKeysSql($table)
     {
         return '';
     }
@@ -402,7 +402,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function truncate_sql($table)
+    public function truncateTableSql($table)
     {
         return '';
     }
@@ -410,7 +410,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function trigger_sql($table)
+    public function createTriggerSql($table)
     {
         return '';
     }
@@ -418,7 +418,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function last_id()
+    public function lastAutoIncrementId()
     {
         return $this->connection->last_id;
     }
@@ -426,7 +426,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function found_rows($table_status, $where)
+    public function countRows($tableStatus, $where)
     {
         return null;
     }
@@ -434,7 +434,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function rename_database($name, $collation)
+    public function renameDatabase($name, $collation)
     {
         return false;
     }
@@ -442,7 +442,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function auto_increment()
+    public function autoIncrement()
     {
         return "";
     }
@@ -450,7 +450,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function alter_indexes($table, $alter)
+    public function alterIndexes($table, $alter)
     {
         return false;
     }
@@ -458,7 +458,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function drop_views($views)
+    public function dropViews($views)
     {
         return false;
     }
@@ -466,7 +466,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function truncate_tables($tables)
+    public function truncateTables($tables)
     {
         return false;
     }
@@ -482,7 +482,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function limit1($table, $query, $where, $separator = "\n")
+    public function limitToOne($table, $query, $where, $separator = "\n")
     {
         return $this->limit($query, $where, 1, 0, $separator);
     }
@@ -490,36 +490,36 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function table_status1($table, $fast = false)
+    public function tableStatusOrName($table, $fast = false)
     {
-        $return = $this->table_status($table, $fast);
+        $return = $this->tableStatus($table, $fast);
         return ($return ? $return : array("Name" => $table));
     }
 
     /**
      * @inheritDoc
      */
-    public function format_foreign_key($foreign_key)
+    public function formatForeignKey($foreignKey)
     {
-        $db = $foreign_key["db"];
-        $ns = $foreign_key["ns"];
+        $db = $foreignKey["db"];
+        $ns = $foreignKey["ns"];
         return " FOREIGN KEY (" . implode(", ", array_map(function ($idf) {
-            return $this->idf_escape($idf);
-        }, $foreign_key["source"])) . ") REFERENCES " .
-            ($db != "" && $db != $this->database ? $this->idf_escape($db) . "." : "") .
-            ($ns != "" && $ns != $this->schema ? $this->idf_escape($ns) . "." : "") .
-            $this->table($foreign_key["table"]) . " (" . implode(", ", array_map(function ($idf) {
-                return $this->idf_escape($idf);
-            }, $foreign_key["target"])) . ")" . //! reuse $name - check in older MySQL versions
-            (preg_match("~^($this->on_actions)\$~", $foreign_key["on_delete"]) ? " ON DELETE $foreign_key[on_delete]" : "") .
-            (preg_match("~^($this->on_actions)\$~", $foreign_key["on_update"]) ? " ON UPDATE $foreign_key[on_update]" : "")
+            return $this->escapeId($idf);
+        }, $foreignKey["source"])) . ") REFERENCES " .
+            ($db != "" && $db != $this->database ? $this->escapeId($db) . "." : "") .
+            ($ns != "" && $ns != $this->schema ? $this->escapeId($ns) . "." : "") .
+            $this->table($foreignKey["table"]) . " (" . implode(", ", array_map(function ($idf) {
+                return $this->escapeId($idf);
+            }, $foreignKey["target"])) . ")" . //! reuse $name - check in older MySQL versions
+            (preg_match("~^($this->onActions)\$~", $foreignKey["on_delete"]) ? " ON DELETE $foreignKey[on_delete]" : "") .
+            (preg_match("~^($this->onActions)\$~", $foreignKey["on_update"]) ? " ON UPDATE $foreignKey[on_update]" : "")
         ;
     }
 
     /**
      * @inheritDoc
      */
-    public function min_version($version, $maria_db = "", $connection = null)
+    public function minVersion($version, $maria_db = "", $connection = null)
     {
         if (!$connection) {
             $connection = $this->connection;
@@ -538,13 +538,13 @@ abstract class Server implements ServerInterface
     public function charset()
     {
         // SHOW CHARSET would require an extra query
-        return ($this->min_version("5.5.3", 0) ? "utf8mb4" : "utf8");
+        return ($this->minVersion("5.5.3", 0) ? "utf8mb4" : "utf8");
     }
 
     /**
      * @inheritDoc
      */
-    public function q($string)
+    public function quote($string)
     {
         return $this->connection->quote($string);
     }

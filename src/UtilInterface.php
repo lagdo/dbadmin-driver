@@ -40,27 +40,27 @@ interface UtilInterface
      * @param string
      * @return bool
      */
-    public function is_utf8($val);
+    public function isUtf8($val);
 
     /**
      * Get INI boolean value
      * @param string
      * @return bool
      */
-    public function ini_bool($ini);
+    public function iniBool($ini);
 
     /**
      * Convert \n to <br>
      * @param string
      * @return string
      */
-    public function nl_br($string);
+    public function convertEolToHtml($string);
 
     /**
      * Compute fields() from input edit data
      * @return array
      */
-    public function fields_from_edit();
+    public function getFieldsFromEdit();
 
     /**
      * Create SQL string from field
@@ -68,5 +68,5 @@ interface UtilInterface
      * @param array information about field type
      * @return array array("field", "type", "NULL", "DEFAULT", "ON UPDATE", "COMMENT", "AUTO_INCREMENT")
      */
-    public function process_field($field, $type_field);
+    public function processField($field, $typeField);
 }

@@ -81,7 +81,7 @@ abstract class Driver implements DriverInterface
     {
         $query = "FROM " . $this->server->table($table);
         return $this->db->queries("DELETE" .
-            ($limit ? $this->server->limit1($table, $query, $queryWhere) : " $query$queryWhere"));
+            ($limit ? $this->server->limitToOne($table, $query, $queryWhere) : " $query$queryWhere"));
     }
 
     /**
@@ -101,7 +101,7 @@ abstract class Driver implements DriverInterface
         }
         $query = $this->server->table($table) . " SET$separator" . implode(",$separator", $values);
         return $this->db->queries("UPDATE" .
-            ($limit ? $this->server->limit1($table, $query, $queryWhere, $separator) : " $query$queryWhere"));
+            ($limit ? $this->server->limitToOne($table, $query, $queryWhere, $separator) : " $query$queryWhere"));
     }
 
     /**

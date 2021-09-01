@@ -70,7 +70,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function set_charset($charset)
+    public function setCharset($charset)
     {
     }
 

@@ -11,14 +11,14 @@ interface DbInterface
      *
      * @return array
      */
-    public function getOptions();
+    public function options();
 
     /**
      * Get SSL connection options
      *
      * @return array
      */
-    public function connectSsl();
+    public function sslOptions();
 
     /**
      * Set the error message
@@ -69,11 +69,11 @@ interface DbInterface
     /**
      * Set the number of rows affected by the last query
      *
-     * @param integer $affected_rows
+     * @param integer $affectedRows
      *
      * @return void
      */
-    public function setAffectedRows($affected_rows);
+    public function setAffectedRows($affectedRows);
 
     /**
      * Get the number of rows affected by the last query
@@ -110,7 +110,7 @@ interface DbInterface
      * @param callback|null
      * @return bool
      */
-    public function apply_queries($query, $tables, $escape = null);
+    public function applyQueries($query, $tables, $escape = null);
 
     /**
      * Get list of values from database
@@ -118,7 +118,7 @@ interface DbInterface
      * @param mixed
      * @return array
      */
-    public function get_vals($query, $column = 0);
+    public function values($query, $column = 0);
 
     /**
      * Get keys from first column and values from second
@@ -127,7 +127,7 @@ interface DbInterface
      * @param bool
      * @return array
      */
-    public function get_key_vals($query, $connection = null, $set_keys = true);
+    public function keyValues($query, $connection = null, $set_keys = true);
 
     /**
      * Get all rows of result
@@ -136,18 +136,18 @@ interface DbInterface
      * @param string
      * @return array of associative arrays
      */
-    public function get_rows($query, $connection = null);
+    public function rows($query, $connection = null);
 
     /**
      * Get default value clause
      * @param array
      * @return string
      */
-    public function default_value($field);
+    public function defaultValue($field);
 
     /**
      * Get regular expression to match numeric types
      * @return string
      */
-    public function number_type();
+    public function numberRegex();
 }

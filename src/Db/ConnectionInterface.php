@@ -25,14 +25,14 @@ interface ConnectionInterface
      *
      * @return boolean
      */
-    public function select_db($database);
+    public function selectDatabase($database);
 
     /**
      * Sets the client character set
      * @param string
      * @return bool
      */
-    public function set_charset($charset);
+    public function setCharset($charset);
 
     /**
      * Execute a query on the current database
@@ -59,7 +59,7 @@ interface ConnectionInterface
      *
      * @return mixed
      */
-    public function next_result();
+    public function nextResult();
 
     /**
      * Execute a query on the current database and ??
@@ -68,16 +68,16 @@ interface ConnectionInterface
      *
      * @return mixed
      */
-    public function multi_query($query);
+    public function multiQuery($query);
 
     /**
-     * Get the result saved by the multi_query() method
+     * Get the result saved by the multiQuery() method
      *
      * @param mixed $result
      *
      * @return mixed
      */
-    public function store_result($result = null);
+    public function storedResult($result = null);
 
     /**
      * Convert value returned by database to actual value
