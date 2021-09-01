@@ -26,15 +26,13 @@ trait DbTrait
     /**
      * Connect to a given server
      *
-     * @param UtilInterface $util
-     * @param string $server The server class name
-     *
      * @return void
      */
-    public function connect(UtilInterface $util, string $server)
+    public function connect()
     {
-        $this->server = new $server($this, $util);
-        $this->connection = $this->server->getConnection();
-        $this->driver = $this->server->getDriver();
+        $di = \jaxon()->di();
+        $this->server = $di->get(ServerInterface::class);
+        $this->connection = $di->get(ConnectionInterface::class);
+        $this->driver = $di->get(DriverInterface::class);
     }
 }
