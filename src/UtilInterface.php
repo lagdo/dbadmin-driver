@@ -26,7 +26,7 @@ interface UtilInterface
      * @param string
      * @return string
      */
-    public function h($string);
+    public function html($string);
 
     /**
      * Remove non-digits from a string

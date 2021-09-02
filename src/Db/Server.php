@@ -91,7 +91,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function getDriver()
+    public function driver()
     {
         return $this->driver;
     }

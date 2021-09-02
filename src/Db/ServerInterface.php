@@ -9,14 +9,14 @@ interface ServerInterface
      *
      * @return DriverInterface
      */
-    public function getDriver();
+    public function driver();
 
     /**
      * Get the driver name
      *
      * @return string
      */
-    public function getName();
+    public function name();
 
     /**
      * Connect to the database server
@@ -24,7 +24,7 @@ interface ServerInterface
      *
      * @return ConnectionInterface|string
      */
-    public function getConnection();
+    public function connection();
 
     /**
      * Select the database and schema
