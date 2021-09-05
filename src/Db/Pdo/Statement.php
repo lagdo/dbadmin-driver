@@ -12,14 +12,14 @@ class Statement extends PDOStatement
      *
      * @var int
      */
-    public $_offset = 0;
+    public $offset = 0;
 
     /**
      * Undocumented variable
      *
      * @var int
      */
-    public $num_rows;
+    public $numRows;
 
     public function fetch_assoc()
     {
@@ -33,7 +33,7 @@ class Statement extends PDOStatement
 
     public function fetch_field()
     {
-        $row = (object) $this->getColumnMeta($this->_offset++);
+        $row = (object) $this->getColumnMeta($this->offset++);
         $row->orgtable = $row->table;
         $row->orgname = $row->name;
         $row->charsetnr = (in_array("blob", (array) $row->flags) ? 63 : 0);

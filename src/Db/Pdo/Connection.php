@@ -32,7 +32,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function getServerInfo()
+    public function serverInfo()
     {
         return @$this->client->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
@@ -58,19 +58,19 @@ abstract class Connection extends AbstractConnection
 
     public function multiQuery($query)
     {
-        return $this->_result = $this->query($query);
+        return $this->result = $this->query($query);
     }
 
     public function storedResult($result = null)
     {
         if (!$result) {
-            $result = $this->_result;
+            $result = $this->result;
             if (!$result) {
                 return false;
             }
         }
         if ($result->columnCount()) {
-            $result->num_rows = $result->rowCount(); // is not guaranteed to work with all drivers
+            $result->numRows = $result->rowCount(); // is not guaranteed to work with all drivers
             return $result;
         }
         $this->db->setAffectedRows($result->rowCount());
@@ -79,11 +79,11 @@ abstract class Connection extends AbstractConnection
 
     public function nextResult()
     {
-        if (!$this->_result) {
+        if (!$this->result) {
             return false;
         }
-        $this->_result->_offset = 0;
-        return @$this->_result->nextRowset(); // @ - PDO_PgSQL doesn't support it
+        $this->result->offset = 0;
+        return @$this->result->nextRowset(); // @ - PDO_PgSQL doesn't support it
     }
 
     public function result($query, $field = 0)

@@ -525,7 +525,7 @@ abstract class Server implements ServerInterface
         if (!$connection) {
             $connection = $this->connection;
         }
-        $info = $connection->getServerInfo();
+        $info = $connection->serverInfo();
         if ($maria_db && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
             $info = $match[1];
             $version = $maria_db;

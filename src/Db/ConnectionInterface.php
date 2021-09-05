@@ -9,14 +9,14 @@ interface ConnectionInterface
      *
      * @return mixed
      */
-    public function getClient();
+    public function client();
 
     /**
      * Get the server description
      *
      * @return string
      */
-    public function getServerInfo();
+    public function serverInfo();
 
     /**
      * Open a connection to a server

@@ -41,7 +41,7 @@ abstract class Connection implements ConnectionInterface
      *
      * @var mixed
      */
-    public $_result;
+    public $result;
 
     /**
      * The constructor
@@ -79,7 +79,7 @@ abstract class Connection implements ConnectionInterface
      *
      * @return mixed
      */
-    public function getClient()
+    public function client()
     {
         return $this->client;
     }
