@@ -44,55 +44,54 @@ abstract class Connection extends AbstractConnection
 
     public function query($query, $unbuffered = false)
     {
-        $result = $this->client->query($query);
+        $statement = $this->client->query($query);
         $this->db->setError();
-        if (!$result) {
+        if (!$statement) {
             list(, $errno, $error) = $this->client->errorInfo();
             $this->db->setErrno($errno);
             $this->db->setError(($error) ? $error : $this->util->lang('Unknown error.'));
             return false;
         }
-        $this->storedResult($result);
-        return $result;
+        // rowCount() is not guaranteed to work with all drivers
+        if (($statement->numRows = $statement->rowCount()) > 0) {
+            $this->db->setAffectedRows($statement->numRows);
+        }
+        return $statement;
     }
 
     public function multiQuery($query)
     {
-        return $this->result = $this->query($query);
+        return $this->statement = $this->query($query);
     }
 
-    public function storedResult($result = null)
+    public function storedResult()
     {
-        if (!$result) {
-            $result = $this->result;
-            if (!$result) {
-                return false;
-            }
+        if (!$this->statement) {
+            return false;
         }
-        if ($result->columnCount()) {
-            $result->numRows = $result->rowCount(); // is not guaranteed to work with all drivers
-            return $result;
+        // rowCount() is not guaranteed to work with all drivers
+        if (($this->statement->numRows = $this->statement->rowCount()) > 0) {
+            $this->db->setAffectedRows($this->statement->numRows);
         }
-        $this->db->setAffectedRows($result->rowCount());
-        return true;
+        return $this->statement;
     }
 
     public function nextResult()
     {
-        if (!$this->result) {
+        if (!$this->statement) {
             return false;
         }
-        $this->result->offset = 0;
-        return @$this->result->nextRowset(); // @ - PDO_PgSQL doesn't support it
+        $this->statement->offset = 0;
+        return @$this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
     }
 
     public function result($query, $field = 0)
     {
-        $result = $this->query($query);
-        if (!$result) {
+        $statement = $this->query($query);
+        if (!$statement) {
             return false;
         }
-        $row = $result->fetch();
+        $row = $statement->fetch();
         return $row[$field];
     }
 

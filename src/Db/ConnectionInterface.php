@@ -50,7 +50,7 @@ interface ConnectionInterface
      * @param string $query
      * @param boolean $unbuffered
      *
-     * @return mixed
+     * @return StatementInterface|bool
      */
     public function query($query, $unbuffered = false);
 
@@ -67,7 +67,7 @@ interface ConnectionInterface
     /**
      * Get the next row set of the last query
      *
-     * @return mixed
+     * @return bool
      */
     public function nextResult();
 
@@ -76,18 +76,16 @@ interface ConnectionInterface
      *
      * @param string $query
      *
-     * @return mixed
+     * @return bool
      */
     public function multiQuery($query);
 
     /**
      * Get the result saved by the multiQuery() method
      *
-     * @param mixed $result
-     *
-     * @return mixed
+     * @return StatementInterface|bool
      */
-    public function storedResult($result = null);
+    public function storedResult();
 
     /**
      * Convert value returned by database to actual value

@@ -2,10 +2,12 @@
 
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+
 use PDOStatement;
 use PDO;
 
-class Statement extends PDOStatement
+class Statement extends PDOStatement implements StatementInterface
 {
     /**
      * Undocumented variable
@@ -21,17 +23,17 @@ class Statement extends PDOStatement
      */
     public $numRows;
 
-    public function fetch_assoc()
+    public function fetchAssoc()
     {
         return $this->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function fetch_row()
+    public function fetchRow()
     {
         return $this->fetch(PDO::FETCH_NUM);
     }
 
-    public function fetch_field()
+    public function fetchField()
     {
         $row = (object) $this->getColumnMeta($this->offset++);
         $row->orgtable = $row->table;
