@@ -5,13 +5,6 @@ namespace Lagdo\DbAdmin\Driver\Db;
 interface ServerInterface
 {
     /**
-     * Get the database driver
-     *
-     * @return DriverInterface
-     */
-    public function driver();
-
-    /**
      * Get the driver name
      *
      * @return string
@@ -19,12 +12,25 @@ interface ServerInterface
     public function name();
 
     /**
-     * Connect to the database server
-     * Return a string for error
+     * Create a connection to the server, based on the config and available packages
      *
-     * @return ConnectionInterface|string
+     * @return ConnectionInterface
+     */
+    public function connect();
+
+    /**
+     * Get the database connection
+     *
+     * @return ConnectionInterface
      */
     public function connection();
+
+    /**
+     * Get the database driver
+     *
+     * @return DriverInterface
+     */
+    public function driver();
 
     /**
      * Select the database and schema

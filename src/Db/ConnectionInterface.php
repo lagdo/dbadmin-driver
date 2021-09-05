@@ -19,6 +19,16 @@ interface ConnectionInterface
     public function getServerInfo();
 
     /**
+     * Open a connection to a server
+     *
+     * @param string $server    The server address, name or uri
+     * @param array  $options   The connection options
+     *
+     * @return boolean
+     */
+    public function open($server, array $options);
+
+    /**
      * Set the current database
      *
      * @param string $database
@@ -124,14 +134,4 @@ interface ConnectionInterface
      * @return string
      */
     public function quoteBinary($string);
-
-    /**
-     * Open a connection to a server
-     *
-     * @param string $server    The server address, name or uri
-     * @param array  $options   The connection options
-     *
-     * @return mixed
-     */
-    public function open($server, array $options);
 }

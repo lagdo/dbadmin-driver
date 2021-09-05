@@ -10,22 +10,22 @@ abstract class Server implements ServerInterface
     /**
      * @var DbInterface
      */
-    protected $db;
+    protected $db = null;
 
     /**
      * @var UtilInterface
      */
-    protected $util;
+    protected $util = null;
 
     /**
      * @var DriverInterface
      */
-    protected $driver;
+    protected $driver = null;
 
     /**
      * @var ConnectionInterface
      */
-    protected $connection;
+    protected $connection = null;
 
     /**
      * @var string
@@ -78,15 +78,16 @@ abstract class Server implements ServerInterface
         $this->grouping = $config['grouping'];
         $this->editFunctions = $config['editFunctions'];
 
-        $this->createConnection();
+        $this->connect();
     }
 
     /**
-     * Create a connection to the server, based on the config and available packages
-     *
-     * @return void
+     * @inheritDoc
      */
-    abstract protected function createConnection();
+    public function connection()
+    {
+        return $this->connection;
+    }
 
     /**
      * @inheritDoc
