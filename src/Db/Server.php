@@ -307,7 +307,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function createTableSql($table, $auto_increment, $style)
+    public function createTableSql($table, $autoIncrement, $style)
     {
         return '';
     }

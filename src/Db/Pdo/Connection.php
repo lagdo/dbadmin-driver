@@ -87,11 +87,12 @@ abstract class Connection extends AbstractConnection
 
     public function result($query, $field = 0)
     {
-        $statement = $this->query($query);
-        if (!$statement) {
+        if (!($statement = $this->query($query))) {
             return false;
         }
-        $row = $statement->fetch();
+        if (!($row = $statement->fetch())) {
+            return false;
+        }
         return $row[$field];
     }
 

@@ -22,7 +22,7 @@ class Statement extends PDOStatement implements StatementInterface
      *
      * @var int
      */
-    public $numRows;
+    public $numRows = 0;
 
     /**
      * @inheritDoc

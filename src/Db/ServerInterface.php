@@ -284,18 +284,18 @@ interface ServerInterface
 
     /**
      * Run commands to create or alter table
-     * @param string "" to create
-     * @param string new name
-     * @param array of array($orig, $process_field, $after)
-     * @param array of strings
-     * @param string
-     * @param string
-     * @param string
-     * @param string number
-     * @param string
+     * @param string $table "" to create
+     * @param string $name new name
+     * @param array $fields of array($orig, $process_field, $after)
+     * @param array $foreign of strings
+     * @param string $comment
+     * @param string $engine
+     * @param string $collation
+     * @param string $autoIncrement number
+     * @param string $partitioning
      * @return bool
      */
-    public function alterTable($table, $name, $fields, $foreign, $comment, $engine, $collation, $auto_increment, $partitioning);
+    public function alterTable($table, $name, $fields, $foreign, $comment, $engine, $collation, $autoIncrement, $partitioning);
 
     /**
      * Run commands to alter indexes
@@ -441,7 +441,7 @@ interface ServerInterface
      * @param string
      * @return string
      */
-    public function createTableSql($table, $auto_increment, $style);
+    public function createTableSql($table, $autoIncrement, $style);
 
     /**
      * Get SQL command to create foreign keys
