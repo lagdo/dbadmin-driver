@@ -286,7 +286,7 @@ interface ServerInterface
      * Run commands to create or alter table
      * @param string $table "" to create
      * @param string $name new name
-     * @param array $fields of array($orig, $process_field, $after)
+     * @param object $fields of array($orig, $process_field, $after)
      * @param array $foreign of strings
      * @param string $comment
      * @param string $engine
@@ -498,18 +498,18 @@ interface ServerInterface
 
     /**
      * Convert field in select and edit
-     * @param array $field one element from $this->fields()
+     * @param object $field one element from $this->fields()
      * @return string
      */
-    public function convertField(array $field);
+    public function convertField($field);
 
     /**
      * Convert value in edit after applying functions back
-     * @param array $field one element from $this->fields()
+     * @param object $field one element from $this->fields()
      * @param string $return
      * @return string
      */
-    public function unconvertField(array $field, $return);
+    public function unconvertField($field, $return);
 
     /**
      * Check whether a feature is supported

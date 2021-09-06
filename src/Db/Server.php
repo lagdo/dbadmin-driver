@@ -260,14 +260,14 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function convertField(array $field)
+    public function convertField($field)
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function unconvertField(array $field, $return)
+    public function unconvertField($field, $return)
     {
         return $return;
     }

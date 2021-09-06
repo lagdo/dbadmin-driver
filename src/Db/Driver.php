@@ -160,7 +160,7 @@ abstract class Driver implements DriverInterface
      * Convert column to be searchable
      * @param string $idf escaped column name
      * @param array $val array("op" => , "val" => )
-     * @param array $field
+     * @param object $field
      * @return string
      */
     public function convertSearch($idf, $val, $field)
