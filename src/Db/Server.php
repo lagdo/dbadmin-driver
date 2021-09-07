@@ -512,8 +512,8 @@ abstract class Server implements ServerInterface
             $this->table($foreignKey["table"]) . " (" . implode(", ", array_map(function ($idf) {
                 return $this->escapeId($idf);
             }, $foreignKey["target"])) . ")" . //! reuse $name - check in older MySQL versions
-            (preg_match("~^($this->onActions)\$~", $foreignKey["on_delete"]) ? " ON DELETE $foreignKey[on_delete]" : "") .
-            (preg_match("~^($this->onActions)\$~", $foreignKey["on_update"]) ? " ON UPDATE $foreignKey[on_update]" : "")
+            (preg_match("~^($this->onActions)\$~", $foreignKey["onDelete"]) ? " ON DELETE $foreignKey[onDelete]" : "") .
+            (preg_match("~^($this->onActions)\$~", $foreignKey["onUpdate"]) ? " ON UPDATE $foreignKey[onUpdate]" : "")
         ;
     }
 
