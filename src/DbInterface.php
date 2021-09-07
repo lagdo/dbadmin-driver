@@ -9,16 +9,11 @@ interface DbInterface
     /**
      * Get the database server options
      *
-     * @return array
-     */
-    public function options();
-
-    /**
-     * Get SSL connection options
+     * @param string $name The option name
      *
-     * @return array
+     * @return mixed
      */
-    public function sslOptions();
+    public function options(string $name = '');
 
     /**
      * Set the error message
