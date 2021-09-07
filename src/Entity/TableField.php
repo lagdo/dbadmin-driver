@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Entity;
 
 class TableField
 {
