@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DbInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\Entity\Config;
 
 abstract class Server implements ServerInterface
 {
@@ -38,6 +39,11 @@ abstract class Server implements ServerInterface
     protected $schema = '';
 
     /**
+     * @var Config
+     */
+    protected $config = null;
+
+    /**
      * From bootstrap.inc.php
      * @var string
      */
@@ -65,20 +71,24 @@ abstract class Server implements ServerInterface
     {
         $this->db = $db;
         $this->util = $util;
-
-        // From bootstrap.inc.php
-        $config = $this->driverConfig();
-        $this->possibleDrivers = $config['possibleDrivers'];
-        $this->jush = $config['jush'];
-        $this->types = $config['types'];
-        $this->structuredTypes = $config['structuredTypes'];
-        $this->unsigned = $config['unsigned'];
-        $this->operators = $config['operators'];
-        $this->functions = $config['functions'];
-        $this->grouping = $config['grouping'];
-        $this->editFunctions = $config['editFunctions'];
-
+        $this->config = new Config();
+        $this->setConfig();
         $this->connect();
+    }
+
+    /**
+     * Set driver config
+     *
+     * @return void
+     */
+    abstract protected function setConfig();
+
+    /**
+     * @inheritDoc
+     */
+    public function config()
+    {
+        return $this->config;
     }
 
     /**

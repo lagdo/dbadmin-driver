@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Entity\Config;
+
 interface ServerInterface
 {
     /**
@@ -548,7 +550,7 @@ interface ServerInterface
 
     /**
      * Get driver config
-     * @return array array('possibleDrivers' => , 'jush' => , 'types' => , 'structuredTypes' => , 'unsigned' => , 'operators' => , 'functions' => , 'grouping' => , 'editFunctions' => )
+     * @return Config
      */
-    public function driverConfig();
+    public function config();
 }
