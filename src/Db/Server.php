@@ -6,6 +6,7 @@ use Lagdo\DbAdmin\Driver\DbInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\Entity\Config;
 use Lagdo\DbAdmin\Driver\Entity\Table;
+use Lagdo\DbAdmin\Driver\Entity\ForeignKey;
 
 abstract class Server implements ServerInterface
 {
@@ -513,20 +514,20 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function formatForeignKey($foreignKey)
+    public function formatForeignKey(ForeignKey $foreignKey)
     {
-        $db = $foreignKey["db"];
-        $ns = $foreignKey["ns"];
+        $db = $foreignKey->db;
+        $schema = $foreignKey->schema;
         return " FOREIGN KEY (" . implode(", ", array_map(function ($idf) {
             return $this->escapeId($idf);
-        }, $foreignKey["source"])) . ") REFERENCES " .
+        }, $foreignKey->source)) . ") REFERENCES " .
             ($db != "" && $db != $this->database ? $this->escapeId($db) . "." : "") .
-            ($ns != "" && $ns != $this->schema ? $this->escapeId($ns) . "." : "") .
-            $this->table($foreignKey["table"]) . " (" . implode(", ", array_map(function ($idf) {
+            ($schema != "" && $schema != $this->schema ? $this->escapeId($schema) . "." : "") .
+            $this->table($foreignKey->table) . " (" . implode(", ", array_map(function ($idf) {
                 return $this->escapeId($idf);
-            }, $foreignKey["target"])) . ")" . //! reuse $name - check in older MySQL versions
-            (preg_match("~^($this->onActions)\$~", $foreignKey["onDelete"]) ? " ON DELETE $foreignKey[onDelete]" : "") .
-            (preg_match("~^($this->onActions)\$~", $foreignKey["onUpdate"]) ? " ON UPDATE $foreignKey[onUpdate]" : "")
+            }, $foreignKey->target)) . ")" . //! reuse $name - check in older MySQL versions
+            (preg_match("~^($this->onActions)\$~", $foreignKey->onDelete) ? " ON DELETE $foreignKey->onDelete" : "") .
+            (preg_match("~^($this->onActions)\$~", $foreignKey->onUpdate) ? " ON UPDATE $foreignKey->onUpdate" : "")
         ;
     }
 

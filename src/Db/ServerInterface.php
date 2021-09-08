@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\Config;
 use Lagdo\DbAdmin\Driver\Entity\Table;
+use Lagdo\DbAdmin\Driver\Entity\ForeignKey;
 
 interface ServerInterface
 {
@@ -158,12 +159,11 @@ interface ServerInterface
     /**
      * Format foreign key to use in SQL query
      *
-     * @param array ("db" => string, "ns" => string, "table" => string, "source" => array, "target" => array,
-     * "onDelete" => one of $this->onActions, "onUpdate" => one of $this->onActions)
+     * @param ForeignKey $foreignKey
      *
      * @return string
      */
-    public function formatForeignKey($foreignKey);
+    public function formatForeignKey(ForeignKey $foreignKey);
 
     /**
      * Get tables list
