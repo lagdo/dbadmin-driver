@@ -5,6 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\DbInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\Entity\Config;
+use Lagdo\DbAdmin\Driver\Entity\Table;
 
 abstract class Server implements ServerInterface
 {
@@ -503,8 +504,10 @@ abstract class Server implements ServerInterface
      */
     public function tableStatusOrName($table, $fast = false)
     {
-        $return = $this->tableStatus($table, $fast);
-        return ($return ? $return : array("Name" => $table));
+        if (($status = $this->tableStatus($table, $fast))) {
+            return $status;
+        }
+        return new Table($table);
     }
 
     /**

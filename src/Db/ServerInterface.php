@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\Config;
+use Lagdo\DbAdmin\Driver\Entity\Table;
 
 interface ServerInterface
 {
@@ -181,7 +182,7 @@ interface ServerInterface
      * Get table status
      * @param string
      * @param bool return only "Name", "Engine" and "Comment" fields
-     * @return array array($name => array("Name" => , "Engine" => , "Comment" => , "Oid" => , "Rows" => , "Collation" => , "Auto_increment" => , "Data_length" => , "Index_length" => , "Data_free" => )) or only inner array with $name
+     * @return Table
      */
     public function tableStatus($name = "", $fast = false);
 
