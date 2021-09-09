@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Entity\StatementField;
+use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
 
 use PDOStatement;
 use PDO;
@@ -46,7 +46,7 @@ class Statement extends PDOStatement implements StatementInterface
     public function fetchField()
     {
         $row = $this->getColumnMeta($this->offset++);
-        return new StatementField($row['native_type'], in_array("blob", (array)$row['flags']),
+        return new StatementFieldEntity($row['native_type'], in_array("blob", (array)$row['flags']),
             $row['name'], $row['name'], $row['table'], $row['table']);
     }
 }

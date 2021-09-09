@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class ForeignKey
+class ForeignKeyEntity
 {
     /**
      * @var string

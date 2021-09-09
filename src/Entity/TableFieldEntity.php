@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class TableField
+class TableFieldEntity
 {
     /**
      * The field name

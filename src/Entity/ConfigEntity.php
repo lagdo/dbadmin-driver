@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class Config
+class ConfigEntity
 {
     /**
      * @var string

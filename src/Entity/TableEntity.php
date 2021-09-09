@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class Table
+class TableEntity
 {
     /**
      * @var string

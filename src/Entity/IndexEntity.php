@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class Index
+class IndexEntity
 {
     /**
      * @var string

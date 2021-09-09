@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class Routine
+class RoutineEntity
 {
     /**
      * @var string

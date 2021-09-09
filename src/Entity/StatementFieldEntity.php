@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class StatementField
+class StatementFieldEntity
 {
     /**
      * The field type

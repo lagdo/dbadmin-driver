@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class Trigger
+class TriggerEntity
 {
     /**
      * @var string

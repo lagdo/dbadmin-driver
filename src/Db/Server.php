@@ -4,9 +4,9 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DbInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
-use Lagdo\DbAdmin\Driver\Entity\Config;
-use Lagdo\DbAdmin\Driver\Entity\Table;
-use Lagdo\DbAdmin\Driver\Entity\ForeignKey;
+use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 
 abstract class Server implements ServerInterface
 {
@@ -41,7 +41,7 @@ abstract class Server implements ServerInterface
     protected $schema = '';
 
     /**
-     * @var Config
+     * @var ConfigEntity
      */
     protected $config = null;
 
@@ -73,7 +73,7 @@ abstract class Server implements ServerInterface
     {
         $this->db = $db;
         $this->util = $util;
-        $this->config = new Config();
+        $this->config = new ConfigEntity();
         $this->setConfig();
         $this->connect();
     }
@@ -508,13 +508,13 @@ abstract class Server implements ServerInterface
         if (($status = $this->tableStatus($table, $fast))) {
             return $status;
         }
-        return new Table($table);
+        return new TableEntity($table);
     }
 
     /**
      * @inheritDoc
      */
-    public function formatForeignKey(ForeignKey $foreignKey)
+    public function formatForeignKey(ForeignKeyEntity $foreignKey)
     {
         $db = $foreignKey->db;
         $schema = $foreignKey->schema;
@@ -534,15 +534,15 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function minVersion($version, $maria_db = "", $connection = null)
+    public function minVersion($version, $mariaDb = "", $connection = null)
     {
         if (!$connection) {
             $connection = $this->connection;
         }
         $info = $connection->serverInfo();
-        if ($maria_db && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
+        if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
             $info = $match[1];
-            $version = $maria_db;
+            $version = $mariaDb;
         }
         return (version_compare($info, $version) >= 0);
     }
