@@ -37,33 +37,45 @@ abstract class Connection extends AbstractConnection
         return @$this->client->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
-    public function quote($string)
+    /**
+     * @inheritDoc
+     */
+    public function quote(string $string)
     {
         return $this->client->quote($string);
     }
 
-    public function query($query, $unbuffered = false)
+    /**
+     * @inheritDoc
+     */
+    public function query(string $query, bool $unbuffered = false)
     {
         $statement = $this->client->query($query);
-        $this->db->setError();
+        $this->driver->setError();
         if (!$statement) {
             list(, $errno, $error) = $this->client->errorInfo();
-            $this->db->setErrno($errno);
-            $this->db->setError(($error) ? $error : $this->util->lang('Unknown error.'));
+            $this->driver->setErrno($errno);
+            $this->driver->setError(($error) ? $error : $this->util->lang('Unknown error.'));
             return false;
         }
         // rowCount() is not guaranteed to work with all drivers
         if (($statement->numRows = $statement->rowCount()) > 0) {
-            $this->db->setAffectedRows($statement->numRows);
+            $this->driver->setAffectedRows($statement->numRows);
         }
         return $statement;
     }
 
-    public function multiQuery($query)
+    /**
+     * @inheritDoc
+     */
+    public function multiQuery(string $query)
     {
         return $this->statement = $this->query($query);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function storedResult()
     {
         if (!$this->statement) {
@@ -71,11 +83,14 @@ abstract class Connection extends AbstractConnection
         }
         // rowCount() is not guaranteed to work with all drivers
         if (($this->statement->numRows = $this->statement->rowCount()) > 0) {
-            $this->db->setAffectedRows($this->statement->numRows);
+            $this->driver->setAffectedRows($this->statement->numRows);
         }
         return $this->statement;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function nextResult()
     {
         if (!$this->statement) {
@@ -85,7 +100,10 @@ abstract class Connection extends AbstractConnection
         return @$this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
     }
 
-    public function result($query, $field = 0)
+    /**
+     * @inheritDoc
+     */
+    public function result(string $query, int $field = 0)
     {
         if (!($statement = $this->query($query))) {
             return false;

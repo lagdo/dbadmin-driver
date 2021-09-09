@@ -2,25 +2,22 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\DbInterface;
+use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
+
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 abstract class Connection implements ConnectionInterface
 {
     /**
-     * @var DbInterface
+     * @var DriverInterface
      */
-    protected $db;
+    protected $driver;
 
     /**
      * @var UtilInterface
      */
     protected $util;
-
-    /**
-     * @var ServerInterface
-     */
-    protected $server;
 
     /**
      * The extension name
@@ -30,7 +27,7 @@ abstract class Connection implements ConnectionInterface
     public $extension;
 
     /**
-     * The client object used to query the database server
+     * The client object used to query the database driver
      *
      * @var mixed
      */
@@ -46,23 +43,21 @@ abstract class Connection implements ConnectionInterface
     /**
      * The constructor
      *
-     * @param DbInterface $db
+     * @param DriverInterface $driver
      * @param UtilInterface $util
-     * @param ServerInterface $server
      * @param string $extension
      */
-    public function __construct(DbInterface $db, UtilInterface $util, ServerInterface $server, string $extension)
+    public function __construct(DriverInterface $driver, UtilInterface $util, string $extension)
     {
-        $this->db = $db;
+        $this->driver = $driver;
         $this->util = $util;
-        $this->server = $server;
         $this->extension = $extension;
     }
 
     /**
      * @inheritDoc
      */
-    public function quote($string)
+    public function quote(string $string)
     {
         return $string;
     }
@@ -70,7 +65,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function setCharset($charset)
+    public function setCharset(string $charset)
     {
     }
 
@@ -87,7 +82,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function quoteBinary($string)
+    public function quoteBinary(string $string)
     {
         return $this->quote($string);
     }
@@ -95,7 +90,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function value($val, $field)
+    public function value(?string $val, TableFieldEntity $field)
     {
         return (is_resource($val) ? stream_get_contents($val) : $val);
     }
@@ -109,8 +104,7 @@ abstract class Connection implements ConnectionInterface
     }
 
     /**
-     * Get warnings about the last command
-     * @return string
+     * @inheritDoc
      */
     public function warnings()
     {

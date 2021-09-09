@@ -5,14 +5,14 @@ namespace Lagdo\DbAdmin\Driver\Db;
 interface StatementInterface
 {
     /**
-     * Fetch the next row as an array with position as keys
+     * Fetch the next row as an array with field position as keys
      *
-     * @return object
+     * @return array
      */
     public function fetchRow();
 
     /**
-     * Fetch the next row as an array with name as keys
+     * Fetch the next row as an array with field name as keys
      *
      * @return array
      */
@@ -21,7 +21,7 @@ interface StatementInterface
     /**
      * Fetch the next field
      *
-     * @return StatementField
+     * @return StatementFieldEntity
      */
     public function fetchField();
 }

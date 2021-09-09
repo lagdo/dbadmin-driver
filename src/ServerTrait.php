@@ -1,17 +1,16 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\IndexEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
-interface ServerInterface
+trait ServerTrait
 {
     /**
      * Check if connection has at least the given version
@@ -22,14 +21,20 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null);
+    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null)
+    {
+        return $this->server->minVersion($version, $mariaDb, $connection);
+    }
 
     /**
      * Get connection charset
      *
      * @return string
      */
-    public function charset();
+    public function charset()
+    {
+        return $this->server->charset();
+    }
 
     /**
      * Get SET NAMES if utf8mb4 might be needed
@@ -38,7 +43,10 @@ interface ServerInterface
      *
      * @return string
      */
-    public function setUtf8mb4(string $create);
+    public function setUtf8mb4(string $create)
+    {
+        return $this->server->setUtf8mb4($create);
+    }
 
     /**
      * Get cached list of databases
@@ -47,7 +55,10 @@ interface ServerInterface
      *
      * @return array
      */
-    public function databases(bool $flush);
+    public function databases(bool $flush)
+    {
+        return $this->server->databases($flush);
+    }
 
     /**
      * Compute size of database
@@ -56,7 +67,10 @@ interface ServerInterface
      *
      * @return int
      */
-    public function databaseSize(string $database);
+    public function databaseSize(string $database)
+    {
+        return $this->server->databaseSize($database);
+    }
 
     /**
      * Get database collation
@@ -66,21 +80,30 @@ interface ServerInterface
      *
      * @return string
      */
-    public function databaseCollation(string $database, array $collations);
+    public function databaseCollation(string $database, array $collations)
+    {
+        return $this->server->databaseCollation($database, $collations);
+    }
 
     /**
      * Get supported engines
      *
      * @return array
      */
-    public function engines();
+    public function engines()
+    {
+        return $this->server->engines();
+    }
 
     /**
      * Get tables list
      *
      * @return array
      */
-    public function tables();
+    public function tables()
+    {
+        return $this->server->tables();
+    }
 
     /**
      * Count tables in all databases
@@ -89,14 +112,20 @@ interface ServerInterface
      *
      * @return array
      */
-    public function countTables(array $databases);
+    public function countTables(array $databases)
+    {
+        return $this->server->countTables($databases);
+    }
 
     /**
      * Get sorted grouped list of collations
      *
      * @return array
      */
-    public function collations();
+    public function collations()
+    {
+        return $this->server->collations();
+    }
 
     /**
      * Find out if database is information_schema
@@ -105,7 +134,10 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function isInformationSchema(string $database);
+    public function isInformationSchema(string $database)
+    {
+        return $this->server->isInformationSchema($database);
+    }
 
     /**
      * Create database
@@ -115,7 +147,10 @@ interface ServerInterface
      *
      * @return string|boolean
      */
-    public function createDatabase(string $database, string $collation) ;
+    public function createDatabase(string $database, string $collation)
+    {
+        return $this->server->createDatabase($database, $collation);
+    }
 
     /**
      * Drop databases
@@ -124,7 +159,10 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function dropDatabases(array $databases);
+    public function dropDatabases(array $databases)
+    {
+        return $this->server->dropDatabases($databases);
+    }
 
     /**
      * Rename database from DB
@@ -134,7 +172,10 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function renameDatabase(string $name, string $collation);
+    public function renameDatabase(string $name, string $collation)
+    {
+        return $this->server->renameDatabase($name, $collation);
+    }
 
     /**
      * Get information about stored routine
@@ -144,21 +185,30 @@ interface ServerInterface
      *
      * @return RoutineEntity
      */
-    public function routine(string $name, string $type);
+    public function routine(string $name, string $type)
+    {
+        return $this->server->routine($name, $type);
+    }
 
     /**
      * Get list of routines
      *
      * @return array
      */
-    public function routines();
+    public function routines()
+    {
+        return $this->server->routines();
+    }
 
     /**
      * Get list of available routine languages
      *
      * @return array
      */
-    public function routineLanguages() ;
+    public function routineLanguages()
+    {
+        return $this->server->routineLanguages();
+    }
 
     /**
      * Get routine signature
@@ -168,42 +218,60 @@ interface ServerInterface
      *
      * @return string
      */
-    public function routineId(string $name, array $row);
+    public function routineId(string $name, array $row)
+    {
+        return $this->server->routineId($name, $row);
+    }
 
     /**
      * Get user defined types
      *
      * @return array
      */
-    public function userTypes() ;
+    public function userTypes()
+    {
+        return $this->server->userTypes();
+    }
 
     /**
      * Get existing schemas
      *
      * @return array
      */
-    public function schemas();
+    public function schemas()
+    {
+        return $this->server->schemas();
+    }
 
     /**
      * Get server variables
      *
      * @return array
      */
-    public function variables();
+    public function variables()
+    {
+        return $this->server->variables();
+    }
 
     /**
      * Get status variables
      *
      * @return array
      */
-    public function statusVariables();
+    public function statusVariables()
+    {
+        return $this->server->statusVariables();
+    }
 
     /**
      * Get process list
      *
      * @return array
      */
-    public function processes();
+    public function processes()
+    {
+        return $this->server->processes();
+    }
 
     /**
      * Kill a process
@@ -212,12 +280,18 @@ interface ServerInterface
      *
      * @return bool
      */
-    // public function killProcess($val);
+    // public function killProcess($val)
+    // {
+    //     return $this->server->killProcess($val);
+    // }
 
     /**
      * Get maximum number of connections
      *
      * @return int
      */
-    // public function maxConnections();
+    // public function maxConnections()
+    // {
+    //     return $this->server->maxConnections();
+    // }
 }

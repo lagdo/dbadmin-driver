@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+
 interface ConnectionInterface
 {
     /**
@@ -26,7 +28,7 @@ interface ConnectionInterface
      *
      * @return boolean
      */
-    public function open($server, array $options);
+    public function open(string $server, array $options);
 
     /**
      * Set the current database
@@ -35,34 +37,36 @@ interface ConnectionInterface
      *
      * @return boolean
      */
-    public function selectDatabase($database);
+    public function selectDatabase(string $database);
 
     /**
      * Sets the client character set
-     * @param string
+     *
+     * @param string $charset
+     *
      * @return bool
      */
-    public function setCharset($charset);
+    public function setCharset(string $charset);
 
     /**
      * Execute a query on the current database
      *
      * @param string $query
-     * @param boolean $unbuffered
+     * @param bool $unbuffered
      *
      * @return StatementInterface|bool
      */
-    public function query($query, $unbuffered = false);
+    public function query(string $query, bool $unbuffered = false);
 
     /**
      * Execute a query on the current database and fetch the specified field
      *
      * @param string $query
-     * @param mixed $field
+     * @param int $field
      *
      * @return mixed
      */
-    public function result($query, $field = 1);
+    public function result(string $query, int $field = 0);
 
     /**
      * Get the next row set of the last query
@@ -78,7 +82,7 @@ interface ConnectionInterface
      *
      * @return bool
      */
-    public function multiQuery($query);
+    public function multiQuery(string $query);
 
     /**
      * Get the result saved by the multiQuery() method
@@ -89,14 +93,17 @@ interface ConnectionInterface
 
     /**
      * Convert value returned by database to actual value
-     * @param string
-     * @param array
+     *
+     * @param string $val
+     * @param TableFieldEntity $field
+     *
      * @return string
      */
-    public function value($val, $field);
+    public function value(?string $val, TableFieldEntity $field);
 
     /**
      * Get warnings about the last command
+     *
      * @return string
      */
     public function warnings();
@@ -115,12 +122,12 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function quote($string);
+    public function quote(string $string);
 
     /**
      * Get the default field number
      *
-     * @return integer
+     * @return int
      */
     public function defaultField();
 
@@ -131,5 +138,5 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function quoteBinary($string);
+    public function quoteBinary(string $string);
 }

@@ -2,539 +2,52 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\DbInterface;
-use Lagdo\DbAdmin\Driver\UtilInterface;
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\IndexEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
+use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
+use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
+
+use Lagdo\DbAdmin\Driver\DriverInterface;
+use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 abstract class Server implements ServerInterface
 {
     /**
-     * @var DbInterface
+     * @var DriverInterface
      */
-    protected $db = null;
+    protected $driver;
 
     /**
      * @var UtilInterface
      */
-    protected $util = null;
-
-    /**
-     * @var DriverInterface
-     */
-    protected $driver = null;
+    protected $util;
 
     /**
      * @var ConnectionInterface
      */
-    protected $connection = null;
-
-    /**
-     * @var string
-     */
-    protected $database = '';
-
-    /**
-     * @var string
-     */
-    protected $schema = '';
-
-    /**
-     * @var ConfigEntity
-     */
-    protected $config = null;
-
-    /**
-     * From bootstrap.inc.php
-     * @var string
-     */
-    public $onActions = "RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT"; ///< @var string used in foreignKeys()
-
-    /**
-     * From index.php
-     * @var string
-     */
-    public $enumLength = "'(?:''|[^'\\\\]|\\\\.)*'";
-
-    /**
-     * From index.php
-     * @var string
-     */
-    public $inout = "IN|OUT|INOUT";
+    protected $connection;
 
     /**
      * The constructor
      *
-     * @param DbInterface $db
+     * @param DriverInterface $driver
      * @param UtilInterface $util
+     * @param ConnectionInterface $connection
      */
-    public function __construct(DbInterface $db, UtilInterface $util)
+    public function __construct(DriverInterface $driver, UtilInterface $util, ConnectionInterface $connection)
     {
-        $this->db = $db;
+        $this->driver = $driver;
         $this->util = $util;
-        $this->config = new ConfigEntity();
-        $this->setConfig();
-        $this->connect();
-    }
-
-    /**
-     * Set driver config
-     *
-     * @return void
-     */
-    abstract protected function setConfig();
-
-    /**
-     * @inheritDoc
-     */
-    public function config()
-    {
-        return $this->config;
+        $this->connection = $connection;
     }
 
     /**
      * @inheritDoc
      */
-    public function connection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function driver()
-    {
-        return $this->driver;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function selectDatabase(string $database, string $schema)
-    {
-        $this->database = $database;
-        $this->schema = $schema;
-        if ($database !== '') {
-            $this->connection->selectDatabase($database);
-            if ($schema !== '') {
-                $this->selectSchema($schema);
-            }
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function selectedDatabase()
-    {
-        return $this->database;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function selectedSchema()
-    {
-        return $this->schema;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function primaryIdName()
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function escapeId($idf)
-    {
-        return $idf;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function unescapeId($idf)
-    {
-        $last = substr($idf, -1);
-        return str_replace($last . $last, $last, substr($idf, 1, -1));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function table($idf)
-    {
-        return $this->escapeId($idf);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function view($name)
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function engines()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function collations()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function databaseCollation($db, $collations)
-    {
-        return "";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function userTypes()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function schemas()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function schema()
-    {
-        return "";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function selectSchema($schema, $connection = null)
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isInformationSchema($db)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isView($tableStatus)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function foreignKeys($table)
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportForeignKeys($tableStatus)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertField($field)
-    {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function unconvertField($field, $return)
-    {
-        return $return;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function variables()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function statusVariables()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function processes()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function explain($connection, $query)
-    {
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createTableSql($table, $autoIncrement, $style)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function moveTables($tables, $views, $target)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function copyTables($tables, $views, $target)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function trigger($name)
-    {
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function triggers($table)
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function triggerOptions()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function routine($name, $type)
-    {
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function routines()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function routineLanguages()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function routineId($name, $row)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function useDatabaseSql($database)
-    {
-        return "";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function foreignKeysSql($table)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function truncateTableSql($table)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createTriggerSql($table)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function lastAutoIncrementId()
-    {
-        return $this->connection->last_id;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function countRows($tableStatus, $where)
-    {
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function renameDatabase($name, $collation)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function autoIncrement()
-    {
-        return "";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function alterIndexes($table, $alter)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function dropViews($views)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function truncateTables($tables)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function limit($query, $where, $limit, $offset = 0, $separator = " ")
-    {
-        return "";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function limitToOne($table, $query, $where, $separator = "\n")
-    {
-        return $this->limit($query, $where, 1, 0, $separator);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function tableStatusOrName($table, $fast = false)
-    {
-        if (($status = $this->tableStatus($table, $fast))) {
-            return $status;
-        }
-        return new TableEntity($table);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey)
-    {
-        $db = $foreignKey->db;
-        $schema = $foreignKey->schema;
-        return " FOREIGN KEY (" . implode(", ", array_map(function ($idf) {
-            return $this->escapeId($idf);
-        }, $foreignKey->source)) . ") REFERENCES " .
-            ($db != "" && $db != $this->database ? $this->escapeId($db) . "." : "") .
-            ($schema != "" && $schema != $this->schema ? $this->escapeId($schema) . "." : "") .
-            $this->table($foreignKey->table) . " (" . implode(", ", array_map(function ($idf) {
-                return $this->escapeId($idf);
-            }, $foreignKey->target)) . ")" . //! reuse $name - check in older MySQL versions
-            (preg_match("~^($this->onActions)\$~", $foreignKey->onDelete) ? " ON DELETE $foreignKey->onDelete" : "") .
-            (preg_match("~^($this->onActions)\$~", $foreignKey->onUpdate) ? " ON UPDATE $foreignKey->onUpdate" : "")
-        ;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function minVersion($version, $mariaDb = "", $connection = null)
+    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null)
     {
         if (!$connection) {
             $connection = $this->connection;
@@ -559,8 +72,126 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function quote($string)
+    public function setUtf8mb4(string $create)
     {
-        return $this->connection->quote($string);
+        static $set = false;
+        // possible false positive
+        if (!$set && preg_match('~\butf8mb4~i', $create)) {
+            $set = true;
+            return "SET NAMES " . $this->charset() . ";\n\n";
+        }
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function engines()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function collations()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function databaseCollation(string $database, array $collations)
+    {
+        return "";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function userTypes()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function schemas()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isInformationSchema(string $database)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function variables()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function statusVariables()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routine(string $name, string $type)
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routines()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routineLanguages()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routineId(string $name, array $row)
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renameDatabase(string $name, string $collation)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function processes()
+    {
+        return [];
     }
 }
