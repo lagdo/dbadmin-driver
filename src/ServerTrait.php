@@ -13,42 +13,6 @@ use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 trait ServerTrait
 {
     /**
-     * Check if connection has at least the given version
-     *
-     * @param string $version required version
-     * @param string $mariaDb required MariaDB version
-     * @param ConnectionInterface|null $connection
-     *
-     * @return bool
-     */
-    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null)
-    {
-        return $this->server->minVersion($version, $mariaDb, $connection);
-    }
-
-    /**
-     * Get connection charset
-     *
-     * @return string
-     */
-    public function charset()
-    {
-        return $this->server->charset();
-    }
-
-    /**
-     * Get SET NAMES if utf8mb4 might be needed
-     *
-     * @param string $create
-     *
-     * @return string
-     */
-    public function setUtf8mb4(string $create)
-    {
-        return $this->server->setUtf8mb4($create);
-    }
-
-    /**
      * Get cached list of databases
      *
      * @param bool $flush
@@ -115,6 +79,70 @@ trait ServerTrait
     public function countTables(array $databases)
     {
         return $this->server->countTables($databases);
+    }
+
+    /**
+     * Drop views
+     *
+     * @param array $views
+     *
+     * @return bool
+     */
+    public function dropViews(array $views)
+    {
+        return $this->server->dropViews($views);
+    }
+
+    /**
+     * Truncate tables
+     *
+     * @param array $tables
+     *
+     * @return bool
+     */
+    public function truncateTables(array $tables)
+    {
+        return $this->server->truncateTables($tables);
+    }
+
+    /**
+     * Drop tables
+     *
+     * @param array $tables
+     *
+     * @return bool
+     */
+    public function dropTables(array $tables)
+    {
+        return $this->server->dropTables($tables);
+    }
+
+    /**
+     * Move tables to other schema
+     *
+     * @param array $tables
+     * @param array $views
+     * @param string $target
+     *
+     * @return bool
+     */
+    public function moveTables(array $tables, array $views, string $target)
+    {
+        return $this->server->moveTables($tables, $views, $target);
+    }
+
+    /**
+     * Copy tables to other schema
+     *
+     * @param array $tables
+     * @param array $views
+     * @param string $target
+     *
+     * @return bool
+     */
+    public function copyTables(array $tables, array $views, string $target)
+    {
+        return $this->server->copyTables($tables, $views, $target);
     }
 
     /**

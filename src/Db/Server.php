@@ -47,45 +47,6 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null)
-    {
-        if (!$connection) {
-            $connection = $this->connection;
-        }
-        $info = $connection->serverInfo();
-        if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
-            $info = $match[1];
-            $version = $mariaDb;
-        }
-        return (version_compare($info, $version) >= 0);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function charset()
-    {
-        // SHOW CHARSET would require an extra query
-        return ($this->minVersion("5.5.3", 0) ? "utf8mb4" : "utf8");
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setUtf8mb4(string $create)
-    {
-        static $set = false;
-        // possible false positive
-        if (!$set && preg_match('~\butf8mb4~i', $create)) {
-            $set = true;
-            return "SET NAMES " . $this->charset() . ";\n\n";
-        }
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function engines()
     {
         return [];
@@ -127,6 +88,38 @@ abstract class Server implements ServerInterface
      * @inheritDoc
      */
     public function isInformationSchema(string $database)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function moveTables(array $tables, array $views, string $target)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function copyTables(array $tables, array $views, string $target)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function truncateTables(array $tables)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function dropViews(array $views)
     {
         return false;
     }

@@ -43,15 +43,6 @@ interface DriverInterface
     public function options(string $name = '');
 
     /**
-     * Check whether a feature is supported
-     *
-     * @param string $feature
-     *
-     * @return bool
-     */
-    public function support(string $feature);
-
-    /**
      * Create a connection to the server, based on the config and available packages
      *
      * @return ConnectionInterface|null
@@ -81,6 +72,42 @@ interface DriverInterface
      * @return string
      */
     public function selectedSchema();
+
+    /**
+     * Check whether a feature is supported
+     *
+     * @param string $feature
+     *
+     * @return bool
+     */
+    public function support(string $feature);
+
+    /**
+     * Check if connection has at least the given version
+     *
+     * @param string $version required version
+     * @param string $mariaDb required MariaDB version
+     * @param ConnectionInterface|null $connection
+     *
+     * @return bool
+     */
+    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null);
+
+    /**
+     * Get connection charset
+     *
+     * @return string
+     */
+    public function charset();
+
+    /**
+     * Get SET NAMES if utf8mb4 might be needed
+     *
+     * @param string $create
+     *
+     * @return string
+     */
+    public function setUtf8mb4(string $create);
 
     /**
      * Get regular expression to match numeric types

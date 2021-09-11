@@ -14,33 +14,6 @@ use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 interface ServerInterface
 {
     /**
-     * Check if connection has at least the given version
-     *
-     * @param string $version required version
-     * @param string $mariaDb required MariaDB version
-     * @param ConnectionInterface|null $connection
-     *
-     * @return bool
-     */
-    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null);
-
-    /**
-     * Get connection charset
-     *
-     * @return string
-     */
-    public function charset();
-
-    /**
-     * Get SET NAMES if utf8mb4 might be needed
-     *
-     * @param string $create
-     *
-     * @return string
-     */
-    public function setUtf8mb4(string $create);
-
-    /**
      * Get cached list of databases
      *
      * @param bool $flush
@@ -220,4 +193,58 @@ interface ServerInterface
      * @return int
      */
     // public function maxConnections();
+
+
+
+
+
+
+    /**
+     * Drop views
+     *
+     * @param array $views
+     *
+     * @return bool
+     */
+    public function dropViews(array $views);
+
+    /**
+     * Truncate tables
+     *
+     * @param array $tables
+     *
+     * @return bool
+     */
+    public function truncateTables(array $tables);
+
+    /**
+     * Drop tables
+     *
+     * @param array $tables
+     *
+     * @return bool
+     */
+    public function dropTables(array $tables);
+
+    /**
+     * Move tables to other schema
+     *
+     * @param array $tables
+     * @param array $views
+     * @param string $target
+     *
+     * @return bool
+     */
+    public function moveTables(array $tables, array $views, string $target);
+
+    /**
+     * Copy tables to other schema
+     *
+     * @param array $tables
+     * @param array $views
+     * @param string $target
+     *
+     * @return bool
+     */
+    public function copyTables(array $tables, array $views, string $target);
 }

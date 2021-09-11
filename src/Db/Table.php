@@ -82,39 +82,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function moveTables(array $tables, array $views, string $target)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function copyTables(array $tables, array $views, string $target)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function truncateTables(array $tables)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function alterIndexes(string $table, array $alte)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function dropViews(array $views)
     {
         return false;
     }

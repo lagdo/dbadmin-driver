@@ -87,34 +87,6 @@ interface TableInterface
     public function foreignKeys(string $table);
 
     /**
-     * Create or alter table
-     *
-     * @param string $table "" to create
-     * @param string $name new name
-     * @param array $fields of array($orig, $process_field, $after)
-     * @param array $foreign of strings
-     * @param string $comment
-     * @param string $engine
-     * @param string $collation
-     * @param int $autoIncrement number
-     * @param string $partitioning
-     *
-     * @return bool
-     */
-    public function alterTable(string $table, string $name, array $fields, array $foreign, string $comment,
-        string $engine, string $collation, int $autoIncrement, string $partitioning);
-
-    /**
-     * Alter indexes
-     *
-     * @param string $table     Escaped table name
-     * @param array $alter      array("index type", "name", array("column definition", ...)) or array("index type", "name", "DROP")
-     *
-     * @return bool
-     */
-    public function alterIndexes(string $table, array $alter);
-
-    /**
      * Get information about a trigger
      *
      * @param string $trigger
@@ -138,55 +110,6 @@ interface TableInterface
      * @return array ("Timing" => [], "Event" => [], "Type" => [])
      */
     public function triggerOptions();
-
-    /**
-     * Drop views
-     *
-     * @param array $views
-     *
-     * @return bool
-     */
-    public function dropViews(array $views);
-
-    /**
-     * Truncate tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function truncateTables(array $tables);
-
-    /**
-     * Drop tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function dropTables(array $tables);
-
-    /**
-     * Move tables to other schema
-     *
-     * @param array $tables
-     * @param array $views
-     * @param string $target
-     *
-     * @return bool
-     */
-    public function moveTables(array $tables, array $views, string $target);
-
-    /**
-     * Copy tables to other schema
-     *
-     * @param array $tables
-     * @param array $views
-     * @param string $target
-     *
-     * @return bool
-     */
-    public function copyTables(array $tables, array $views, string $target);
 
     /**
      * Find backward keys for table
@@ -225,6 +148,34 @@ interface TableInterface
      * @return array
      */
     public function referencableTables(string $table);
+
+    /**
+     * Create or alter table
+     *
+     * @param string $table "" to create
+     * @param string $name new name
+     * @param array $fields of array($orig, $process_field, $after)
+     * @param array $foreign of strings
+     * @param string $comment
+     * @param string $engine
+     * @param string $collation
+     * @param int $autoIncrement number
+     * @param string $partitioning
+     *
+     * @return bool
+     */
+    public function alterTable(string $table, string $name, array $fields, array $foreign, string $comment,
+        string $engine, string $collation, int $autoIncrement, string $partitioning);
+
+    /**
+     * Alter indexes
+     *
+     * @param string $table     Escaped table name
+     * @param array $alter      array("index type", "name", array("column definition", ...)) or array("index type", "name", "DROP")
+     *
+     * @return bool
+     */
+    public function alterIndexes(string $table, array $alter);
 
     /**
      * Get help link for table
