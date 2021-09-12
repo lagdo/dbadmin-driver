@@ -60,21 +60,21 @@ interface DriverInterface
     public function connect(string $database, string $schema);
 
     /**
-     * Select the database and schema
+     * Get the selected database
      *
      * @return string
      */
-    public function selectedDatabase();
+    public function database();
 
     /**
-     * Select the database and schema
+     * Get the selected schema
      *
      * @return string
      */
-    public function selectedSchema();
+    public function schema();
 
     /**
-     * Check whether a feature is supported
+     * Check if a feature is supported
      *
      * @param string $feature
      *

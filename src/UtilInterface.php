@@ -36,7 +36,7 @@ interface UtilInterface
     public function number($val);
 
     /**
-     * Check whether the string is in UTF-8
+     * Check if the string is in UTF-8
      * @param string
      * @return bool
      */

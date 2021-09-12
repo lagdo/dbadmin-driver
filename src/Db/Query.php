@@ -4,10 +4,6 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\IndexEntity;
-use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
-use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
@@ -79,14 +75,14 @@ abstract class Query implements QueryInterface
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        $is_group = (count($group) < count($select));
+        $isGroup = (count($group) < count($select));
         $query = $this->driver->buildSelectQuery($select, $where, $group, $order, $limit, $page);
         if (!$query) {
             $query = "SELECT" . $this->driver->limit(
-                ($page != "last" && $limit != "" && $group && $is_group && $this->driver->jush() == "sql" ?
+                ($page != "last" && $limit != "" && $group && $isGroup && $this->driver->jush() == "sql" ?
                 "SQL_CALC_FOUND_ROWS " : "") . implode(", ", $select) . "\nFROM " .
                 $this->driver->table($table),
-                ($where ? "\nWHERE " . implode(" AND ", $where) : "") . ($group && $is_group ?
+                ($where ? "\nWHERE " . implode(" AND ", $where) : "") . ($group && $isGroup ?
                 "\nGROUP BY " . implode(", ", $group) : "") . ($order ? "\nORDER BY " .
                 implode(", ", $order) : ""),
                 ($limit != "" ? +$limit : null),

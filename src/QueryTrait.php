@@ -24,14 +24,14 @@ trait QueryTrait
     }
 
     /**
-     * Get current schema
+     * Get current schema from the database
      *
      * @return string
      */
-    public function schema()
-    {
-        return $this->query->schema();
-    }
+    // public function schema()
+    // {
+    //     return $this->query->schema();
+    // }
 
     /**
      * Select data from table

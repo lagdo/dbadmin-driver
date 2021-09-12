@@ -3,11 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\IndexEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
-use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
@@ -189,7 +185,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function createTableSql(string $table, bool $autoIncrement, string $style)
+    public function sqlForCreateTable(string $table, bool $autoIncrement, string $style)
     {
         return '';
     }
@@ -197,7 +193,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function createIndexSql(string $table, string $type, string $name, array $columns)
+    public function sqlForCreateIndex(string $table, string $type, string $name, string $columns)
     {
         return '';
     }
@@ -205,7 +201,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function useDatabaseSql(string $database)
+    public function sqlForUseDatabase(string $database)
     {
         return "";
     }
@@ -213,7 +209,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function foreignKeysSql(string $table)
+    public function sqlForForeignKeys(string $table)
     {
         return '';
     }
@@ -221,7 +217,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function truncateTableSql(string $table)
+    public function sqlForTruncateTable(string $table)
     {
         return '';
     }
@@ -229,7 +225,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function createTriggerSql(string $table)
+    public function sqlForCreateTrigger(string $table)
     {
         return '';
     }

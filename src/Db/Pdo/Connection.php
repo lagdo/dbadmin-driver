@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
 use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
-use Lagdo\DbAdmin\Driver\Db\Exception\AuthException;
+use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
 use PDO;
 use Exception;

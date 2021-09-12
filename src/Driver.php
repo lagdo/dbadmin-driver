@@ -94,7 +94,7 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
         $this->util->setDriver($this);
         $this->options = $options;
         $this->config = new ConfigEntity();
-        $this->setConfig();
+        $this->initConfig();
         $this->createConnection();
     }
 
@@ -146,7 +146,7 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
      *
      * @return void
      */
-    abstract protected function setConfig();
+    abstract protected function initConfig();
 
     /**
      * @inheritDoc
@@ -164,6 +164,18 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     }
 
     /**
+     * Set the current database
+     *
+     * @param string $database
+     *
+     * @return boolean
+     */
+    public function selectDatabase(string $database)
+    {
+        return $this->connection->selectDatabase($database);
+    }
+
+    /**
      * Set current schema
      *
      * @param string $schema
@@ -171,7 +183,7 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
      *
      * @return bool
      */
-    protected function selectSchema(string $schema, ConnectionInterface $connection = null)
+    public function selectSchema(string $schema, ConnectionInterface $connection = null)
     {
         return true;
     }
@@ -179,7 +191,7 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     /**
      * @inheritDoc
      */
-    public function selectedDatabase()
+    public function database()
     {
         return $this->database;
     }
@@ -187,7 +199,7 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     /**
      * @inheritDoc
      */
-    public function selectedSchema()
+    public function schema()
     {
         return $this->schema;
     }

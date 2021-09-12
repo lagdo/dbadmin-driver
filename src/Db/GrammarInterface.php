@@ -3,11 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\IndexEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
-use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 interface GrammarInterface
 {
@@ -172,7 +168,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function createTableSql(string $table, bool $autoIncrement, string $style);
+    public function sqlForCreateTable(string $table, bool $autoIncrement, string $style);
 
     /**
      * Command to create an index
@@ -180,17 +176,17 @@ interface GrammarInterface
      * @param string $table
      * @param string $type
      * @param string $name
-     * @param array $columns
+     * @param string $columns
      *
      * @return string
      */
-    public function createIndexSql(string $table, string $type, string $name, array $columns);
+    public function sqlForCreateIndex(string $table, string $type, string $name, string $columns);
 
     /**
      * Get SQL command to create foreign keys
      *
-     * createTableSql() produces CREATE TABLE without FK CONSTRAINTs
-     * foreignKeysSql() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
+     * sqlForCreateTable() produces CREATE TABLE without FK CONSTRAINTs
+     * sqlForForeignKeys() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
      * so that all FKs can be added after all tables have been created, avoiding any need
      * to reorder CREATE TABLE statements in order of their FK dependencies
      *
@@ -198,7 +194,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function foreignKeysSql(string $table);
+    public function sqlForForeignKeys(string $table);
 
     /**
      * Get SQL command to truncate table
@@ -207,7 +203,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function truncateTableSql(string $table);
+    public function sqlForTruncateTable(string $table);
 
     /**
      * Get SQL command to change database
@@ -216,7 +212,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function useDatabaseSql(string $database);
+    public function sqlForUseDatabase(string $database);
 
     /**
      * Get SQL commands to create triggers
@@ -225,7 +221,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function createTriggerSql(string $table);
+    public function sqlForCreateTrigger(string $table);
 
     /**
      * Return query to get connection ID
