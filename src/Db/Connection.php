@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
@@ -18,6 +19,11 @@ abstract class Connection implements ConnectionInterface
      * @var UtilInterface
      */
     protected $util;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $trans;
 
     /**
      * The extension name
@@ -45,12 +51,14 @@ abstract class Connection implements ConnectionInterface
      *
      * @param DriverInterface $driver
      * @param UtilInterface $util
+     * @param TranslatorInterface $trans
      * @param string $extension
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, string $extension)
+    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans, string $extension)
     {
         $this->driver = $driver;
         $this->util = $util;
+        $this->trans = $trans;
         $this->extension = $extension;
     }
 

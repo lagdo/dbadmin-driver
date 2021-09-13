@@ -55,7 +55,7 @@ abstract class Connection extends AbstractConnection
         if (!$statement) {
             list(, $errno, $error) = $this->client->errorInfo();
             $this->driver->setErrno($errno);
-            $this->driver->setError(($error) ? $error : $this->util->lang('Unknown error.'));
+            $this->driver->setError(($error) ? $error : $this->trans->lang('Unknown error.'));
             return false;
         }
         // rowCount() is not guaranteed to work with all drivers

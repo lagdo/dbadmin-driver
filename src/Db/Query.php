@@ -7,6 +7,7 @@ use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\TranslatorInterface;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 abstract class Query implements QueryInterface
@@ -20,6 +21,11 @@ abstract class Query implements QueryInterface
      * @var UtilInterface
      */
     protected $util;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $trans;
 
     /**
      * @var ConnectionInterface
@@ -52,12 +58,14 @@ abstract class Query implements QueryInterface
      *
      * @param DriverInterface $driver
      * @param UtilInterface $util
+     * @param TranslatorInterface $trans
      * @param ConnectionInterface $connection
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, ConnectionInterface $connection)
+    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans, ConnectionInterface $connection)
     {
         $this->driver = $driver;
         $this->util = $util;
+        $this->trans = $trans;
         $this->connection = $connection;
     }
 
@@ -228,7 +236,7 @@ abstract class Query implements QueryInterface
         }
         if ($query === null) {
             // return executed queries
-            return array(implode("\n", $queries), $this->util->formatTime($start));
+            return array(implode("\n", $queries), $this->trans->formatTime($start));
         }
         $queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
         return $this->connection->query($query);

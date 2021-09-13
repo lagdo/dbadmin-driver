@@ -25,6 +25,11 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     protected $util;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $trans;
+
+    /**
      * @var ServerInterface
      */
     protected $server;
@@ -86,12 +91,14 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
      * The constructor
      *
      * @param UtilInterface $util
+     * @param TranslatorInterface $trans
      * @param array $options
      */
-    public function __construct(UtilInterface $util, array $options)
+    public function __construct(UtilInterface $util, TranslatorInterface $trans, array $options)
     {
         $this->util = $util;
         $this->util->setDriver($this);
+        $this->trans = $trans;
         $this->options = $options;
         $this->config = new ConfigEntity();
         $this->initConfig();

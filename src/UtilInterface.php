@@ -12,16 +12,6 @@ interface UtilInterface
     public function input();
 
     /**
-     * Get a translated string
-     * The first parameter is mandatory. Optional parameters can follow.
-     *
-     * @param string
-     *
-     * @return string
-     */
-    public function lang($idf);
-
-    /**
      * Escape for HTML
      * @param string
      * @return string
