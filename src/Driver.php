@@ -10,6 +10,8 @@ use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 
+use Lagdo\DbAdmin\Driver\Exception\AuthException;
+
 abstract class Driver implements DriverInterface, ServerInterface, TableInterface, QueryInterface, GrammarInterface
 {
     use ConfigTrait;
@@ -106,6 +108,13 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     }
 
     /**
+     * Set driver config
+     *
+     * @return void
+     */
+    abstract protected function initConfig();
+
+    /**
      * @inheritDoc
      */
     public function version()
@@ -143,56 +152,21 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     /**
      * @inheritDoc
      */
-    public function numberRegex()
-    {
-        return '((?<!o)int(?!er)|numeric|real|float|double|decimal|money)'; // not point, not interval
-    }
-
-    /**
-     * Set driver config
-     *
-     * @return void
-     */
-    abstract protected function initConfig();
-
-    /**
-     * @inheritDoc
-     */
     public function connect(string $database, string $schema)
     {
-        if (($database)) {
-            $this->database = $database;
-            $this->schema = $schema;
-            $this->connection->selectDatabase($database);
-            if (($schema)) {
-                $this->selectSchema($schema);
-            }
+        $this->database = $database;
+        $this->schema = $schema;
+        if (!$this->connection->open($database, $schema)) {
+            throw new AuthException($this->error());
         }
     }
 
     /**
-     * Set the current database
-     *
-     * @param string $database
-     *
-     * @return boolean
+     * @inheritDoc
      */
-    public function selectDatabase(string $database)
+    public function numberRegex()
     {
-        return $this->connection->selectDatabase($database);
-    }
-
-    /**
-     * Set current schema
-     *
-     * @param string $schema
-     * @param ConnectionInterface $connection
-     *
-     * @return bool
-     */
-    public function selectSchema(string $schema, ConnectionInterface $connection = null)
-    {
-        return true;
+        return '((?<!o)int(?!er)|numeric|real|float|double|decimal|money)'; // not point, not interval
     }
 
     /**

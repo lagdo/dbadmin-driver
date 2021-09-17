@@ -21,23 +21,14 @@ interface ConnectionInterface
     public function serverInfo();
 
     /**
-     * Open a connection to a server
+     * Connect to a database and a schema
      *
-     * @param string $server    The server address, name or uri
-     * @param array  $options   The connection options
+     * @param string $database  The database name
+     * @param string $schema    The database schema
      *
-     * @return boolean
+     * @return bool
      */
-    public function open(string $server, array $options);
-
-    /**
-     * Set the current database
-     *
-     * @param string $database
-     *
-     * @return boolean
-     */
-    public function selectDatabase(string $database);
+    public function open(string $database, string $schema = '');
 
     /**
      * Sets the client character set
