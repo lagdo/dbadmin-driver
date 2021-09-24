@@ -109,8 +109,8 @@ abstract class Query implements QueryInterface
     public function insert(string $table, array $set)
     {
         return $this->driver->queries("INSERT INTO " . $this->driver->table($table) .
-            $set ? " (" . implode(", ", array_keys($set)) . ")\nVALUES (" . implode(", ", $set) . ")" :
-            " DEFAULT VALUES");
+            ($set ? " (" . implode(", ", array_keys($set)) . ")\nVALUES (" . implode(", ", $set) . ")" :
+            " DEFAULT VALUES"));
     }
 
     /**
@@ -123,8 +123,8 @@ abstract class Query implements QueryInterface
             $values[] = "$key = $val";
         }
         $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $values);
-        return $this->driver->queries("UPDATE" . $limit ?
-            $this->driver->limitToOne($table, $query, $queryWhere, $separator) : " $query$queryWhere");
+        return $this->driver->queries("UPDATE" . ($limit ?
+            $this->driver->limitToOne($table, $query, $queryWhere, $separator) : " $query$queryWhere"));
     }
 
     /**
