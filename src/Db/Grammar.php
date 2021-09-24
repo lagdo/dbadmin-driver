@@ -104,9 +104,28 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function buildSelectQuery(array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0)
+    public function buildSelectQuery(string $table, array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        return '';
+        $isGroup = (count($group) < count($select));
+        $query = '';
+        if ($this->driver->jush() == "sql" && ($page) && ($limit) && ($group) && $isGroup) {
+            $query = "SQL_CALC_FOUND_ROWS ";
+        }
+        $query .= \implode(", ", $select) . "\nFROM " . $this->table($table);
+        $clauses = '';
+        if (($where)) {
+            $clauses = "\nWHERE " . \implode(" AND ", $where);
+        }
+        if (($group) && $isGroup) {
+            $clauses .= "\nGROUP BY " . \implode(", ", $group);
+        }
+        if (($order)) {
+            $clauses .= "\nORDER BY " . \implode(", ", $order);
+        }
+        $limit = $limit != "" ? +$limit : null;
+        $offset = $page ? $limit * $page : 0;
+
+        return "SELECT" . $this->limit($query, $clauses, $limit, $offset, "\n");
     }
 
     /**

@@ -83,21 +83,7 @@ abstract class Query implements QueryInterface
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        $isGroup = (count($group) < count($select));
-        $query = $this->driver->buildSelectQuery($select, $where, $group, $order, $limit, $page);
-        if (!$query) {
-            $query = "SELECT" . $this->driver->limit(
-                ($page != "last" && $limit != "" && $group && $isGroup && $this->driver->jush() == "sql" ?
-                "SQL_CALC_FOUND_ROWS " : "") . implode(", ", $select) . "\nFROM " .
-                $this->driver->table($table),
-                ($where ? "\nWHERE " . implode(" AND ", $where) : "") . ($group && $isGroup ?
-                "\nGROUP BY " . implode(", ", $group) : "") . ($order ? "\nORDER BY " .
-                implode(", ", $order) : ""),
-                ($limit != "" ? +$limit : null),
-                ($page ? $limit * $page : 0),
-                "\n"
-            );
-        }
+        $query = $this->driver->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
         $start = microtime(true);
         $return = $this->connection->query($query);
         return $return;
@@ -106,25 +92,30 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function insert(string $table, array $set)
+    public function insert(string $table, array $values)
     {
-        return $this->driver->queries("INSERT INTO " . $this->driver->table($table) .
-            ($set ? " (" . implode(", ", array_keys($set)) . ")\nVALUES (" . implode(", ", $set) . ")" :
-            " DEFAULT VALUES"));
+        $table = $this->driver->table($table);
+        if (!$values) {
+            return $this->driver->queries("INSERT INTO $table DEFAULT VALUES");
+        }
+        return $this->driver->queries("INSERT INTO $table (" .
+            implode(", ", array_keys($values)) . ") VALUES (" . implode(", ", $values) . ")");
     }
 
     /**
      * @inheritDoc
      */
-    public function update(string $table, array $set, string $queryWhere, int $limit = 0, string $separator = "\n")
+    public function update(string $table, array $values, string $queryWhere, int $limit = 0, string $separator = "\n")
     {
-        $values = [];
-        foreach ($set as $key => $val) {
-            $values[] = "$key = $val";
+        if (!$limit) {
+            $assignments = [];
+            foreach ($values as $name => $value) {
+                $assignments[] = "$name = $value";
+            }
+            return $this->driver->queries("UPDATE " . $this->driver->table($table) .
+                " SET$separator" . implode(",$separator", $assignments) . $queryWhere);
         }
-        $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $values);
-        return $this->driver->queries("UPDATE" . ($limit ?
-            $this->driver->limitToOne($table, $query, $queryWhere, $separator) : " $query$queryWhere"));
+        return $this->driver->queries("UPDATE" . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
     }
 
     /**
@@ -133,8 +124,10 @@ abstract class Query implements QueryInterface
     public function delete(string $table, string $queryWhere, int $limit = 0)
     {
         $query = "FROM " . $this->driver->table($table);
-        return $this->driver->queries("DELETE" .
-            ($limit ? $this->driver->limitToOne($table, $query, $queryWhere) : " $query$queryWhere"));
+        if (!$limit) {
+            return $this->driver->queries("DELETE $query $queryWhere");
+        }
+        return $this->driver->queries("DELETE" . $this->driver->limitToOne($table, $query, $queryWhere));
     }
 
     /**

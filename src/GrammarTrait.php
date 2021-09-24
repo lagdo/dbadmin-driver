@@ -101,6 +101,7 @@ trait GrammarTrait
     /**
      * Select data from table
      *
+     * @param string $table
      * @param array $select
      * @param array $where
      * @param array $group
@@ -110,9 +111,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function buildSelectQuery(array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0)
+    public function buildSelectQuery(string $table, array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        return $this->grammar->buildSelectQuery($select, $where, $group, $order, $limit, $page);
+        return $this->grammar->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
     }
 
     /**

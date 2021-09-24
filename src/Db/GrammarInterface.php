@@ -76,6 +76,7 @@ interface GrammarInterface
     /**
      * Select data from table
      *
+     * @param string $table
      * @param array $select
      * @param array $where
      * @param array $group
@@ -85,7 +86,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function buildSelectQuery(array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0);
+    public function buildSelectQuery(string $table, array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0);
 
     /**
      * Apply SQL function
