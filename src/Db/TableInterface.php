@@ -113,7 +113,7 @@ interface TableInterface
      * @param string
      * @param string
      *
-     * @return array $return[$target_table]["keys"][$key_name][$target_column] = $source_column; $return[$target_table]["name"] = $this->tableName($target_table);
+     * @return array
      */
     public function backwardKeys(string $table, string $tableName);
 

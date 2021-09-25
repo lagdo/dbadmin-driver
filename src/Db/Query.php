@@ -85,8 +85,7 @@ abstract class Query implements QueryInterface
     {
         $query = $this->driver->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
         $start = microtime(true);
-        $return = $this->connection->query($query);
-        return $return;
+        return $this->connection->query($query);
     }
 
     /**
@@ -258,14 +257,14 @@ abstract class Query implements QueryInterface
      */
     public function values(string $query, $column = 0)
     {
-        $return = [];
+        $values = [];
         $statement = $this->connection->query($query);
         if (is_object($statement)) {
             while ($row = $statement->fetchRow()) {
-                $return[] = $row[$column];
+                $values[] = $row[$column];
             }
         }
-        return $return;
+        return $values;
     }
 
     /**
@@ -276,18 +275,18 @@ abstract class Query implements QueryInterface
         if (!is_object($connection)) {
             $connection = $this->connection;
         }
-        $return = [];
+        $values = [];
         $statement = $connection->query($query);
         if (is_object($statement)) {
             while ($row = $statement->fetchRow()) {
                 if ($setKeys) {
-                    $return[$row[0]] = $row[1];
+                    $values[$row[0]] = $row[1];
                 } else {
-                    $return[] = $row[0];
+                    $values[] = $row[0];
                 }
             }
         }
-        return $return;
+        return $values;
     }
 
     /**
@@ -295,17 +294,18 @@ abstract class Query implements QueryInterface
      */
     public function rows(string $query, ConnectionInterface $connection = null)
     {
-        if (!is_object($connection)) {
+        if (!$connection) {
             $connection = $this->connection;
         }
-        $return = [];
         $statement = $connection->query($query);
-        if (is_object($statement)) { // can return true
-            while ($row = $statement->fetchAssoc()) {
-                $return[] = $row;
-            }
+        if (!is_object($statement)) { // can return true
+            return [];
         }
-        return $return;
+        $rows = [];
+        while ($row = $statement->fetchAssoc()) {
+            $rows[] = $row;
+        }
+        return $rows;
     }
 
     /**
