@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
+use Lagdo\DbAdmin\Driver\TranslatorInterface;
+
 class ConfigEntity
 {
     /**
@@ -48,4 +50,20 @@ class ConfigEntity
      * @var array
      */
     public $editFunctions = [];
+
+    /**
+     * Set the supported types
+     *
+     * @param array $types
+     * @param TranslatorInterface $trans
+     *
+     * @return void
+     */
+    public function setTypes(array $types, TranslatorInterface $trans)
+    {
+        foreach ($types as $group => $_types) {
+            $this->structuredTypes[$trans->lang($group)] = array_keys($_types);
+            $this->types = array_merge($this->types, $_types);
+        }
+    }
 }
