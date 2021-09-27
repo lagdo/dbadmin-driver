@@ -59,7 +59,7 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
     /**
      * @var ConfigEntity
      */
-    protected $config = null;
+    protected $config;
 
     /**
      * From bootstrap.inc.php
@@ -154,11 +154,11 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
      */
     public function connect(string $database, string $schema)
     {
-        $this->database = $database;
-        $this->schema = $schema;
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->error());
         }
+        $this->database = $database;
+        $this->schema = $schema;
     }
 
     /**

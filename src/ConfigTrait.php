@@ -6,11 +6,12 @@ trait ConfigTrait
 {
     /**
      * Get the server jush
+     *
      * @return string
      */
     public function jush()
     {
-        return $this->config()->jush;
+        return $this->config->jush;
     }
 
     /**
@@ -18,7 +19,7 @@ trait ConfigTrait
      */
     public function unsigned()
     {
-        return $this->config()->unsigned;
+        return $this->config->unsigned;
     }
 
     /**
@@ -26,7 +27,7 @@ trait ConfigTrait
      */
     public function functions()
     {
-        return $this->config()->functions;
+        return $this->config->functions;
     }
 
     /**
@@ -34,7 +35,7 @@ trait ConfigTrait
      */
     public function grouping()
     {
-        return $this->config()->grouping;
+        return $this->config->grouping;
     }
 
     /**
@@ -42,7 +43,7 @@ trait ConfigTrait
      */
     public function operators()
     {
-        return $this->config()->operators;
+        return $this->config->operators;
     }
 
     /**
@@ -50,7 +51,7 @@ trait ConfigTrait
      */
     public function editFunctions()
     {
-        return $this->config()->editFunctions;
+        return $this->config->editFunctions;
     }
 
     /**
@@ -58,7 +59,7 @@ trait ConfigTrait
      */
     public function types()
     {
-        return $this->config()->types;
+        return $this->config->types;
     }
 
     /**
@@ -68,7 +69,7 @@ trait ConfigTrait
      */
     public function typeExists(string $type)
     {
-        return isset($this->config()->types[$type]);
+        return isset($this->config->types[$type]);
     }
 
     /**
@@ -78,7 +79,7 @@ trait ConfigTrait
      */
     public function type(string $type)
     {
-        return $this->config()->types[$type];
+        return $this->config->types[$type];
     }
 
     /**
@@ -86,7 +87,7 @@ trait ConfigTrait
      */
     public function structuredTypes()
     {
-        return $this->config()->structuredTypes;
+        return $this->config->structuredTypes;
     }
 
     /**
@@ -97,7 +98,7 @@ trait ConfigTrait
      */
     public function setStructuredType(string $key, $value)
     {
-        $this->config()->structuredTypes[$key] = $value;
+        $this->config->structuredTypes[$key] = $value;
     }
 
     /**
