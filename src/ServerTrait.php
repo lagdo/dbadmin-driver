@@ -292,6 +292,26 @@ trait ServerTrait
     }
 
     /**
+     * Get events
+     *
+     * @return array
+     */
+    public function events()
+    {
+        return $this->server->events();
+    }
+
+    /**
+     * Get user privileges
+     *
+     * @return array
+     */
+    public function privileges()
+    {
+        return $this->server->privileges();
+    }
+
+    /**
      * Get process list
      *
      * @return array

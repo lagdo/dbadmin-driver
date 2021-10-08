@@ -88,6 +88,59 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
+    public function events()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function privileges()
+    {
+        // From user.inc.php
+        $features = [
+            "" => [
+                "All privileges" => "",
+            ],
+        ];
+        foreach ($this->driver->rows("SHOW PRIVILEGES") as $row) {
+            // Context of "Grant option" privilege is set to empty string
+            $contexts = \explode(",", ($row["Privilege"] == "Grant option" ? "" : $row["Context"]));
+            foreach ($contexts as $context) {
+                $features[$context][$row["Privilege"]] = $row["Comment"];
+            }
+        }
+
+        // Privileges of "Server Admin" and "File access on server" are merged
+        $features["Server Admin"] = \array_merge(
+            $features["Server Admin"],
+            $features["File access on server"]
+        );
+        // Comment for this is "No privileges - allow connect only"
+        unset($features["Server Admin"]["Usage"]);
+
+        if (\array_key_exists("Create routine", $features["Procedures"])) {
+            // MySQL bug #30305
+            $features["Databases"]["Create routine"] = $features["Procedures"]["Create routine"];
+            unset($features["Procedures"]["Create routine"]);
+        }
+
+        $features["Columns"] = [];
+        foreach (["Select", "Insert", "Update", "References"] as $val) {
+            $features["Columns"][$val] = $features["Tables"][$val];
+        }
+
+        foreach ($features["Tables"] as $key => $val) {
+            unset($features["Databases"][$key]);
+        }
+
+        return (array)$features;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isInformationSchema(string $database)
     {
         return false;

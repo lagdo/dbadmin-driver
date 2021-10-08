@@ -165,6 +165,20 @@ interface ServerInterface
     public function statusVariables();
 
     /**
+     * Get events
+     *
+     * @return array
+     */
+    public function events();
+
+    /**
+     * Get the features user has access to
+     *
+     * @return array
+     */
+    public function privileges();
+
+    /**
      * Get process list
      *
      * @return array
@@ -186,11 +200,6 @@ interface ServerInterface
      * @return int
      */
     // public function maxConnections();
-
-
-
-
-
 
     /**
      * Drop views
