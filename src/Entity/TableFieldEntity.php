@@ -157,4 +157,52 @@ class TableFieldEntity
      * @var boolean
      */
     public $onDeleteHidden = true;
+
+    /**
+     * Create an entity from array data
+     *
+     * @param array $field
+     *
+     * @return TableFieldEntity
+     */
+    public static function make(array $field)
+    {
+        $entity = new static();
+
+        $attrs = ['name', 'type', 'fullType', 'primary', 'unsigned', 'length', 'autoIncrement',
+            'onUpdate', 'onDelete', 'collation', 'privileges', 'generated', 'lengthRequired',
+            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden', 'comment'];
+        foreach ($attrs as $attr) {
+            if (isset($field[$attr])) {
+                $entity->$attr = $field[$attr];
+            }
+        }
+        $entity->null = isset($field['null']);
+        if (isset($field['default']) && ($field['default'])) {
+            $field['hasDefault'] = true;
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Check if the values of the field are changed
+     *
+     * @param TableFieldEntity $field
+     *
+     * @return bool
+     */
+    public function changed(TableFieldEntity $field)
+    {
+        $attrs = ['type', 'primary', 'unsigned', 'length', 'autoIncrement',
+            'onUpdate', 'onDelete', 'collation', 'privileges', 'generated', 'lengthRequired',
+            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden', 'comment'];
+        foreach ($attrs as $attr) {
+            if ($field->$attr != $this->$attr) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
