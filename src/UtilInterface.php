@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+
 interface UtilInterface
 {
     /**
@@ -13,50 +15,63 @@ interface UtilInterface
 
     /**
      * Escape for HTML
-     * @param string
+     *
+     * @param string $string
+     *
      * @return string
      */
-    public function html($string);
+    public function html(?string $string);
 
     /**
      * Remove non-digits from a string
-     * @param string
+     *
+     * @param string $val
+     *
      * @return string
      */
-    public function number($val);
+    public function number(string $val);
 
     /**
      * Check if the string is in UTF-8
-     * @param string
+     *
+     * @param string $val
+     *
      * @return bool
      */
-    public function isUtf8($val);
+    public function isUtf8(string $val);
 
     /**
      * Get INI boolean value
-     * @param string
+     *
+     * @param string $ini
+     *
      * @return bool
      */
-    public function iniBool($ini);
+    public function iniBool(string $ini);
 
     /**
      * Convert \n to <br>
-     * @param string
+     *
+     * @param string $string
+     *
      * @return string
      */
-    public function convertEolToHtml($string);
+    public function convertEolToHtml(string $string);
 
     /**
      * Compute fields() from input edit data
+     *
      * @return array
      */
     public function getFieldsFromEdit();
 
     /**
      * Create SQL string from field
-     * @param array basic field information
-     * @param array information about field type
-     * @return array array("field", "type", "NULL", "DEFAULT", "ON UPDATE", "COMMENT", "AUTO_INCREMENT")
+     *
+     * @param TableFieldEntity $field Basic field information
+     * @param TableFieldEntity $typeField Information about field type
+     *
+     * @return array
      */
-    public function processField($field, $typeField);
+    public function processField(TableFieldEntity $field, TableFieldEntity $typeField);
 }
