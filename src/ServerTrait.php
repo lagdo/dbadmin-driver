@@ -2,13 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
-
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 trait ServerTrait
 {
