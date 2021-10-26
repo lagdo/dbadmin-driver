@@ -45,7 +45,7 @@ interface QueryInterface
      * @param string $table
      * @param array $set Escaped columns in keys, quoted data in values
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function insert(string $table, array $set);
 
@@ -58,7 +58,7 @@ interface QueryInterface
      * @param int $limit 0 or 1
      * @param string $separator
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function update(string $table, array $set, string $queryWhere, int $limit = 0, string $separator = "\n");
 
@@ -69,7 +69,7 @@ interface QueryInterface
      * @param string $queryWhere " WHERE ..."
      * @param int $limit 0 or 1
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function delete(string $table, string $queryWhere, int $limit = 0);
 
@@ -80,7 +80,7 @@ interface QueryInterface
      * @param array $rows
      * @param array $primary of arrays with escaped columns in keys and quoted data in values
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function insertOrUpdate(string $table, array $rows, array $primary);
 
@@ -187,11 +187,18 @@ interface QueryInterface
     /**
      * Execute and remember query
      *
-     * @param string $query Set to empty string to return remembered queries, end with ';' to use DELIMITER
+     * @param string $query
      *
-     * @return Statement|array
+     * @return StatementInterface|bool
      */
-    public function queries(string $query = '');
+    public function execute(string $query);
+
+    /**
+     * Get the remembered queries
+     *
+     * @return array
+     */
+    public function queries();
 
     /**
      * Apply command to all array items

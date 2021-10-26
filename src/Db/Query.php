@@ -54,6 +54,20 @@ abstract class Query implements QueryInterface
     protected $affectedRows;
 
     /**
+     * Executed queries
+     *
+     * @var array
+     */
+    protected $queries = [];
+
+    /**
+     * Query start timestamp
+     *
+     * @var int
+     */
+    protected $start = 0;
+
+    /**
      * The constructor
      *
      * @param DriverInterface $driver
@@ -61,7 +75,8 @@ abstract class Query implements QueryInterface
      * @param TranslatorInterface $trans
      * @param ConnectionInterface $connection
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans, ConnectionInterface $connection)
+    public function __construct(DriverInterface $driver, UtilInterface $util,
+        TranslatorInterface $trans, ConnectionInterface $connection)
     {
         $this->driver = $driver;
         $this->util = $util;
@@ -95,9 +110,9 @@ abstract class Query implements QueryInterface
     {
         $table = $this->driver->table($table);
         if (!empty($values)) {
-            return $this->driver->queries("INSERT INTO $table DEFAULT VALUES");
+            return $this->execute("INSERT INTO $table DEFAULT VALUES");
         }
-        return $this->driver->queries("INSERT INTO $table (" .
+        return $this->execute("INSERT INTO $table (" .
             implode(", ", array_keys($values)) . ") VALUES (" . implode(", ", $values) . ")");
     }
 
@@ -112,9 +127,9 @@ abstract class Query implements QueryInterface
         }
         $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $assignments);
         if (!$limit) {
-            return $this->driver->queries('UPDATE ' . $query . $queryWhere);
+            return $this->execute('UPDATE ' . $query . $queryWhere);
         }
-        return $this->driver->queries('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
+        return $this->execute('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
     }
 
     /**
@@ -124,9 +139,9 @@ abstract class Query implements QueryInterface
     {
         $query = 'FROM ' . $this->driver->table($table);
         if (!$limit) {
-            return $this->driver->queries("DELETE $query $queryWhere");
+            return $this->execute("DELETE $query $queryWhere");
         }
-        return $this->driver->queries('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
+        return $this->execute('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
     }
 
     /**
@@ -211,19 +226,21 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function queries(string $query = '')
+    public function execute(string $query)
     {
-        static $queries = [];
-        static $start;
-        if (!$start) {
-            $start = microtime(true);
+        if (!$this->start) {
+            $this->start = microtime(true);
         }
-        if ($query === '') {
-            // return executed queries
-            return [implode("\n", $queries), $this->trans->formatTime($start)];
-        }
-        $queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
+        $this->queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
         return $this->connection->query($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function queries()
+    {
+        return [implode("\n", $this->queries), $this->trans->formatTime($this->start)];
     }
 
     /**
@@ -237,7 +254,7 @@ abstract class Query implements QueryInterface
             };
         }
         foreach ($tables as $table) {
-            if (!$this->queries("$query " . $escape($table))) {
+            if (!$this->execute("$query " . $escape($table))) {
                 return false;
             }
         }

@@ -11,18 +11,22 @@ use PDO;
 class Statement extends PDOStatement implements StatementInterface
 {
     /**
-     * Undocumented variable
-     *
      * @var int
      */
     public $offset = 0;
 
     /**
-     * Undocumented variable
-     *
      * @var int
      */
     public $numRows = 0;
+
+    /**
+     * @inheritDoc
+     */
+    public function rowCount()
+    {
+        return $this->numRows;
+    }
 
     /**
      * @inheritDoc

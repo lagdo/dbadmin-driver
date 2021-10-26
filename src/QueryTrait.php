@@ -59,7 +59,7 @@ trait QueryTrait
      * @param string $table
      * @param array $set Escaped columns in keys, quoted data in values
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function insert(string $table, array $set)
     {
@@ -75,7 +75,7 @@ trait QueryTrait
      * @param int $limit 0 or 1
      * @param string $separator
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function update(string $table, array $set, string $queryWhere, int $limit = 0, string $separator = "\n")
     {
@@ -89,7 +89,7 @@ trait QueryTrait
      * @param string $queryWhere " WHERE ..."
      * @param int $limit 0 or 1
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function delete(string $table, string $queryWhere, int $limit = 0)
     {
@@ -103,7 +103,7 @@ trait QueryTrait
      * @param array $rows
      * @param array $primary of arrays with escaped columns in keys and quoted data in values
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function insertOrUpdate(string $table, array $rows, array $primary)
     {
@@ -252,13 +252,23 @@ trait QueryTrait
     /**
      * Execute and remember query
      *
-     * @param string $query Set to empty string to return remembered queries, end with ';' to use DELIMITER
+     * @param string $query
      *
-     * @return Statement|array
+     * @return StatementInterface|bool
      */
-    public function queries(string $query = '')
+    public function execute(string $query)
     {
-        return $this->query->queries($query);
+        return $this->query->execute($query);
+    }
+
+    /**
+     * Get the remembered queries
+     *
+     * @return array
+     */
+    public function queries()
+    {
+        return $this->query->queries();
     }
 
     /**
@@ -356,15 +366,15 @@ trait QueryTrait
     /**
      * Convert column to be searchable
      *
-     * @param string $idf escaped column name
-     * @param array $val array("op" => , "val" => )
+     * @param string $idf Escaped column name
+     * @param array $value ["op" => , "val" => ]
      * @param TableFieldEntity $field
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $val, TableFieldEntity $field)
+    public function convertSearch(string $idf, array $value, TableFieldEntity $field)
     {
-        return $this->query->convertSearch($idf, $val, $field);
+        return $this->query->convertSearch($idf, $value, $field);
     }
 
     /**

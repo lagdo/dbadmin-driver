@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
 use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
-use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+use Lagdo\DbAdmin\Driver\Db\Pdo\Statement;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
 use PDO;
@@ -12,7 +12,7 @@ use Exception;
 abstract class Connection extends AbstractConnection
 {
     /**
-     * @var StatementInterface|bool
+     * @var Statement|bool
      */
     private $statement = null;
 

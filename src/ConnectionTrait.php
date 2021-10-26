@@ -119,6 +119,6 @@ trait ConnectionTrait
      */
     public function value($value, TableFieldEntity $field)
     {
-        return $this->connection->value($val, $field);
+        return $this->connection->value($value, $field);
     }
 }

@@ -10,7 +10,7 @@ use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 
-interface DriverInterface extends ServerInterface, TableInterface, QueryInterface, GrammarInterface
+interface DriverInterface extends ConfigInterface, ServerInterface, TableInterface, QueryInterface, GrammarInterface
 {
     /**
      * Get the driver name
