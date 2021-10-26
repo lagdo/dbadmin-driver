@@ -5,6 +5,7 @@ namespace Lagdo\DbAdmin\Driver;
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
@@ -101,19 +102,13 @@ trait GrammarTrait
     /**
      * Select data from table
      *
-     * @param string $table
-     * @param array $select
-     * @param array $where
-     * @param array $group
-     * @param array $order
-     * @param int $limit
-     * @param int $page
+     * @param TableSelectEntity $select
      *
      * @return string
      */
-    public function buildSelectQuery(string $table, array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0)
+    public function buildSelectQuery(TableSelectEntity $select)
     {
-        return $this->grammar->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
+        return $this->grammar->buildSelectQuery($select);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
@@ -105,7 +106,8 @@ abstract class Query implements QueryInterface
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        $query = $this->driver->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
+        $entity = new TableSelectEntity($table, $select, $where, $group, $order, $limit, $page);
+        $query = $this->driver->buildSelectQuery($entity);
         $this->start = intval(microtime(true));
         return $this->connection->query($query);
     }

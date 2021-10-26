@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
@@ -78,20 +79,32 @@ abstract class Grammar implements GrammarInterface
      */
     public function formatForeignKey(ForeignKeyEntity $foreignKey)
     {
-        $db = $foreignKey->db;
+        $database = $foreignKey->database;
         $schema = $foreignKey->schema;
         $onActions = $this->driver->actions();
-        return " FOREIGN KEY (" . implode(", ", array_map(function ($idf) {
+        $sources = implode(', ', array_map(function ($idf) {
             return $this->escapeId($idf);
-        }, $foreignKey->source)) . ") REFERENCES " .
-            ($db != "" && $db != $this->driver->database() ? $this->escapeId($db) . "." : "") .
-            ($schema != "" && $schema != $this->driver->schema() ? $this->escapeId($schema) . "." : "") .
-            $this->table($foreignKey->table) . " (" . implode(", ", array_map(function ($idf) {
-                return $this->escapeId($idf);
-            }, $foreignKey->target)) . ")" . //! reuse $name - check in older MySQL versions
-            (preg_match("~^($onActions)\$~", $foreignKey->onDelete) ? " ON DELETE $foreignKey->onDelete" : "") .
-            (preg_match("~^($onActions)\$~", $foreignKey->onUpdate) ? " ON UPDATE $foreignKey->onUpdate" : "")
-        ;
+        }, $foreignKey->source));
+        $targets = implode(', ', array_map(function ($idf) {
+            return $this->escapeId($idf);
+        }, $foreignKey->target));
+
+        $query = " FOREIGN KEY ($sources) REFERENCES ";
+        if ($database != '' && $database != $this->driver->database()) {
+            $query .= $this->escapeId($database) . '.';
+        }
+        if ($schema != '' && $schema != $this->driver->schema()) {
+            $query .= $this->escapeId($schema) . '.';
+        }
+        $query .= $this->table($foreignKey->table) . " ($targets)";
+        if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
+            $query .= " ON DELETE {$foreignKey->onDelete}";
+        }
+        if (preg_match("~^($onActions)\$~", $foreignKey->onUpdate)) {
+            $query .= " ON UPDATE {$foreignKey->onUpdate}";
+        }
+
+        return $query;
     }
 
     /**
@@ -105,26 +118,27 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function buildSelectQuery(string $table, array $select, array $where, array $group, array $order = [], int $limit = 1, int $page = 0)
+    public function buildSelectQuery(TableSelectEntity $select)
     {
-        $isGroup = (count($group) < count($select));
+        $isGroup = (count($select->group) < count($select->fields));
         $query = '';
-        if ($this->driver->jush() === 'sql' && ($page) && ($limit) && !empty($group) && $isGroup) {
+        if ($this->driver->jush() === 'sql' && ($select->page) &&
+            ($select->limit) && !empty($select->group) && $isGroup) {
             $query = 'SQL_CALC_FOUND_ROWS ';
         }
-        $query .= \implode(', ', $select) . "\nFROM " . $this->table($table);
+        $query .= \implode(', ', $select->fields) . "\nFROM " . $this->table($select->table);
         $clauses = '';
-        if (!empty($where)) {
-            $clauses = "\nWHERE " . \implode(' AND ', $where);
+        if (!empty($select->where)) {
+            $clauses = "\nWHERE " . \implode(' AND ', $select->where);
         }
-        if (!empty($group) && $isGroup) {
-            $clauses .= "\nGROUP BY " . \implode(', ', $group);
+        if (!empty($select->group) && $isGroup) {
+            $clauses .= "\nGROUP BY " . \implode(', ', $select->group);
         }
-        if (!empty($order)) {
-            $clauses .= "\nORDER BY " . \implode(', ', $order);
+        if (!empty($select->order)) {
+            $clauses .= "\nORDER BY " . \implode(', ', $select->order);
         }
-        $limit = $limit != '' ? +$limit : 0;
-        $offset = $page ? $limit * $page : 0;
+        $limit = +$select->limit;
+        $offset = $select->page ? $limit * $select->page : 0;
 
         return 'SELECT' . $this->limit($query, $clauses, $limit, $offset, "\n");
     }
