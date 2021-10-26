@@ -255,7 +255,7 @@ trait QueryTrait
      *
      * @return Statement
      */
-    public function queries(string $query)
+    public function queries(string $query = '')
     {
         return $this->query->queries($query);
     }

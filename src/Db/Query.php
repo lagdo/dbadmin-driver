@@ -219,16 +219,16 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function queries(string $query)
+    public function queries(string $query = '')
     {
         static $queries = [];
         static $start;
         if (!$start) {
             $start = microtime(true);
         }
-        if ($query === null) {
+        if ($query === '') {
             // return executed queries
-            return array(implode("\n", $queries), $this->trans->formatTime($start));
+            return [implode("\n", $queries), $this->trans->formatTime($start)];
         }
         $queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
         return $this->connection->query($query);

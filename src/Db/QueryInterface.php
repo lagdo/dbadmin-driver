@@ -191,7 +191,7 @@ interface QueryInterface
      *
      * @return Statement
      */
-    public function queries(string $query);
+    public function queries(string $query = '');
 
     /**
      * Apply command to all array items
