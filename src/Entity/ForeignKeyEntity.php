@@ -7,7 +7,7 @@ class ForeignKeyEntity
     /**
      * @var string
      */
-    public $db = '';
+    public $database = '';
 
     /**
      * @var string
