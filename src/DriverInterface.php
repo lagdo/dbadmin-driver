@@ -119,6 +119,16 @@ interface DriverInterface extends ConfigInterface, ServerInterface, TableInterfa
     /**
      * @return string
      */
+    public function inout();
+
+    /**
+     * @return string
+     */
+    public function enumLength();
+
+    /**
+     * @return string
+     */
     public function actions();
 
     /**

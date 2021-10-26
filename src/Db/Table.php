@@ -157,7 +157,7 @@ abstract class Table implements TableInterface
     public function referencableTables(string $table)
     {
         $fields = []; // table_name => field
-        foreach ($this->tableStatus('', true) as $tableName => $tableStatus) {
+        foreach ($this->tablesStatuses(true) as $tableName => $tableStatus) {
             if ($tableName != $table && $this->supportForeignKeys($tableStatus)) {
                 foreach ($this->fields($tableName) as $field) {
                     if ($field->primary) {

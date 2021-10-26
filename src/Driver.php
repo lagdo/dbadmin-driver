@@ -69,19 +69,7 @@ abstract class Driver implements DriverInterface
      * From bootstrap.inc.php
      * @var string
      */
-    public $onActions = "RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT"; ///< @var string used in foreignKeys()
-
-    /**
-     * From index.php
-     * @var string
-     */
-    public $enumLength = "'(?:''|[^'\\\\]|\\\\.)*'";
-
-    /**
-     * From index.php
-     * @var string
-     */
-    public $inout = "IN|OUT|INOUT";
+    public $onActions = 'RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT'; ///< @var string used in foreignKeys()
 
     /**
      * @var string
@@ -123,7 +111,7 @@ abstract class Driver implements DriverInterface
      */
     public function version()
     {
-        return "4.8.1-dev";
+        return '4.8.1-dev';
     }
 
     /**
@@ -200,7 +188,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null)
+    public function minVersion(string $version, string $mariaDb = '', ConnectionInterface $connection = null)
     {
         if (!$connection) {
             $connection = $this->connection;
@@ -219,7 +207,7 @@ abstract class Driver implements DriverInterface
     public function charset()
     {
         // SHOW CHARSET would require an extra query
-        return ($this->minVersion("5.5.3", 0) ? "utf8mb4" : "utf8");
+        return ($this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8');
     }
 
     /**
@@ -231,9 +219,27 @@ abstract class Driver implements DriverInterface
         // possible false positive
         if (!$set && preg_match('~\butf8mb4~i', $create)) {
             $set = true;
-            return "SET NAMES " . $this->charset() . ";\n\n";
+            return 'SET NAMES ' . $this->charset() . ";\n\n";
         }
         return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function inout()
+    {
+        // From index.php
+        return 'IN|OUT|INOUT';
+    }
+
+    /**
+     * @return string
+     */
+    public function enumLength()
+    {
+        // From index.php
+        return "'(?:''|[^'\\\\]|\\\\.)*'";
     }
 
     /**

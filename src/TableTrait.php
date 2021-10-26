@@ -28,11 +28,23 @@ trait TableTrait
      * @param string $table
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity
+     * @return TableEntity|null
      */
-    public function tableStatus(string $table = "", bool $fast = false)
+    public function tableStatus(string $table, bool $fast = false)
     {
         return $this->table->tableStatus($table, $fast);
+    }
+
+    /**
+     * Get all tables statuses
+     *
+     * @param bool $fast Return only "Name", "Engine" and "Comment" fields
+     *
+     * @return TableEntity[]
+     */
+    public function tablesStatuses(bool $fast = false)
+    {
+        return $this->table->tablesStatuses($fast);
     }
 
     /**
