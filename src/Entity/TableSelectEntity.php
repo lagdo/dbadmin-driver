@@ -84,7 +84,7 @@ class TableSelectEntity
         if (!empty($where)) {
             $this->clauses = ' WHERE ' . \implode(' AND ', $where);
         }
-        if (!empty($group) && $isGroup) {
+        if (!empty($group) && count($group) < count($fields)) {
             $this->clauses .= ' GROUP BY ' . \implode(', ', $group);
         }
         if (!empty($order)) {

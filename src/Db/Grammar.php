@@ -120,13 +120,13 @@ abstract class Grammar implements GrammarInterface
      */
     public function buildSelectQuery(TableSelectEntity $select)
     {
-        $isGroup = (count($select->group) < count($select->fields));
         $query = '';
         if ($this->driver->jush() === 'sql' && ($select->page) &&
-            ($select->limit) && !empty($select->group) && $isGroup) {
+            ($select->limit) && !empty($select->group) &&
+            count($select->group) < count($select->fields)) {
             $query = 'SQL_CALC_FOUND_ROWS ';
         }
-        $query .= \implode(', ', $select->fields) . "\nFROM " . $this->table($select->table);
+        $query .= \implode(', ', $select->fields) . ' FROM ' . $this->table($select->table);
         $limit = +$select->limit;
         $offset = $select->page ? $limit * $select->page : 0;
 
@@ -138,8 +138,8 @@ abstract class Grammar implements GrammarInterface
      */
     public function applySqlFunction(string $function, string $column)
     {
-        return ($function ? ($function == "unixepoch" ? "DATETIME($column, '$function')" :
-            ($function == "count distinct" ? "COUNT(DISTINCT " : strtoupper("$function(")) . "$column)") : $column);
+        return ($function ? ($function == 'unixepoch' ? "DATETIME($column, '$function')" :
+            ($function == 'count distinct' ? 'COUNT(DISTINCT ' : strtoupper("$function(")) . "$column)") : $column);
     }
 
     /**
@@ -148,7 +148,7 @@ abstract class Grammar implements GrammarInterface
     public function defaultValue($field)
     {
         $default = $field->default;
-        return ($default === null ? "" : " DEFAULT " .
+        return ($default === null ? '' : ' DEFAULT ' .
             (preg_match('~char|binary|text|enum|set~', $field->type) ||
             preg_match('~^(?![a-z])~i', $default) ? $this->quote($default) : $default));
     }
@@ -156,9 +156,9 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = " ")
+    public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = ' ')
     {
-        return "";
+        return '';
     }
 
     /**
@@ -190,14 +190,14 @@ abstract class Grammar implements GrammarInterface
      */
     public function convertFields(array $columns, array $fields, array $select = [])
     {
-        $clause = "";
+        $clause = '';
         foreach ($columns as $key => $val) {
             if (!empty($select) && !in_array($this->escapeId($key), $select)) {
                 continue;
             }
             $as = $this->convertField($fields[$key]);
             if ($as) {
-                $clause .= ", $as AS " . $this->escapeId($key);
+                $clause .= ', $as AS ' . $this->escapeId($key);
             }
         }
         return $clause;
@@ -208,10 +208,10 @@ abstract class Grammar implements GrammarInterface
      */
     public function countRowsSql(string $table, array $where, bool $isGroup, array $groups)
     {
-        $query = " FROM " . $this->table($table) . ($where ? " WHERE " . implode(" AND ", $where) : "");
-        return ($isGroup && ($this->driver->jush() == "sql" || count($groups) == 1)
-            ? "SELECT COUNT(DISTINCT " . implode(", ", $groups) . ")$query"
-            : "SELECT COUNT(*)" . ($isGroup ? " FROM (SELECT 1$query GROUP BY " . implode(", ", $groups) . ") x" : $query)
+        $query = ' FROM ' . $this->table($table) . ($where ? ' WHERE ' . implode(' AND ', $where) : '');
+        return ($isGroup && ($this->driver->jush() == 'sql' || count($groups) == 1)
+            ? 'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query"
+            : 'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " . implode(', ', $groups) . ') x' : $query)
         );
     }
 
@@ -236,7 +236,7 @@ abstract class Grammar implements GrammarInterface
      */
     public function sqlForUseDatabase(string $database)
     {
-        return "";
+        return '';
     }
 
     /**
@@ -268,6 +268,6 @@ abstract class Grammar implements GrammarInterface
      */
     public function autoIncrement()
     {
-        return "";
+        return '';
     }
 }
