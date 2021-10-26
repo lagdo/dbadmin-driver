@@ -127,20 +127,10 @@ abstract class Grammar implements GrammarInterface
             $query = 'SQL_CALC_FOUND_ROWS ';
         }
         $query .= \implode(', ', $select->fields) . "\nFROM " . $this->table($select->table);
-        $clauses = '';
-        if (!empty($select->where)) {
-            $clauses = "\nWHERE " . \implode(' AND ', $select->where);
-        }
-        if (!empty($select->group) && $isGroup) {
-            $clauses .= "\nGROUP BY " . \implode(', ', $select->group);
-        }
-        if (!empty($select->order)) {
-            $clauses .= "\nORDER BY " . \implode(', ', $select->order);
-        }
         $limit = +$select->limit;
         $offset = $select->page ? $limit * $select->page : 0;
 
-        return 'SELECT' . $this->limit($query, $clauses, $limit, $offset, "\n");
+        return 'SELECT' . $this->limit($query, $select->clauses, $limit, $offset, "\n");
     }
 
     /**

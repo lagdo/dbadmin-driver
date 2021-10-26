@@ -40,6 +40,13 @@ class TableSelectEntity
     public $order = [];
 
     /**
+     * All clauses, formatted
+     *
+     * @var string
+     */
+    public $clauses = '';
+
+    /**
      * The row limit
      *
      * @var int
@@ -74,5 +81,14 @@ class TableSelectEntity
         $this->order = $order;
         $this->limit = $limit;
         $this->page = $page;
+        if (!empty($where)) {
+            $this->clauses = ' WHERE ' . \implode(' AND ', $where);
+        }
+        if (!empty($group) && $isGroup) {
+            $this->clauses .= ' GROUP BY ' . \implode(', ', $group);
+        }
+        if (!empty($order)) {
+            $this->clauses .= ' ORDER BY ' . \implode(', ', $order);
+        }
     }
 }
