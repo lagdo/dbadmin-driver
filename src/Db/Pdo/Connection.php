@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
 use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
 use PDO;
@@ -10,14 +11,22 @@ use Exception;
 
 abstract class Connection extends AbstractConnection
 {
-    // public function __construct() {
-    //     $pos = array_search("SQL", $this->server->operators());
-    //     if ($pos !== false) {
-    //         unset($this->server->operators()[$pos]);
-    //     }
-    // }
+    /**
+     * @var StatementInterface|bool
+     */
+    private $statement = null;
 
-    public function dsn($dsn, $username, $password, $options = [])
+    /**
+     * Create a PDO connection
+     *
+     * @param string $dsn
+     * @param string $username
+     * @param string $password
+     * @param array $options
+     *
+     * @return void
+     */
+    public function dsn(string $dsn, string $username, string $password, array $options = [])
     {
         try {
             $this->client = new PDO($dsn, $username, $password, $options);
@@ -103,7 +112,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $field = 0)
+    public function result(string $query, int $field = -1)
     {
         if (!($statement = $this->query($query))) {
             return false;

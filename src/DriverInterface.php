@@ -10,7 +10,7 @@ use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 
-interface DriverInterface
+interface DriverInterface extends ServerInterface, TableInterface, QueryInterface, GrammarInterface
 {
     /**
      * Get the driver name
@@ -115,4 +115,14 @@ interface DriverInterface
      * @return string
      */
     public function numberRegex();
+
+    /**
+     * @return string
+     */
+    public function actions();
+
+    /**
+     * @return array
+     */
+    public function onActions();
 }

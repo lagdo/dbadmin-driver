@@ -12,7 +12,7 @@ use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
-abstract class Driver implements DriverInterface, ServerInterface, TableInterface, QueryInterface, GrammarInterface
+abstract class Driver implements DriverInterface
 {
     use ConfigTrait;
     use ServerTrait;
@@ -60,6 +60,11 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
      * @var ConfigEntity
      */
     protected $config;
+
+    /**
+     * @var array
+     */
+    protected $options;
 
     /**
      * From bootstrap.inc.php
@@ -230,5 +235,21 @@ abstract class Driver implements DriverInterface, ServerInterface, TableInterfac
             return "SET NAMES " . $this->charset() . ";\n\n";
         }
         return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function actions()
+    {
+        return $this->onActions;
+    }
+
+    /**
+     * @return array
+     */
+    public function onActions()
+    {
+        return \explode('|', $this->onActions);
     }
 }

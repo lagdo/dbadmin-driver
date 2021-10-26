@@ -57,7 +57,7 @@ interface ConnectionInterface
      *
      * @return mixed
      */
-    public function result(string $query, int $field = 0);
+    public function result(string $query, int $field = -1);
 
     /**
      * Get the next row set of the last query
@@ -85,12 +85,12 @@ interface ConnectionInterface
     /**
      * Convert value returned by database to actual value
      *
-     * @param string $val
+     * @param string|resource|null $value
      * @param TableFieldEntity $field
      *
      * @return string
      */
-    public function value(?string $val, TableFieldEntity $field);
+    public function value($value, TableFieldEntity $field);
 
     /**
      * Get warnings about the last command
@@ -114,13 +114,6 @@ interface ConnectionInterface
      * @return string
      */
     public function quote(string $string);
-
-    /**
-     * Get the default field number
-     *
-     * @return int
-     */
-    public function defaultField();
 
     /**
      * Return a quoted string

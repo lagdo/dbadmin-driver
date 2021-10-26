@@ -100,12 +100,4 @@ trait ConfigTrait
     {
         $this->config->structuredTypes[$key] = $value;
     }
-
-    /**
-     * @return array
-     */
-    public function onActions()
-    {
-        return \explode('|', $this->onActions);
-    }
 }

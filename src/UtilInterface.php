@@ -7,6 +7,15 @@ use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 interface UtilInterface
 {
     /**
+     * Set the driver
+     *
+     * @param DriverInterface $driver
+     *
+     * @return void
+     */
+    public function setDriver(DriverInterface $driver);
+
+    /**
      * Get the request inputs
      *
      * @return InputInterface

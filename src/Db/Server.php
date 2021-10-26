@@ -61,9 +61,9 @@ abstract class Server implements ServerInterface
     public function sequences()
     {
         $sequences = [];
-        if ($this->support("sequence")) {
+        if ($this->driver->support("sequence")) {
             // From db.inc.php
-            $sequences = $this->values("SELECT sequence_name FROM information_schema.sequences " .
+            $sequences = $this->driver->values("SELECT sequence_name FROM information_schema.sequences " .
                 "WHERE sequence_schema = selectedSchema() ORDER BY sequence_name");
         }
         return $sequences;

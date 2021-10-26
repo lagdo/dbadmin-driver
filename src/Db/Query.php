@@ -84,7 +84,7 @@ abstract class Query implements QueryInterface
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
         $query = $this->driver->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
-        $start = microtime(true);
+        // $start = microtime(true);
         return $this->connection->query($query);
     }
 
@@ -94,7 +94,7 @@ abstract class Query implements QueryInterface
     public function insert(string $table, array $values)
     {
         $table = $this->driver->table($table);
-        if (!$values) {
+        if (!empty($values)) {
             return $this->driver->queries("INSERT INTO $table DEFAULT VALUES");
         }
         return $this->driver->queries("INSERT INTO $table (" .
@@ -106,15 +106,15 @@ abstract class Query implements QueryInterface
      */
     public function update(string $table, array $values, string $queryWhere, int $limit = 0, string $separator = "\n")
     {
-        if (!$limit) {
-            $assignments = [];
-            foreach ($values as $name => $value) {
-                $assignments[] = "$name = $value";
-            }
-            return $this->driver->queries("UPDATE " . $this->driver->table($table) .
-                " SET$separator" . implode(",$separator", $assignments) . $queryWhere);
+        $assignments = [];
+        foreach ($values as $name => $value) {
+            $assignments[] = "$name = $value";
         }
-        return $this->driver->queries("UPDATE" . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
+        $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $assignments);
+        if (!$limit) {
+            return $this->driver->queries('UPDATE ' . $query . $queryWhere);
+        }
+        return $this->driver->queries('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
     }
 
     /**
@@ -122,11 +122,11 @@ abstract class Query implements QueryInterface
      */
     public function delete(string $table, string $queryWhere, int $limit = 0)
     {
-        $query = "FROM " . $this->driver->table($table);
+        $query = 'FROM ' . $this->driver->table($table);
         if (!$limit) {
             return $this->driver->queries("DELETE $query $queryWhere");
         }
-        return $this->driver->queries("DELETE" . $this->driver->limitToOne($table, $query, $queryWhere));
+        return $this->driver->queries('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
     }
 
     /**
@@ -135,14 +135,6 @@ abstract class Query implements QueryInterface
     public function explain(ConnectionInterface $connection, string $query)
     {
         return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function lastAutoIncrementId()
-    {
-        return $this->connection->last_id;
     }
 
     /**
@@ -323,7 +315,7 @@ abstract class Query implements QueryInterface
      */
     public function begin()
     {
-        return $this->queries("BEGIN");
+        return $this->connection->query("BEGIN");
     }
 
     /**
@@ -331,7 +323,7 @@ abstract class Query implements QueryInterface
      */
     public function commit()
     {
-        return $this->queries("COMMIT");
+        return $this->connection->query("COMMIT");
     }
 
     /**
@@ -339,7 +331,7 @@ abstract class Query implements QueryInterface
      */
     public function rollback()
     {
-        return $this->queries("ROLLBACK");
+        return $this->connection->query("ROLLBACK");
     }
 
     /**

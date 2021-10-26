@@ -34,7 +34,7 @@ interface QueryInterface
      * @param int $limit Result of processSelectLimit()
      * @param int $page Index of page starting at zero
      *
-     * @return Statement
+     * @return StatementInterface|bool
      */
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0);
@@ -104,21 +104,21 @@ interface QueryInterface
     /**
      * Begin transaction
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function begin();
 
     /**
      * Commit transaction
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function commit();
 
     /**
      * Rollback transaction
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function rollback();
 
@@ -189,7 +189,7 @@ interface QueryInterface
      *
      * @param string $query Set to empty string to return remembered queries, end with ';' to use DELIMITER
      *
-     * @return Statement
+     * @return Statement|array
      */
     public function queries(string $query = '');
 

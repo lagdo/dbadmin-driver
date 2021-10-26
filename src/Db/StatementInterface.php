@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
+
 interface StatementInterface
 {
     /**

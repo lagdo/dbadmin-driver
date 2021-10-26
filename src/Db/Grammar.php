@@ -80,16 +80,17 @@ abstract class Grammar implements GrammarInterface
     {
         $db = $foreignKey->db;
         $schema = $foreignKey->schema;
+        $onActions = $this->driver->actions();
         return " FOREIGN KEY (" . implode(", ", array_map(function ($idf) {
             return $this->escapeId($idf);
         }, $foreignKey->source)) . ") REFERENCES " .
-            ($db != "" && $db != $this->driver->database ? $this->escapeId($db) . "." : "") .
-            ($schema != "" && $schema != $this->driver->schema ? $this->escapeId($schema) . "." : "") .
+            ($db != "" && $db != $this->driver->database() ? $this->escapeId($db) . "." : "") .
+            ($schema != "" && $schema != $this->driver->schema() ? $this->escapeId($schema) . "." : "") .
             $this->table($foreignKey->table) . " (" . implode(", ", array_map(function ($idf) {
                 return $this->escapeId($idf);
             }, $foreignKey->target)) . ")" . //! reuse $name - check in older MySQL versions
-            (preg_match("~^({$this->driver->onActions})\$~", $foreignKey->onDelete) ? " ON DELETE $foreignKey->onDelete" : "") .
-            (preg_match("~^({$this->driver->onActions})\$~", $foreignKey->onUpdate) ? " ON UPDATE $foreignKey->onUpdate" : "")
+            (preg_match("~^($onActions)\$~", $foreignKey->onDelete) ? " ON DELETE $foreignKey->onDelete" : "") .
+            (preg_match("~^($onActions)\$~", $foreignKey->onUpdate) ? " ON UPDATE $foreignKey->onUpdate" : "")
         ;
     }
 
@@ -108,24 +109,24 @@ abstract class Grammar implements GrammarInterface
     {
         $isGroup = (count($group) < count($select));
         $query = '';
-        if ($this->driver->jush() == "sql" && ($page) && ($limit) && ($group) && $isGroup) {
-            $query = "SQL_CALC_FOUND_ROWS ";
+        if ($this->driver->jush() === 'sql' && ($page) && ($limit) && !empty($group) && $isGroup) {
+            $query = 'SQL_CALC_FOUND_ROWS ';
         }
-        $query .= \implode(", ", $select) . "\nFROM " . $this->table($table);
+        $query .= \implode(', ', $select) . "\nFROM " . $this->table($table);
         $clauses = '';
-        if (($where)) {
-            $clauses = "\nWHERE " . \implode(" AND ", $where);
+        if (!empty($where)) {
+            $clauses = "\nWHERE " . \implode(' AND ', $where);
         }
-        if (($group) && $isGroup) {
-            $clauses .= "\nGROUP BY " . \implode(", ", $group);
+        if (!empty($group) && $isGroup) {
+            $clauses .= "\nGROUP BY " . \implode(', ', $group);
         }
-        if (($order)) {
-            $clauses .= "\nORDER BY " . \implode(", ", $order);
+        if (!empty($order)) {
+            $clauses .= "\nORDER BY " . \implode(', ', $order);
         }
-        $limit = $limit != "" ? +$limit : null;
+        $limit = $limit != '' ? +$limit : 0;
         $offset = $page ? $limit * $page : 0;
 
-        return "SELECT" . $this->limit($query, $clauses, $limit, $offset, "\n");
+        return 'SELECT' . $this->limit($query, $clauses, $limit, $offset, "\n");
     }
 
     /**
@@ -169,6 +170,7 @@ abstract class Grammar implements GrammarInterface
      */
     public function convertField(TableFieldEntity $field)
     {
+        return '';
     }
 
     /**
@@ -186,7 +188,7 @@ abstract class Grammar implements GrammarInterface
     {
         $clause = "";
         foreach ($columns as $key => $val) {
-            if ($select && !in_array($this->escapeId($key), $select)) {
+            if (!empty($select) && !in_array($this->escapeId($key), $select)) {
                 continue;
             }
             $as = $this->convertField($fields[$key]);

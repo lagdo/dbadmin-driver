@@ -8,6 +8,9 @@ use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
+use function is_resource;
+use function stream_get_contents;
+
 abstract class Connection implements ConnectionInterface
 {
     /**
@@ -98,9 +101,9 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function value(?string $val, TableFieldEntity $field)
+    public function value($value, TableFieldEntity $field)
     {
-        return (is_resource($val) ? stream_get_contents($val) : $val);
+        return (is_resource($value) ? stream_get_contents($value) : $value);
     }
 
     /**
@@ -124,6 +127,6 @@ abstract class Connection implements ConnectionInterface
      */
     public function close()
     {
-        return false;
+        return;
     }
 }

@@ -10,6 +10,7 @@ use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 trait QueryTrait
 {
@@ -44,7 +45,7 @@ trait QueryTrait
      * @param int $limit Result of processSelectLimit()
      * @param int $page Index of page starting at zero
      *
-     * @return Statement
+     * @return StatementInterface|bool
      */
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0)
@@ -135,7 +136,7 @@ trait QueryTrait
     /**
      * Begin transaction
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function begin()
     {
@@ -145,7 +146,7 @@ trait QueryTrait
     /**
      * Commit transaction
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function commit()
     {
@@ -155,7 +156,7 @@ trait QueryTrait
     /**
      * Rollback transaction
      *
-     * @return bool
+     * @return StatementInterface|bool
      */
     public function rollback()
     {
@@ -253,7 +254,7 @@ trait QueryTrait
      *
      * @param string $query Set to empty string to return remembered queries, end with ';' to use DELIMITER
      *
-     * @return Statement
+     * @return Statement|array
      */
     public function queries(string $query = '')
     {

@@ -72,11 +72,8 @@ trait ConnectionTrait
      *
      * @return mixed
      */
-    public function result(string $query, int $field = 0)
+    public function result(string $query, int $field = -1)
     {
-        if ($field === null) {
-            $field = $this->connection->defaultField();
-        }
         return $this->connection->result($query, $field);
     }
 
@@ -115,12 +112,12 @@ trait ConnectionTrait
     /**
      * Convert value returned by database to actual value
      *
-     * @param string $val
+     * @param string|resource|null $value
      * @param TableFieldEntity $field
      *
      * @return string
      */
-    public function value(?string $val, TableFieldEntity $field)
+    public function value($value, TableFieldEntity $field)
     {
         return $this->connection->value($val, $field);
     }
