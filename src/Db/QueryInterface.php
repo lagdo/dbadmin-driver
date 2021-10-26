@@ -97,7 +97,7 @@ interface QueryInterface
      * @param string $query
      * @param int $timeout In seconds
      *
-     * @return string or null if the driver doesn't support query timeouts
+     * @return string|null
      */
     public function slowQuery(string $query, int $timeout);
 

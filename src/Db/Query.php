@@ -166,6 +166,7 @@ abstract class Query implements QueryInterface
      */
     public function slowQuery(string $query, int $timeout)
     {
+        return null;
     }
 
     /**
