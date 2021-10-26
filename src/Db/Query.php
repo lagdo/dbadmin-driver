@@ -10,6 +10,13 @@ use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
+use function implode;
+use function array_keys;
+use function intval;
+use function microtime;
+use function is_object;
+use function preg_replace;
+
 abstract class Query implements QueryInterface
 {
     /**
@@ -99,7 +106,7 @@ abstract class Query implements QueryInterface
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
         $query = $this->driver->buildSelectQuery($table, $select, $where, $group, $order, $limit, $page);
-        // $start = microtime(true);
+        $this->start = intval(microtime(true));
         return $this->connection->query($query);
     }
 
@@ -149,7 +156,7 @@ abstract class Query implements QueryInterface
      */
     public function explain(ConnectionInterface $connection, string $query)
     {
-        return null;
+        return false;
     }
 
     /**
@@ -229,7 +236,7 @@ abstract class Query implements QueryInterface
     public function execute(string $query)
     {
         if (!$this->start) {
-            $this->start = microtime(true);
+            $this->start = intval(microtime(true));
         }
         $this->queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
         return $this->connection->query($query);

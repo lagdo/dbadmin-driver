@@ -10,16 +10,6 @@ use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 trait ConnectionTrait
 {
     /**
-     * Get information about the last query
-     *
-     * @return string
-     */
-    public function info()
-    {
-        return $this->connection->info;
-    }
-
-    /**
      * Get the server description
      *
      * @return string
@@ -36,7 +26,7 @@ trait ConnectionTrait
      */
     public function extension()
     {
-        return $this->connection->extension;
+        return $this->connection->extension();
     }
 
     /**

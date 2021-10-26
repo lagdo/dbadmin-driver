@@ -33,7 +33,7 @@ abstract class Connection implements ConnectionInterface
      *
      * @var string
      */
-    public $extension;
+    protected $extension;
 
     /**
      * The client object used to query the database driver
@@ -43,8 +43,6 @@ abstract class Connection implements ConnectionInterface
     protected $client;
 
     /**
-     * Undocumented variable
-     *
      * @var mixed
      */
     public $result;
@@ -63,6 +61,14 @@ abstract class Connection implements ConnectionInterface
         $this->util = $util;
         $this->trans = $trans;
         $this->extension = $extension;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function extension()
+    {
+        return $this->extension;
     }
 
     /**

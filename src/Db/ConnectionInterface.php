@@ -21,6 +21,13 @@ interface ConnectionInterface
     public function serverInfo();
 
     /**
+     * Get the driver extension
+     *
+     * @return string
+     */
+    public function extension();
+
+    /**
      * Connect to a database and a schema
      *
      * @param string $database  The database name

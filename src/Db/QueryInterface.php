@@ -257,7 +257,7 @@ interface QueryInterface
      * @param ConnectionInterface $connection
      * @param string $query
      *
-     * @return Statement|null
+     * @return StatementInterface|bool
      */
     public function explain(ConnectionInterface $connection, string $query);
 
