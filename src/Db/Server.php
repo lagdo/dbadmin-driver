@@ -54,6 +54,22 @@ abstract class Server implements ServerInterface
     }
 
     /**
+     * Get sequences list
+     *
+     * @return array
+     */
+    public function sequences()
+    {
+        $sequences = [];
+        if ($this->support("sequence")) {
+            // From db.inc.php
+            $sequences = $this->values("SELECT sequence_name FROM information_schema.sequences " .
+                "WHERE sequence_schema = selectedSchema() ORDER BY sequence_name");
+        }
+        return $sequences;
+    }
+
+    /**
      * @inheritDoc
      */
     public function collations()

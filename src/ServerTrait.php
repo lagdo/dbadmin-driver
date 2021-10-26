@@ -76,6 +76,16 @@ trait ServerTrait
     }
 
     /**
+     * Get sequences list
+     *
+     * @return array
+     */
+    public function sequences()
+    {
+        return $this->server->sequences();
+    }
+
+    /**
      * Drop views
      *
      * @param array $views

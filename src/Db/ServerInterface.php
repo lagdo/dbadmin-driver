@@ -58,6 +58,13 @@ interface ServerInterface
     public function countTables(array $databases);
 
     /**
+     * Get sequences list
+     *
+     * @return array
+     */
+    public function sequences();
+
+    /**
      * Get sorted grouped list of collations
      *
      * @return array
