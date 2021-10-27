@@ -16,19 +16,6 @@ class Statement extends PDOStatement implements StatementInterface
     public $offset = 0;
 
     /**
-     * @var int
-     */
-    public $numRows = 0;
-
-    /**
-     * @inheritDoc
-     */
-    public function rowCount()
-    {
-        return $this->numRows;
-    }
-
-    /**
      * @inheritDoc
      */
     public function fetchAssoc()
@@ -50,7 +37,8 @@ class Statement extends PDOStatement implements StatementInterface
     public function fetchField()
     {
         $row = $this->getColumnMeta($this->offset++);
-        return new StatementFieldEntity($row['native_type'], in_array("blob", (array)$row['flags']),
+        $flags = $row['flags'] ?? [];
+        return new StatementFieldEntity($row['native_type'], in_array("blob", (array)$flags),
             $row['name'], $row['name'], $row['table'], $row['table']);
     }
 }

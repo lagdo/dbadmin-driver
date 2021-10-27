@@ -119,10 +119,12 @@ abstract class Query implements QueryInterface
     {
         $table = $this->driver->table($table);
         if (!empty($values)) {
-            return $this->execute("INSERT INTO $table DEFAULT VALUES");
+            $result = $this->execute("INSERT INTO $table DEFAULT VALUES");
+            return $result == true;
         }
-        return $this->execute("INSERT INTO $table (" .
+        $result = $this->execute("INSERT INTO $table (" .
             implode(", ", array_keys($values)) . ") VALUES (" . implode(", ", $values) . ")");
+        return $result == true;
     }
 
     /**
@@ -136,9 +138,11 @@ abstract class Query implements QueryInterface
         }
         $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $assignments);
         if (!$limit) {
-            return $this->execute('UPDATE ' . $query . $queryWhere);
+            $result = $this->execute('UPDATE ' . $query . $queryWhere);
+            return $result == true;
         }
-        return $this->execute('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
+        $result = $this->execute('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
+        return $result == true;
     }
 
     /**
@@ -148,9 +152,11 @@ abstract class Query implements QueryInterface
     {
         $query = 'FROM ' . $this->driver->table($table);
         if (!$limit) {
-            return $this->execute("DELETE $query $queryWhere");
+            $result = $this->execute("DELETE $query $queryWhere");
+            return $result == true;
         }
-        return $this->execute('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
+        $result = $this->execute('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
+        return $result == true;
     }
 
     /**
@@ -342,7 +348,8 @@ abstract class Query implements QueryInterface
      */
     public function begin()
     {
-        return $this->connection->query("BEGIN");
+        $result = $this->connection->query("BEGIN");
+        return $result == true;
     }
 
     /**
@@ -350,7 +357,8 @@ abstract class Query implements QueryInterface
      */
     public function commit()
     {
-        return $this->connection->query("COMMIT");
+        $result = $this->connection->query("COMMIT");
+        return $result == true;
     }
 
     /**
@@ -358,7 +366,8 @@ abstract class Query implements QueryInterface
      */
     public function rollback()
     {
-        return $this->connection->query("ROLLBACK");
+        $result = $this->connection->query("ROLLBACK");
+        return $result == true;
     }
 
     /**

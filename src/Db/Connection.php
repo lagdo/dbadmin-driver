@@ -45,7 +45,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @var mixed
      */
-    public $result;
+    public $statement;
 
     /**
      * The constructor

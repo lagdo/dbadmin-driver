@@ -86,7 +86,7 @@ interface ServerInterface
      * @param string $database
      * @param string $collation
      *
-     * @return string|boolean
+     * @return boolean
      */
     public function createDatabase(string $database, string $collation) ;
 

@@ -68,16 +68,6 @@ trait ConnectionTrait
     }
 
     /**
-     * Get the next row set of the last query
-     *
-     * @return bool
-     */
-    public function nextResult()
-    {
-        return $this->connection->nextResult();
-    }
-
-    /**
      * Execute a query on the current database and store the result
      *
      * @param string $query
@@ -92,11 +82,21 @@ trait ConnectionTrait
     /**
      * Get the result saved by the multiQuery() method
      *
-     * @return StatementInterface|bool
+     * @return StatementInterface|null
      */
     public function storedResult()
     {
         return $this->connection->storedResult();
+    }
+
+    /**
+     * Get the next row set of the last query
+     *
+     * @return bool
+     */
+    public function nextResult()
+    {
+        return $this->connection->nextResult();
     }
 
     /**

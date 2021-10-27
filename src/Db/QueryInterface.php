@@ -45,7 +45,7 @@ interface QueryInterface
      * @param string $table
      * @param array $set Escaped columns in keys, quoted data in values
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function insert(string $table, array $set);
 
@@ -58,7 +58,7 @@ interface QueryInterface
      * @param int $limit 0 or 1
      * @param string $separator
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function update(string $table, array $set, string $queryWhere, int $limit = 0, string $separator = "\n");
 
@@ -69,7 +69,7 @@ interface QueryInterface
      * @param string $queryWhere " WHERE ..."
      * @param int $limit 0 or 1
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function delete(string $table, string $queryWhere, int $limit = 0);
 
@@ -80,7 +80,7 @@ interface QueryInterface
      * @param array $rows
      * @param array $primary of arrays with escaped columns in keys and quoted data in values
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function insertOrUpdate(string $table, array $rows, array $primary);
 
@@ -104,21 +104,21 @@ interface QueryInterface
     /**
      * Begin transaction
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function begin();
 
     /**
      * Commit transaction
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function commit();
 
     /**
      * Rollback transaction
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
     public function rollback();
 

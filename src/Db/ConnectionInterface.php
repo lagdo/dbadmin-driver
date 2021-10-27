@@ -67,13 +67,6 @@ interface ConnectionInterface
     public function result(string $query, int $field = -1);
 
     /**
-     * Get the next row set of the last query
-     *
-     * @return bool
-     */
-    public function nextResult();
-
-    /**
      * Execute a query on the current database and ??
      *
      * @param string $query
@@ -85,9 +78,16 @@ interface ConnectionInterface
     /**
      * Get the result saved by the multiQuery() method
      *
-     * @return StatementInterface|bool
+     * @return StatementInterface|null
      */
     public function storedResult();
+
+    /**
+     * Get the next row set of the last query
+     *
+     * @return bool
+     */
+    public function nextResult();
 
     /**
      * Convert value returned by database to actual value

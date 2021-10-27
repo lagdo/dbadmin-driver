@@ -9,13 +9,10 @@ use Lagdo\DbAdmin\Driver\Exception\AuthException;
 use PDO;
 use Exception;
 
+use function count;
+
 abstract class Connection extends AbstractConnection
 {
-    /**
-     * @var Statement|bool
-     */
-    private $statement = null;
-
     /**
      * Create a PDO connection
      *
@@ -79,7 +76,8 @@ abstract class Connection extends AbstractConnection
      */
     public function multiQuery(string $query)
     {
-        return $this->statement = $this->query($query);
+        $this->statement = $this->query($query);
+        return !(!$this->statement);
     }
 
     /**
@@ -88,11 +86,11 @@ abstract class Connection extends AbstractConnection
     public function storedResult()
     {
         if (!$this->statement) {
-            return false;
+            return null;
         }
         // rowCount() is not guaranteed to work with all drivers
-        if (($this->statement->numRows = $this->statement->rowCount()) > 0) {
-            $this->driver->setAffectedRows($this->statement->numRows);
+        if ($this->statement->rowCount() > 0) {
+            $this->driver->setAffectedRows($this->statement->rowCount());
         }
         return $this->statement;
     }
@@ -114,13 +112,16 @@ abstract class Connection extends AbstractConnection
      */
     public function result(string $query, int $field = -1)
     {
+        if ($field < 0) {
+            $field = $this->defaultField();
+        }
         if (!($statement = $this->query($query))) {
-            return false;
+            return null;
         }
         if (!($row = $statement->fetch())) {
-            return false;
+            return null;
         }
-        return $row[$field];
+        return count($row) > $field ? $row[$field] : null;
     }
 
     /**
