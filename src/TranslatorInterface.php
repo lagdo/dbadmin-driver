@@ -9,7 +9,7 @@ interface TranslatorInterface
      * The first parameter is mandatory. Optional parameters can follow.
      *
      * @param string $idf
-     * @param int $number
+     * @param mixed $number
      *
      * @return string
      */
