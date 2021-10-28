@@ -42,29 +42,6 @@ interface ServerInterface
     public function engines();
 
     /**
-     * Get tables list
-     *
-     * @return array
-     */
-    public function tables();
-
-    /**
-     * Count tables in all databases
-     *
-     * @param array $databases
-     *
-     * @return array
-     */
-    public function countTables(array $databases);
-
-    /**
-     * Get sequences list
-     *
-     * @return array
-     */
-    public function sequences();
-
-    /**
      * Get sorted grouped list of collations
      *
      * @return array
@@ -110,52 +87,11 @@ interface ServerInterface
     public function renameDatabase(string $name, string $collation);
 
     /**
-     * Get information about stored routine
-     *
-     * @param string $name
-     * @param string $type "FUNCTION" or "PROCEDURE"
-     *
-     * @return RoutineEntity
-     */
-    public function routine(string $name, string $type);
-
-    /**
-     * Get list of routines
-     *
-     * @return array
-     */
-    public function routines();
-
-    /**
      * Get list of available routine languages
      *
      * @return array
      */
     public function routineLanguages() ;
-
-    /**
-     * Get routine signature
-     *
-     * @param string $name
-     * @param array $row result of routine()
-     *
-     * @return string
-     */
-    public function routineId(string $name, array $row);
-
-    /**
-     * Get user defined types
-     *
-     * @return array
-     */
-    public function userTypes() ;
-
-    /**
-     * Get existing schemas
-     *
-     * @return array
-     */
-    public function schemas();
 
     /**
      * Get server variables
@@ -170,20 +106,6 @@ interface ServerInterface
      * @return array
      */
     public function statusVariables();
-
-    /**
-     * Get events
-     *
-     * @return array
-     */
-    public function events();
-
-    /**
-     * Get the features user has access to
-     *
-     * @return array
-     */
-    public function privileges();
 
     /**
      * Get process list
@@ -207,53 +129,4 @@ interface ServerInterface
      * @return int
      */
     // public function maxConnections();
-
-    /**
-     * Drop views
-     *
-     * @param array $views
-     *
-     * @return bool
-     */
-    public function dropViews(array $views);
-
-    /**
-     * Truncate tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function truncateTables(array $tables);
-
-    /**
-     * Drop tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function dropTables(array $tables);
-
-    /**
-     * Move tables to other schema
-     *
-     * @param array $tables
-     * @param array $views
-     * @param string $target
-     *
-     * @return bool
-     */
-    public function moveTables(array $tables, array $views, string $target);
-
-    /**
-     * Copy tables to other schema
-     *
-     * @param array $tables
-     * @param array $views
-     * @param string $target
-     *
-     * @return bool
-     */
-    public function copyTables(array $tables, array $views, string $target);
 }

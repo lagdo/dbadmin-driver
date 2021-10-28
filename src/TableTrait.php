@@ -13,16 +13,6 @@ use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 trait TableTrait
 {
     /**
-     * Get the name of the primary id field
-     *
-     * @return string
-     */
-    public function primaryIdName()
-    {
-        return $this->table->primaryIdName();
-    }
-
-    /**
      * Get table status
      *
      * @param string $table
@@ -42,9 +32,19 @@ trait TableTrait
      *
      * @return TableEntity[]
      */
-    public function tablesStatuses(bool $fast = false)
+    public function tableStatuses(bool $fast = false)
     {
-        return $this->table->tablesStatuses($fast);
+        return $this->table->tableStatuses($fast);
+    }
+
+    /**
+     * Get all tables names
+     *
+     * @return array
+     */
+    public function tableNames()
+    {
+        return $this->table->tableNames();
     }
 
     /**
@@ -122,41 +122,6 @@ trait TableTrait
     }
 
     /**
-     * Create or alter table
-     *
-     * @param string $table "" to create
-     * @param string $name new name
-     * @param array $fields of array($orig, $process_field, $after)
-     * @param array $foreign of strings
-     * @param string $comment
-     * @param string $engine
-     * @param string $collation
-     * @param int $autoIncrement number
-     * @param string $partitioning
-     *
-     * @return bool
-     */
-    public function alterTable(string $table, string $name, array $fields, array $foreign,
-        string $comment, string $engine, string $collation, int $autoIncrement, string $partitioning)
-    {
-        return $this->table->alterTable($table, $name, $fields, $foreign, $comment,
-            $engine, $collation, $autoIncrement, $partitioning);
-    }
-
-    /**
-     * Alter indexes
-     *
-     * @param string $table     Escaped table name
-     * @param array $alter      array("index type", "name", array("column definition", ...)) or array("index type", "name", "DROP")
-     *
-     * @return bool
-     */
-    public function alterIndexes(string $table, array $alter)
-    {
-        return $this->table->alterIndexes($table, $alter);
-    }
-
-    /**
      * Get information about a trigger
      *
      * @param string $name
@@ -189,44 +154,6 @@ trait TableTrait
     public function triggerOptions()
     {
         return $this->table->triggerOptions();
-    }
-
-    /**
-     * Find backward keys for table
-     *
-     * @param string $table
-     * @param string $tableName
-     *
-     * @return array
-     */
-    public function backwardKeys(string $table, string $tableName)
-    {
-        return $this->table->backwardKeys($table, $tableName);
-    }
-
-    /**
-     * Get descriptions of selected data
-     *
-     * @param array $rows All data to print
-     * @param array $foreignKeys
-     *
-     * @return array
-     */
-    public function rowDescriptions(array $rows, array $foreignKeys)
-    {
-        return $this->table->rowDescriptions($rows, $foreignKeys);
-    }
-
-    /**
-     * Find out foreign keys for each column
-     *
-     * @param string $table
-     *
-     * @return array
-     */
-    public function columnForeignKeys(string $table)
-    {
-        return $this->table->columnForeignKeys($table);
     }
 
     /**

@@ -6,6 +6,7 @@ use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
+use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
@@ -16,6 +17,7 @@ abstract class Driver implements DriverInterface
 {
     use ServerTrait;
     use TableTrait;
+    use DatabaseTrait;
     use QueryTrait;
     use GrammarTrait;
     use ConnectionTrait;
@@ -34,6 +36,11 @@ abstract class Driver implements DriverInterface
      * @var ServerInterface
      */
     protected $server;
+
+    /**
+     * @var DatabaseInterface
+     */
+    protected $database;
 
     /**
      * @var TableInterface
@@ -72,14 +79,46 @@ abstract class Driver implements DriverInterface
     public $onActions = 'RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT'; ///< @var string used in foreignKeys()
 
     /**
+     * The current database name
+     *
      * @var string
      */
-    protected $database = '';
+    protected $databaseName = '';
 
     /**
+     * The current schema name
+     *
      * @var string
      */
-    protected $schema = '';
+    protected $schemaName = '';
+
+    /**
+     * Executed queries
+     *
+     * @var array
+     */
+    protected $queries = [];
+
+    /**
+     * Query start timestamp
+     *
+     * @var int
+     */
+    protected $start = 0;
+
+    /**
+     * The last error code
+     *
+     * @var int
+     */
+    protected $errno = 0;
+
+    /**
+     * The last error message
+     *
+     * @var string
+     */
+    protected $error = '';
 
     /**
      * The constructor
@@ -149,8 +188,8 @@ abstract class Driver implements DriverInterface
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->error());
         }
-        $this->database = $database;
-        $this->schema = $schema;
+        $this->databaseName = $database;
+        $this->schemaName = $schema;
     }
 
     /**
@@ -166,7 +205,7 @@ abstract class Driver implements DriverInterface
      */
     public function database()
     {
-        return $this->database;
+        return $this->databaseName;
     }
 
     /**
@@ -174,7 +213,7 @@ abstract class Driver implements DriverInterface
      */
     public function schema()
     {
-        return $this->schema;
+        return $this->schemaName;
     }
 
     /**
@@ -208,6 +247,33 @@ abstract class Driver implements DriverInterface
     {
         // SHOW CHARSET would require an extra query
         return ($this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function begin()
+    {
+        $result = $this->connection->query("BEGIN");
+        return $result !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function commit()
+    {
+        $result = $this->connection->query("COMMIT");
+        return $result !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rollback()
+    {
+        $result = $this->connection->query("ROLLBACK");
+        return $result !== false;
     }
 
     /**
@@ -353,5 +419,147 @@ abstract class Driver implements DriverInterface
     public function setStructuredType(string $key, $value)
     {
         $this->config->structuredTypes[$key] = $value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setError(string $error = '')
+    {
+        $this->error = $error;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function error()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasError()
+    {
+        return $this->error !== '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setErrno($errno)
+    {
+        $this->errno = $errno;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function errno()
+    {
+        return $this->errno;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasErrno()
+    {
+        return $this->errno !== 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execute(string $query)
+    {
+        if (!$this->start) {
+            $this->start = intval(microtime(true));
+        }
+        $this->queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
+        return $this->connection->query($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function queries()
+    {
+        return [implode("\n", $this->queries), $this->trans->formatTime($this->start)];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function applyQueries(string $query, array $tables, $escape = null)
+    {
+        if (!$escape) {
+            $escape = function ($table) {
+                return $this->driver->table($table);
+            };
+        }
+        foreach ($tables as $table) {
+            if (!$this->execute("$query " . $escape($table))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function values(string $query, $column = 0)
+    {
+        $values = [];
+        $statement = $this->connection->query($query);
+        if (is_object($statement)) {
+            while ($row = $statement->fetchRow()) {
+                $values[] = $row[$column];
+            }
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function keyValues(string $query, ConnectionInterface $connection = null, bool $setKeys = true)
+    {
+        if (!is_object($connection)) {
+            $connection = $this->connection;
+        }
+        $values = [];
+        $statement = $connection->query($query);
+        if (is_object($statement)) {
+            while ($row = $statement->fetchRow()) {
+                if ($setKeys) {
+                    $values[$row[0]] = $row[1];
+                } else {
+                    $values[] = $row[0];
+                }
+            }
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rows(string $query, ConnectionInterface $connection = null)
+    {
+        if (!$connection) {
+            $connection = $this->connection;
+        }
+        $statement = $connection->query($query);
+        if (!is_object($statement)) { // can return true
+            return [];
+        }
+        $rows = [];
+        while ($row = $statement->fetchAssoc()) {
+            $rows[] = $row;
+        }
+        return $rows;
     }
 }

@@ -48,6 +48,13 @@ abstract class Connection implements ConnectionInterface
     public $statement;
 
     /**
+     * The number of rows affected by the last query
+     *
+     * @var int
+     */
+    protected $affectedRows;
+
+    /**
      * The constructor
      *
      * @param DriverInterface $driver
@@ -61,6 +68,26 @@ abstract class Connection implements ConnectionInterface
         $this->util = $util;
         $this->trans = $trans;
         $this->extension = $extension;
+    }
+
+    /**
+     * Set the number of rows affected by the last query
+     *
+     * @param int $affectedRows
+     *
+     * @return void
+     */
+    protected function setAffectedRows($affectedRows)
+    {
+        $this->affectedRows = $affectedRows;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function affectedRows()
+    {
+        return $this->affectedRows;
     }
 
     /**

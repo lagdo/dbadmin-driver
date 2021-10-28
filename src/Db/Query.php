@@ -9,7 +9,6 @@ use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 use function implode;
 use function array_keys;
@@ -41,41 +40,6 @@ abstract class Query implements QueryInterface
     protected $connection;
 
     /**
-     * The last error code
-     *
-     * @var int
-     */
-    protected $errno = 0;
-
-    /**
-     * The last error message
-     *
-     * @var string
-     */
-    protected $error = '';
-
-    /**
-     * The number of rows affected by the last query
-     *
-     * @var int
-     */
-    protected $affectedRows;
-
-    /**
-     * Executed queries
-     *
-     * @var array
-     */
-    protected $queries = [];
-
-    /**
-     * Query start timestamp
-     *
-     * @var int
-     */
-    protected $start = 0;
-
-    /**
      * The constructor
      *
      * @param DriverInterface $driver
@@ -101,6 +65,18 @@ abstract class Query implements QueryInterface
     }
 
     /**
+     * Formulate SQL modification query with limit 1
+     *
+     * @param string $table
+     * @param string $query Everything after UPDATE or DELETE
+     * @param string $where
+     * @param string $separator
+     *
+     * @return string
+     */
+    abstract protected function limitToOne(string $table, string $query, string $where, string $separator = "\n");
+
+    /**
      * @inheritDoc
      */
     public function select(string $table, array $select, array $where,
@@ -108,7 +84,7 @@ abstract class Query implements QueryInterface
     {
         $entity = new TableSelectEntity($table, $select, $where, $group, $order, $limit, $page);
         $query = $this->driver->buildSelectQuery($entity);
-        $this->start = intval(microtime(true));
+        // $this->start = intval(microtime(true));
         return $this->connection->query($query);
     }
 
@@ -141,7 +117,7 @@ abstract class Query implements QueryInterface
             $result = $this->execute('UPDATE ' . $query . $queryWhere);
             return $result !== false;
         }
-        $result = $this->execute('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
+        $result = $this->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere, $separator));
         return $result !== false;
     }
 
@@ -155,7 +131,7 @@ abstract class Query implements QueryInterface
             $result = $this->execute("DELETE $query $queryWhere");
             return $result !== false;
         }
-        $result = $this->execute('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
+        $result = $this->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
         return $result !== false;
     }
 
@@ -173,201 +149,6 @@ abstract class Query implements QueryInterface
     public function slowQuery(string $query, int $timeout)
     {
         return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setError(string $error = '')
-    {
-        $this->error = $error;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function error()
-    {
-        return $this->error;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasError()
-    {
-        return $this->error !== '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setErrno($errno)
-    {
-        $this->errno = $errno;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function errno()
-    {
-        return $this->errno;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasErrno()
-    {
-        return $this->errno !== 0;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setAffectedRows($affectedRows)
-    {
-        $this->affectedRows = $affectedRows;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function affectedRows()
-    {
-        return $this->affectedRows;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function execute(string $query)
-    {
-        if (!$this->start) {
-            $this->start = intval(microtime(true));
-        }
-        $this->queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
-        return $this->connection->query($query);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function queries()
-    {
-        return [implode("\n", $this->queries), $this->trans->formatTime($this->start)];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function applyQueries(string $query, array $tables, $escape = null)
-    {
-        if (!$escape) {
-            $escape = function ($table) {
-                return $this->driver->table($table);
-            };
-        }
-        foreach ($tables as $table) {
-            if (!$this->execute("$query " . $escape($table))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function values(string $query, $column = 0)
-    {
-        $values = [];
-        $statement = $this->connection->query($query);
-        if (is_object($statement)) {
-            while ($row = $statement->fetchRow()) {
-                $values[] = $row[$column];
-            }
-        }
-        return $values;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function keyValues(string $query, ConnectionInterface $connection = null, bool $setKeys = true)
-    {
-        if (!is_object($connection)) {
-            $connection = $this->connection;
-        }
-        $values = [];
-        $statement = $connection->query($query);
-        if (is_object($statement)) {
-            while ($row = $statement->fetchRow()) {
-                if ($setKeys) {
-                    $values[$row[0]] = $row[1];
-                } else {
-                    $values[] = $row[0];
-                }
-            }
-        }
-        return $values;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rows(string $query, ConnectionInterface $connection = null)
-    {
-        if (!$connection) {
-            $connection = $this->connection;
-        }
-        $statement = $connection->query($query);
-        if (!is_object($statement)) { // can return true
-            return [];
-        }
-        $rows = [];
-        while ($row = $statement->fetchAssoc()) {
-            $rows[] = $row;
-        }
-        return $rows;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function removeDefiner(string $query)
-    {
-        return preg_replace('~^([A-Z =]+) DEFINER=`' .
-            preg_replace('~@(.*)~', '`@`(%|\1)', $this->user()) .
-            '`~', '\1', $query); //! proper escaping of user
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function begin()
-    {
-        $result = $this->connection->query("BEGIN");
-        return $result !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function commit()
-    {
-        $result = $this->connection->query("COMMIT");
-        return $result !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rollback()
-    {
-        $result = $this->connection->query("ROLLBACK");
-        return $result !== false;
     }
 
     /**

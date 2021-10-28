@@ -57,6 +57,13 @@ interface ConnectionInterface
     public function query(string $query, bool $unbuffered = false);
 
     /**
+     * Get the number of rows affected by the last query
+     *
+     * @return integer
+     */
+    public function affectedRows();
+
+    /**
      * Execute a query on the current database and fetch the specified field
      *
      * @param string $query

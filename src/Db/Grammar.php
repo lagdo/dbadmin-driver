@@ -9,7 +9,6 @@ use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 abstract class Grammar implements GrammarInterface
 {
@@ -110,36 +109,13 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function quote($string)
-    {
-        return $this->connection->quote($string);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function buildSelectQuery(TableSelectEntity $select)
     {
-        $query = '';
-        if ($this->driver->jush() === 'sql' && ($select->page) &&
-            ($select->limit) && !empty($select->group) &&
-            count($select->group) < count($select->fields)) {
-            $query = 'SQL_CALC_FOUND_ROWS ';
-        }
-        $query .= \implode(', ', $select->fields) . ' FROM ' . $this->table($select->table);
+        $query = \implode(', ', $select->fields) . ' FROM ' . $this->table($select->table);
         $limit = +$select->limit;
         $offset = $select->page ? $limit * $select->page : 0;
 
         return 'SELECT' . $this->limit($query, $select->clauses, $limit, $offset, "\n");
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function applySqlFunction(string $function, string $column)
-    {
-        return ($function ? ($function == 'unixepoch' ? "DATETIME($column, '$function')" :
-            ($function == 'count distinct' ? 'COUNT(DISTINCT ' : strtoupper("$function(")) . "$column)") : $column);
     }
 
     /**
@@ -150,7 +126,7 @@ abstract class Grammar implements GrammarInterface
         $default = $field->default;
         return ($default === null ? '' : ' DEFAULT ' .
             (preg_match('~char|binary|text|enum|set~', $field->type) ||
-            preg_match('~^(?![a-z])~i', $default) ? $this->quote($default) : $default));
+            preg_match('~^(?![a-z])~i', $default) ? $this->driver->quote($default) : $default));
     }
 
     /**
@@ -159,14 +135,6 @@ abstract class Grammar implements GrammarInterface
     public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = ' ')
     {
         return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function limitToOne(string $table, string $query, string $where, string $separator = "\n")
-    {
-        return $this->limit($query, $where, 1, 0, $separator);
     }
 
     /**

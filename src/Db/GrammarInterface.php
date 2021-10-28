@@ -66,15 +66,6 @@ interface GrammarInterface
     public function convertFields(array $columns, array $fields, array $select = []);
 
     /**
-     * Shortcut for $this->connection->quote($string)
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public function quote(string $string);
-
-    /**
      * Select data from table
      *
      * @param TableSelectEntity $select
@@ -82,16 +73,6 @@ interface GrammarInterface
      * @return string
      */
     public function buildSelectQuery(TableSelectEntity $select);
-
-    /**
-     * Apply SQL function
-     *
-     * @param string $function
-     * @param string $column escaped column identifier
-     *
-     * @return string
-     */
-    public function applySqlFunction(string $function, string $column);
 
     /**
      * Get query to compute number of found rows
@@ -126,18 +107,6 @@ interface GrammarInterface
      * @return string
      */
     public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = " ");
-
-    /**
-     * Formulate SQL modification query with limit 1
-     *
-     * @param string $table
-     * @param string $query Everything after UPDATE or DELETE
-     * @param string $where
-     * @param string $separator
-     *
-     * @return string
-     */
-    public function limitToOne(string $table, string $query, string $where, string $separator = "\n");
 
     /**
      * Format foreign key to use in SQL query

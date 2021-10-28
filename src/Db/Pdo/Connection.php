@@ -66,7 +66,7 @@ abstract class Connection extends AbstractConnection
         }
         // rowCount() is not guaranteed to work with all drivers
         if (($statement->numRows = $statement->rowCount()) > 0) {
-            $this->driver->setAffectedRows($statement->numRows);
+            $this->setAffectedRows($statement->numRows);
         }
         return $statement;
     }
@@ -90,7 +90,7 @@ abstract class Connection extends AbstractConnection
         }
         // rowCount() is not guaranteed to work with all drivers
         if ($this->statement->rowCount() > 0) {
-            $this->driver->setAffectedRows($this->statement->rowCount());
+            $this->setAffectedRows($this->statement->rowCount());
         }
         return $this->statement;
     }

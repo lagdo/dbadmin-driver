@@ -42,6 +42,18 @@ trait ConnectionTrait
     }
 
     /**
+     * Return a quoted string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function quote(string $string)
+    {
+        return $this->connection->quote($string);
+    }
+
+    /**
      * Execute a query on the current database
      *
      * @param string $query
@@ -52,6 +64,16 @@ trait ConnectionTrait
     public function query(string $query, bool $unbuffered = false)
     {
         return $this->connection->query($query, $unbuffered);
+    }
+
+    /**
+     * Get the number of rows affected by the last query
+     *
+     * @return integer
+     */
+    public function affectedRows()
+    {
+        return $this->connection->affectedRows();
     }
 
     /**

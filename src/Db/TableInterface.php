@@ -10,13 +10,6 @@ use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 interface TableInterface
 {
     /**
-     * Get the name of the primary id field
-     *
-     * @return string
-     */
-    public function primaryIdName();
-
-    /**
      * Get table status
      *
      * @param string $table
@@ -33,7 +26,14 @@ interface TableInterface
      *
      * @return TableEntity[]
      */
-    public function tablesStatuses(bool $fast = false);
+    public function tableStatuses(bool $fast = false);
+
+    /**
+     * Get all tables names
+     *
+     * @return array
+     */
+    public function tableNames();
 
     /**
      * Get status of a single table and fall back to name on error
@@ -87,7 +87,7 @@ interface TableInterface
      *
      * @param string $table
      *
-     * @return array array($name => array("db" => , "ns" => , "table" => , "source" => [], "target" => [], "onDelete" => , "onUpdate" => ))
+     * @return array
      */
     public function foreignKeys(string $table);
 
@@ -118,35 +118,6 @@ interface TableInterface
     public function triggerOptions();
 
     /**
-     * Find backward keys for table
-     *
-     * @param string
-     * @param string
-     *
-     * @return array
-     */
-    public function backwardKeys(string $table, string $tableName);
-
-    /**
-     * Get descriptions of selected data
-     *
-     * @param array $rows All data to print
-     * @param array $foreignKeys
-     *
-     * @return array
-     */
-    public function rowDescriptions(array $rows, array $foreignKeys);
-
-    /**
-     * Find out foreign keys for each column
-     *
-     * @param string $table
-     *
-     * @return array
-     */
-    public function columnForeignKeys(string $table);
-
-    /**
      * Get referencable tables with single column primary key except self
      *
      * @param string $table
@@ -154,34 +125,6 @@ interface TableInterface
      * @return array
      */
     public function referencableTables(string $table);
-
-    /**
-     * Create or alter table
-     *
-     * @param string $table "" to create
-     * @param string $name new name
-     * @param array $fields of array($orig, $process_field, $after)
-     * @param array $foreign of strings
-     * @param string $comment
-     * @param string $engine
-     * @param string $collation
-     * @param int $autoIncrement number
-     * @param string $partitioning
-     *
-     * @return bool
-     */
-    public function alterTable(string $table, string $name, array $fields, array $foreign, string $comment,
-        string $engine, string $collation, int $autoIncrement, string $partitioning);
-
-    /**
-     * Alter indexes
-     *
-     * @param string $table     Escaped table name
-     * @param array $alter      array("index type", "name", array("column definition", ...)) or array("index type", "name", "DROP")
-     *
-     * @return bool
-     */
-    public function alterIndexes(string $table, array $alter);
 
     /**
      * Get help link for table

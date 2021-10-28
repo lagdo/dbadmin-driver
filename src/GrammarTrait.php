@@ -88,18 +88,6 @@ trait GrammarTrait
     }
 
     /**
-     * Shortcut for $this->connection->quote($string)
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public function quote(string $string)
-    {
-        return $this->grammar->quote($string);
-    }
-
-    /**
      * Select data from table
      *
      * @param TableSelectEntity $select
@@ -109,19 +97,6 @@ trait GrammarTrait
     public function buildSelectQuery(TableSelectEntity $select)
     {
         return $this->grammar->buildSelectQuery($select);
-    }
-
-    /**
-     * Apply SQL function
-     *
-     * @param string $function
-     * @param string $column escaped column identifier
-     *
-     * @return string
-     */
-    public function applySqlFunction(string $function, string $column)
-    {
-        return $this->grammar->applySqlFunction($function, $column);
     }
 
     /**
@@ -165,21 +140,6 @@ trait GrammarTrait
     public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = " ")
     {
         return $this->grammar->limit($query, $where, $limit, $offset, $separator);
-    }
-
-    /**
-     * Formulate SQL modification query with limit 1
-     *
-     * @param string $table
-     * @param string $query Everything after UPDATE or DELETE
-     * @param string $where
-     * @param string $separator
-     *
-     * @return string
-     */
-    public function limitToOne(string $table, string $query, string $where, string $separator = "\n")
-    {
-        return $this->grammar->limitToOne($table, $query, $where, $separator);
     }
 
     /**

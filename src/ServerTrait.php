@@ -54,102 +54,6 @@ trait ServerTrait
     }
 
     /**
-     * Get tables list
-     *
-     * @return array
-     */
-    public function tables()
-    {
-        return $this->server->tables();
-    }
-
-    /**
-     * Count tables in all databases
-     *
-     * @param array $databases
-     *
-     * @return array
-     */
-    public function countTables(array $databases)
-    {
-        return $this->server->countTables($databases);
-    }
-
-    /**
-     * Get sequences list
-     *
-     * @return array
-     */
-    public function sequences()
-    {
-        return $this->server->sequences();
-    }
-
-    /**
-     * Drop views
-     *
-     * @param array $views
-     *
-     * @return bool
-     */
-    public function dropViews(array $views)
-    {
-        return $this->server->dropViews($views);
-    }
-
-    /**
-     * Truncate tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function truncateTables(array $tables)
-    {
-        return $this->server->truncateTables($tables);
-    }
-
-    /**
-     * Drop tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function dropTables(array $tables)
-    {
-        return $this->server->dropTables($tables);
-    }
-
-    /**
-     * Move tables to other schema
-     *
-     * @param array $tables
-     * @param array $views
-     * @param string $target
-     *
-     * @return bool
-     */
-    public function moveTables(array $tables, array $views, string $target)
-    {
-        return $this->server->moveTables($tables, $views, $target);
-    }
-
-    /**
-     * Copy tables to other schema
-     *
-     * @param array $tables
-     * @param array $views
-     * @param string $target
-     *
-     * @return bool
-     */
-    public function copyTables(array $tables, array $views, string $target)
-    {
-        return $this->server->copyTables($tables, $views, $target);
-    }
-
-    /**
      * Get sorted grouped list of collations
      *
      * @return array
@@ -210,29 +114,6 @@ trait ServerTrait
     }
 
     /**
-     * Get information about stored routine
-     *
-     * @param string $name
-     * @param string $type "FUNCTION" or "PROCEDURE"
-     *
-     * @return RoutineEntity
-     */
-    public function routine(string $name, string $type)
-    {
-        return $this->server->routine($name, $type);
-    }
-
-    /**
-     * Get list of routines
-     *
-     * @return array
-     */
-    public function routines()
-    {
-        return $this->server->routines();
-    }
-
-    /**
      * Get list of available routine languages
      *
      * @return array
@@ -256,26 +137,6 @@ trait ServerTrait
     }
 
     /**
-     * Get user defined types
-     *
-     * @return array
-     */
-    public function userTypes()
-    {
-        return $this->server->userTypes();
-    }
-
-    /**
-     * Get existing schemas
-     *
-     * @return array
-     */
-    public function schemas()
-    {
-        return $this->server->schemas();
-    }
-
-    /**
      * Get server variables
      *
      * @return array
@@ -293,26 +154,6 @@ trait ServerTrait
     public function statusVariables()
     {
         return $this->server->statusVariables();
-    }
-
-    /**
-     * Get events
-     *
-     * @return array
-     */
-    public function events()
-    {
-        return $this->server->events();
-    }
-
-    /**
-     * Get user privileges
-     *
-     * @return array
-     */
-    public function privileges()
-    {
-        return $this->server->privileges();
     }
 
     /**

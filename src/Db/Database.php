@@ -6,7 +6,7 @@ use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
-abstract class Server implements ServerInterface
+abstract class Database implements DatabaseInterface
 {
     /**
      * @var DriverInterface
@@ -47,7 +47,39 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function engines()
+    public function dropViews(array $views)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function moveTables(array $tables, array $views, string $target)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function copyTables(array $tables, array $views, string $target)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function truncateTables(array $tables)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sequences()
     {
         return [];
     }
@@ -55,7 +87,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function collations()
+    public function userTypes()
     {
         return [];
     }
@@ -63,55 +95,40 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function databaseCollation(string $database, array $collations)
+    public function schemas()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function events()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routine(string $name, string $type)
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routines()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function routineId(string $name, array $row)
     {
         return '';
-    }
-    /**
-     * @inheritDoc
-     */
-    public function isInformationSchema(string $database)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function variables()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function statusVariables()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function routineLanguages()
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function renameDatabase(string $name, string $collation)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function processes()
-    {
-        return [];
     }
 }

@@ -5,7 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
 abstract class Table implements TableInterface
@@ -44,14 +44,6 @@ abstract class Table implements TableInterface
         $this->util = $util;
         $this->trans = $trans;
         $this->connection = $connection;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function primaryIdName()
-    {
-        return '';
     }
 
     /**
@@ -124,53 +116,9 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function backwardKeys(string $table, string $tableName)
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rowDescriptions(array $rows, array $foreignKeys)
-    {
-        return $rows;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function columnForeignKeys(string $table)
-    {
-        $keys = [];
-        foreach ($this->foreignKeys($table) as $foreignKey) {
-            foreach ($foreignKey->source as $val) {
-                $keys[$val][] = $foreignKey;
-            }
-        }
-        return $keys;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function referencableTables(string $table)
     {
-        $fields = []; // table_name => field
-        foreach ($this->tablesStatuses(true) as $tableName => $tableStatus) {
-            if ($tableName != $table && $this->supportForeignKeys($tableStatus)) {
-                foreach ($this->fields($tableName) as $field) {
-                    if ($field->primary) {
-                        if (isset($fields[$tableName])) { // multi column primary key
-                            unset($fields[$tableName]);
-                            break;
-                        }
-                        $fields[$tableName] = $field;
-                    }
-                }
-            }
-        }
-        return $fields;
+        return [];
     }
 
     /**

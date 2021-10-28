@@ -101,6 +101,27 @@ interface DriverInterface extends ConfigInterface, ServerInterface, TableInterfa
     public function charset();
 
     /**
+     * Begin transaction
+     *
+     * @return bool
+     */
+    public function begin();
+
+    /**
+     * Commit transaction
+     *
+     * @return bool
+     */
+    public function commit();
+
+    /**
+     * Rollback transaction
+     *
+     * @return bool
+     */
+    public function rollback();
+
+    /**
      * Get SET NAMES if utf8mb4 might be needed
      *
      * @param string $create
@@ -135,4 +156,115 @@ interface DriverInterface extends ConfigInterface, ServerInterface, TableInterfa
      * @return array
      */
     public function onActions();
+
+    /**
+     * Set the error message
+     *
+     * @param string $error
+     *
+     * @return void
+     */
+    public function setError(string $error = '');
+
+    /**
+     * Get the raw error message
+     *
+     * @return string
+     */
+    public function error();
+
+    /**
+     * Check if the last query returned an error message
+     *
+     * @return bool
+     */
+    public function hasError();
+
+    /**
+     * Set the error number
+     *
+     * @param int $errno
+     *
+     * @return void
+     */
+    public function setErrno(int $errno);
+
+    /**
+     * Get the last error number
+     *
+     * @return string
+     */
+    public function errno();
+
+    /**
+     * Check if the last query returned an error number
+     *
+     * @return bool
+     */
+    public function hasErrno();
+
+    /**
+     * Get the number of rows affected by the last query
+     *
+     * @return integer
+     */
+    public function affectedRows();
+
+    /**
+     * Execute and remember query
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
+     */
+    public function execute(string $query);
+
+    /**
+     * Get the remembered queries
+     *
+     * @return array
+     */
+    public function queries();
+
+    /**
+     * Apply command to all array items
+     *
+     * @param string $query
+     * @param array $tables
+     * @param callback|null $escape
+     *
+     * @return bool
+     */
+    public function applyQueries(string $query, array $tables, $escape = null);
+
+    /**
+     * Get list of values from database
+     *
+     * @param string $query
+     * @param string|int $column
+     *
+     * @return array
+     */
+    public function values(string $query, $column = 0);
+
+    /**
+     * Get keys from first column and values from second
+     *
+     * @param string $query
+     * @param ConnectionInterface $connection
+     * @param bool $setKeys
+     *
+     * @return array
+     */
+    public function keyValues(string $query, ConnectionInterface $connection = null, bool $setKeys = true);
+
+    /**
+     * Get all rows of result
+     *
+     * @param string $query
+     * @param ConnectionInterface $connection
+     *
+     * @return array
+     */
+    public function rows(string $query, ConnectionInterface $connection = null);
 }
