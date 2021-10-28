@@ -120,11 +120,11 @@ abstract class Query implements QueryInterface
         $table = $this->driver->table($table);
         if (!empty($values)) {
             $result = $this->execute("INSERT INTO $table DEFAULT VALUES");
-            return $result == true;
+            return $result !== false;
         }
         $result = $this->execute("INSERT INTO $table (" .
             implode(", ", array_keys($values)) . ") VALUES (" . implode(", ", $values) . ")");
-        return $result == true;
+        return $result !== false;
     }
 
     /**
@@ -139,10 +139,10 @@ abstract class Query implements QueryInterface
         $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $assignments);
         if (!$limit) {
             $result = $this->execute('UPDATE ' . $query . $queryWhere);
-            return $result == true;
+            return $result !== false;
         }
         $result = $this->execute('UPDATE' . $this->driver->limitToOne($table, $query, $queryWhere, $separator));
-        return $result == true;
+        return $result !== false;
     }
 
     /**
@@ -153,10 +153,10 @@ abstract class Query implements QueryInterface
         $query = 'FROM ' . $this->driver->table($table);
         if (!$limit) {
             $result = $this->execute("DELETE $query $queryWhere");
-            return $result == true;
+            return $result !== false;
         }
         $result = $this->execute('DELETE' . $this->driver->limitToOne($table, $query, $queryWhere));
-        return $result == true;
+        return $result !== false;
     }
 
     /**
@@ -349,7 +349,7 @@ abstract class Query implements QueryInterface
     public function begin()
     {
         $result = $this->connection->query("BEGIN");
-        return $result == true;
+        return $result !== false;
     }
 
     /**
@@ -358,7 +358,7 @@ abstract class Query implements QueryInterface
     public function commit()
     {
         $result = $this->connection->query("COMMIT");
-        return $result == true;
+        return $result !== false;
     }
 
     /**
@@ -367,7 +367,7 @@ abstract class Query implements QueryInterface
     public function rollback()
     {
         $result = $this->connection->query("ROLLBACK");
-        return $result == true;
+        return $result !== false;
     }
 
     /**

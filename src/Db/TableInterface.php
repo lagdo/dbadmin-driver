@@ -94,11 +94,12 @@ interface TableInterface
     /**
      * Get information about a trigger
      *
-     * @param string $trigger
+     * @param string $name
+     * @param string $table
      *
      * @return TriggerEntity
      */
-    public function trigger(string $trigger);
+    public function trigger(string $name, string $table = '');
 
     /**
      * Get defined triggers

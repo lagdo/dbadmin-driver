@@ -77,7 +77,7 @@ abstract class Connection extends AbstractConnection
     public function multiQuery(string $query)
     {
         $this->statement = $this->query($query);
-        return !(!$this->statement);
+        return $this->statement !== false;
     }
 
     /**
@@ -104,7 +104,7 @@ abstract class Connection extends AbstractConnection
             return false;
         }
         $this->statement->offset = 0;
-        return @$this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
+        return $this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
     }
 
     /**

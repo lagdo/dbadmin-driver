@@ -100,7 +100,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function trigger(string $trigger)
+    public function trigger(string $name, string $table = '')
     {
         return null;
     }

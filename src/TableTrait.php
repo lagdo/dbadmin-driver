@@ -159,13 +159,14 @@ trait TableTrait
     /**
      * Get information about a trigger
      *
-     * @param string $trigger
+     * @param string $name
+     * @param string $table
      *
      * @return TriggerEntity
      */
-    public function trigger(string $trigger)
+    public function trigger(string $name, string $table = '')
     {
-        return $this->table->trigger($trigger);
+        return $this->table->trigger($name, $table);
     }
 
     /**
