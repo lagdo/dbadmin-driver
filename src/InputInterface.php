@@ -14,7 +14,7 @@ interface InputInterface
     /**
      * Return true if a table was defined
      *
-     * @return string
+     * @return bool
      */
     public function hasTable();
 
