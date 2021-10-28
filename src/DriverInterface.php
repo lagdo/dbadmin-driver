@@ -2,8 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
-
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
@@ -21,29 +19,6 @@ interface DriverInterface extends ConfigInterface, ServerInterface, TableInterfa
     public function name();
 
     /**
-     * Get driver config
-     *
-     * @return ConfigEntity
-     */
-    public function config();
-
-    /**
-     * Get the Adminer version
-     *
-     * @return string
-     */
-    public function version();
-
-    /**
-     * Get the driver options
-     *
-     * @param string $name The option name
-     *
-     * @return mixed
-     */
-    public function options(string $name = '');
-
-    /**
      * Create a connection to the server, based on the config and available packages
      *
      * @return ConnectionInterface|null
@@ -59,20 +34,6 @@ interface DriverInterface extends ConfigInterface, ServerInterface, TableInterfa
      * @return void
      */
     public function connect(string $database, string $schema);
-
-    /**
-     * Get the selected database
-     *
-     * @return string
-     */
-    public function database();
-
-    /**
-     * Get the selected schema
-     *
-     * @return string
-     */
-    public function schema();
 
     /**
      * Check if a feature is supported
@@ -130,33 +91,6 @@ interface DriverInterface extends ConfigInterface, ServerInterface, TableInterfa
      * @return string
      */
     public function setUtf8mb4(string $create);
-
-    /**
-     * Get regular expression to match numeric types
-     *
-     * @return string
-     */
-    public function numberRegex();
-
-    /**
-     * @return string
-     */
-    public function inout();
-
-    /**
-     * @return string
-     */
-    public function enumLength();
-
-    /**
-     * @return string
-     */
-    public function actions();
-
-    /**
-     * @return array
-     */
-    public function onActions();
 
     /**
      * Set the error message

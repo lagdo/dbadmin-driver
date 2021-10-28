@@ -12,6 +12,13 @@ interface ConfigInterface
     public function jush();
 
     /**
+     * Get the Adminer version
+     *
+     * @return string
+     */
+    public function version();
+
+    /**
      * @return array
      */
     public function unsigned();
@@ -67,4 +74,54 @@ interface ConfigInterface
      * @return void
      */
     public function setStructuredType(string $key, $value);
+
+    /**
+     * Get the driver options
+     *
+     * @param string $name The option name
+     *
+     * @return mixed
+     */
+    public function options(string $name = '');
+
+    /**
+     * Get the selected database
+     *
+     * @return string
+     */
+    public function database();
+
+    /**
+     * Get the selected schema
+     *
+     * @return string
+     */
+    public function schema();
+
+    /**
+     * Get regular expression to match numeric types
+     *
+     * @return string
+     */
+    public function numberRegex();
+
+    /**
+     * @return string
+     */
+    public function inout();
+
+    /**
+     * @return string
+     */
+    public function enumLength();
+
+    /**
+     * @return string
+     */
+    public function actions();
+
+    /**
+     * @return array
+     */
+    public function onActions();
 }
