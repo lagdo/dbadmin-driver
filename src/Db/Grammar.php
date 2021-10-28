@@ -126,7 +126,7 @@ abstract class Grammar implements GrammarInterface
         $default = $field->default;
         return ($default === null ? '' : ' DEFAULT ' .
             (preg_match('~char|binary|text|enum|set~', $field->type) ||
-            preg_match('~^(?![a-z])~i', $default) ? $this->driver->quote($default) : $default));
+            preg_match('~^(?![a-z])~i', $default) ? $this->connection->quote($default) : $default));
     }
 
     /**

@@ -5,8 +5,6 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
-
 interface QueryInterface
 {
     /**

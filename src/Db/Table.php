@@ -76,14 +76,6 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function alterIndexes(string $table, array $alte)
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function isView(TableEntity $tableStatus)
     {
         return false;

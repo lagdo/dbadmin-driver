@@ -496,7 +496,7 @@ abstract class Driver implements DriverInterface
     {
         if (!$escape) {
             $escape = function ($table) {
-                return $this->driver->table($table);
+                return $this->table($table);
             };
         }
         foreach ($tables as $table) {

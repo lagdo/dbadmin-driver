@@ -95,10 +95,10 @@ abstract class Query implements QueryInterface
     {
         $table = $this->driver->table($table);
         if (!empty($values)) {
-            $result = $this->execute("INSERT INTO $table DEFAULT VALUES");
+            $result = $this->driver->execute("INSERT INTO $table DEFAULT VALUES");
             return $result !== false;
         }
-        $result = $this->execute("INSERT INTO $table (" .
+        $result = $this->driver->execute("INSERT INTO $table (" .
             implode(", ", array_keys($values)) . ") VALUES (" . implode(", ", $values) . ")");
         return $result !== false;
     }
@@ -114,10 +114,10 @@ abstract class Query implements QueryInterface
         }
         $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $assignments);
         if (!$limit) {
-            $result = $this->execute('UPDATE ' . $query . $queryWhere);
+            $result = $this->driver->execute('UPDATE ' . $query . $queryWhere);
             return $result !== false;
         }
-        $result = $this->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere, $separator));
+        $result = $this->driver->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere, $separator));
         return $result !== false;
     }
 
@@ -128,10 +128,10 @@ abstract class Query implements QueryInterface
     {
         $query = 'FROM ' . $this->driver->table($table);
         if (!$limit) {
-            $result = $this->execute("DELETE $query $queryWhere");
+            $result = $this->driver->execute("DELETE $query $queryWhere");
             return $result !== false;
         }
-        $result = $this->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
+        $result = $this->driver->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
         return $result !== false;
     }
 

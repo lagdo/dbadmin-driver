@@ -2,8 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
+use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 

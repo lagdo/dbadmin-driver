@@ -9,6 +9,7 @@ use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 interface DriverInterface extends ConfigInterface, ServerInterface, TableInterface, QueryInterface, GrammarInterface
 {
