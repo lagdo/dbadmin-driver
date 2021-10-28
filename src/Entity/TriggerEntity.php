@@ -43,5 +43,8 @@ class TriggerEntity
     {
         $this->timing = $timing;
         $this->event = $event;
+        $this->statement = $statement;
+        $this->of = $of;
+        $this->name = $name;
     }
 }
