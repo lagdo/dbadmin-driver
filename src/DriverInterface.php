@@ -4,12 +4,14 @@ namespace Lagdo\DbAdmin\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
+use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
-interface DriverInterface extends ConfigInterface, ServerInterface, TableInterface, QueryInterface, GrammarInterface
+interface DriverInterface extends ConfigInterface, ServerInterface,
+    DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
 {
     /**
      * Get the driver name
