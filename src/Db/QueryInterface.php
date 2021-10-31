@@ -54,11 +54,10 @@ interface QueryInterface
      * @param array $set Escaped columns in keys, quoted data in values
      * @param string $queryWhere " WHERE ..."
      * @param int $limit 0 or 1
-     * @param string $separator
      *
      * @return bool
      */
-    public function update(string $table, array $set, string $queryWhere, int $limit = 0, string $separator = "\n");
+    public function update(string $table, array $set, string $queryWhere, int $limit = 0);
 
     /**
      * Delete data from table

@@ -137,9 +137,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = " ")
+    public function limit(string $query, string $where, int $limit, int $offset = 0)
     {
-        return $this->grammar->limit($query, $where, $limit, $offset, $separator);
+        return $this->grammar->limit($query, $where, $limit, $offset);
     }
 
     /**

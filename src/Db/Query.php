@@ -70,11 +70,10 @@ abstract class Query implements QueryInterface
      * @param string $table
      * @param string $query Everything after UPDATE or DELETE
      * @param string $where
-     * @param string $separator
      *
      * @return string
      */
-    abstract protected function limitToOne(string $table, string $query, string $where, string $separator = "\n");
+    abstract protected function limitToOne(string $table, string $query, string $where);
 
     /**
      * @inheritDoc
@@ -106,18 +105,18 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function update(string $table, array $values, string $queryWhere, int $limit = 0, string $separator = "\n")
+    public function update(string $table, array $values, string $queryWhere, int $limit = 0)
     {
         $assignments = [];
         foreach ($values as $name => $value) {
             $assignments[] = "$name = $value";
         }
-        $query = $this->driver->table($table) . " SET$separator" . implode(",$separator", $assignments);
+        $query = $this->driver->table($table) . " SET " . implode(", ", $assignments);
         if (!$limit) {
             $result = $this->driver->execute('UPDATE ' . $query . $queryWhere);
             return $result !== false;
         }
-        $result = $this->driver->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere, $separator));
+        $result = $this->driver->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere));
         return $result !== false;
     }
 

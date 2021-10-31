@@ -106,7 +106,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = " ");
+    public function limit(string $query, string $where, int $limit, int $offset = 0);
 
     /**
      * Format foreign key to use in SQL query

@@ -76,6 +76,21 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
+    public function limit(string $query, string $where, int $limit, int $offset = 0)
+    {
+        $sql = " $query$where";
+        if ($limit > 0) {
+            $sql .= " LIMIT $limit";
+            if ($offset > 0) {
+                $sql .= " OFFSET $offset";
+            }
+        }
+        return $sql;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function formatForeignKey(ForeignKeyEntity $foreignKey)
     {
         $database = $foreignKey->database;
@@ -127,14 +142,6 @@ abstract class Grammar implements GrammarInterface
         return ($default === null ? '' : ' DEFAULT ' .
             (preg_match('~char|binary|text|enum|set~', $field->type) ||
             preg_match('~^(?![a-z])~i', $default) ? $this->connection->quote($default) : $default));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function limit(string $query, string $where, int $limit, int $offset = 0, string $separator = ' ')
-    {
-        return '';
     }
 
     /**
