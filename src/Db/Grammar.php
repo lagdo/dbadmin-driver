@@ -130,7 +130,7 @@ abstract class Grammar implements GrammarInterface
         $limit = +$select->limit;
         $offset = $select->page ? $limit * $select->page : 0;
 
-        return 'SELECT' . $this->limit($query, $select->clauses, $limit, $offset, "\n");
+        return 'SELECT' . $this->limit($query, $select->clauses, $limit, $offset);
     }
 
     /**
