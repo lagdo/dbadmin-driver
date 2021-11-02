@@ -93,7 +93,7 @@ abstract class Query implements QueryInterface
     public function insert(string $table, array $values)
     {
         $table = $this->driver->table($table);
-        if (!empty($values)) {
+        if (empty($values)) {
             $result = $this->driver->execute("INSERT INTO $table DEFAULT VALUES");
             return $result !== false;
         }

@@ -57,28 +57,28 @@ trait QueryTrait
      * Insert data into table
      *
      * @param string $table
-     * @param array $set Escaped columns in keys, quoted data in values
+     * @param array $values Escaped columns in keys, quoted data in values
      *
      * @return bool
      */
-    public function insert(string $table, array $set)
+    public function insert(string $table, array $values)
     {
-        return $this->query->insert($table, $set);
+        return $this->query->insert($table, $values);
     }
 
     /**
      * Update data in table
      *
      * @param string $table
-     * @param array $set Escaped columns in keys, quoted data in values
+     * @param array $values Escaped columns in keys, quoted data in values
      * @param string $queryWhere " WHERE ..."
      * @param int $limit 0 or 1
      *
      * @return bool
      */
-    public function update(string $table, array $set, string $queryWhere, int $limit = 0)
+    public function update(string $table, array $values, string $queryWhere, int $limit = 0)
     {
-        return $this->query->update($table, $set, $queryWhere, $limit);
+        return $this->query->update($table, $values, $queryWhere, $limit);
     }
 
     /**
