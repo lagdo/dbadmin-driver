@@ -61,7 +61,7 @@ abstract class Query implements QueryInterface
      */
     public function schema()
     {
-        return "";
+        return '';
     }
 
     /**
@@ -98,7 +98,7 @@ abstract class Query implements QueryInterface
             return $result !== false;
         }
         $result = $this->driver->execute("INSERT INTO $table (" .
-            implode(", ", array_keys($values)) . ") VALUES (" . implode(", ", $values) . ")");
+            implode(', ', array_keys($values)) . ') VALUES (' . implode(', ', $values) . ')');
         return $result !== false;
     }
 
@@ -111,7 +111,7 @@ abstract class Query implements QueryInterface
         foreach ($values as $name => $value) {
             $assignments[] = "$name = $value";
         }
-        $query = $this->driver->table($table) . " SET " . implode(", ", $assignments);
+        $query = $this->driver->table($table) . ' SET ' . implode(', ', $assignments);
         if (!$limit) {
             $result = $this->driver->execute('UPDATE ' . $query . $queryWhere);
             return $result !== false;

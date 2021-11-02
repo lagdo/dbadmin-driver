@@ -9,6 +9,7 @@ use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 interface DriverInterface extends ConfigInterface, ServerInterface,
     DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
@@ -183,6 +184,16 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      * @return array
      */
     public function values(string $query, $column = 0);
+
+    /**
+     * Convert value returned by database to actual value
+     *
+     * @param string|resource|null $value
+     * @param TableFieldEntity $field
+     *
+     * @return string
+     */
+    public function value($value, TableFieldEntity $field);
 
     /**
      * Get keys from first column and values from second
