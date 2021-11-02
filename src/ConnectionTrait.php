@@ -54,6 +54,18 @@ trait ConnectionTrait
     }
 
     /**
+     * Return a quoted string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function quoteBinary(string $string)
+    {
+        return $this->connection->quoteBinary($string);
+    }
+
+    /**
      * Execute a query on the current database
      *
      * @param string $query

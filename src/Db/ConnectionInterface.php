@@ -102,7 +102,7 @@ interface ConnectionInterface
      * @param string|resource|null $value
      * @param TableFieldEntity $field
      *
-     * @return string
+     * @return string|null
      */
     public function value($value, TableFieldEntity $field);
 
