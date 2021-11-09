@@ -133,7 +133,6 @@ trait GrammarTrait
      * @param string $where Including WHERE
      * @param int $limit
      * @param int $offset
-     * @param string $separator
      *
      * @return string
      */
