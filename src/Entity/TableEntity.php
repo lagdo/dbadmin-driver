@@ -50,16 +50,25 @@ class TableEntity
     public $rows = [];
 
     /**
+     * Columns to add when creating or altering a table.
+     *
      * @var array
      */
     public $fields = [];
 
     /**
-     * Columns to drop when altering the table.
+     * Columns to edit when altering a table.
      *
      * @var array
      */
-    public $drop = [];
+    public $edited = [];
+
+    /**
+     * Columns to drop when altering a table.
+     *
+     * @var array
+     */
+    public $dropped = [];
 
     /**
      * @var array
