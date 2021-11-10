@@ -50,6 +50,33 @@ class TableEntity
     public $rows = [];
 
     /**
+     * @var array
+     */
+    public $fields = [];
+
+    /**
+     * Columns to drop when altering the table.
+     *
+     * @var array
+     */
+    public $drop = [];
+
+    /**
+     * @var array
+     */
+    public $foreign = [];
+
+    /**
+     * @var integer
+     */
+    public $autoIncrement = 0;
+
+    /**
+     * @var string
+     */
+    public $partitioning = '';
+
+    /**
      * The constructor
      *
      * @param string $name The table name

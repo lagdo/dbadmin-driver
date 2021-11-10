@@ -10,6 +10,16 @@ class IndexEntity
     public $type = '';
 
     /**
+     * @var string
+     */
+    public $name = '';
+
+    /**
+     * @var string
+     */
+    public $action = '';
+
+    /**
      * @var array
      */
     public $columns = [];

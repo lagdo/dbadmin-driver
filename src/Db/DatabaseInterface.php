@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
@@ -9,32 +10,34 @@ use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 interface DatabaseInterface
 {
     /**
-     * Create or alter table
+     * Create table
      *
-     * @param string $table "" to create
-     * @param string $name new name
-     * @param array $fields of array($orig, $process_field, $after)
-     * @param array $foreign of strings
-     * @param string $comment
-     * @param string $engine
-     * @param string $collation
-     * @param int $autoIncrement number
-     * @param string $partitioning
+     * @param TableEntity $tableAttrs
      *
      * @return bool
      */
-    public function alterTable(string $table, string $name, array $fields, array $foreign, string $comment,
-        string $engine, string $collation, int $autoIncrement, string $partitioning);
+    public function createTable(TableEntity $tableAttrs);
+
+    /**
+     * Alter table
+     *
+     * @param string $table
+     * @param TableEntity $tableAttrs
+     *
+     * @return bool
+     */
+    public function alterTable(string $table, TableEntity $tableAttrs);
 
     /**
      * Alter indexes
      *
-     * @param string $table     Escaped table name
-     * @param array $alter      array("index type", "name", array("column definition", ...)) or array("index type", "name", "DROP")
+     * @param string $table Escaped table name
+     * @param array $alter  Indexes to alter. Array of IndexEntity.
+     * @param array $drop   Indexes to drop. Array of IndexEntity.
      *
      * @return bool
      */
-    public function alterIndexes(string $table, array $alter);
+    public function alterIndexes(string $table, array $alter, array $drop);
 
     /**
      * Get tables list
