@@ -178,8 +178,8 @@ class TableFieldEntity
             }
         }
         $entity->null = isset($field['null']);
-        if (isset($field['default']) && ($field['default'])) {
-            $field['hasDefault'] = true;
+        if (!empty($field['default'])) {
+            $entity->hasDefault = true;
         }
 
         return $entity;
@@ -194,15 +194,14 @@ class TableFieldEntity
      */
     public function changed(TableFieldEntity $field)
     {
-        $attrs = ['type', 'primary', 'unsigned', 'length', 'autoIncrement',
-            'onUpdate', 'onDelete', 'collation', 'privileges', 'generated', 'lengthRequired',
-            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden', 'comment'];
+        $attrs = ['type', 'primary', 'autoIncrement', 'unsigned', 'length', 'comment',
+            'collation', 'generated', 'lengthRequired', 'onUpdate', 'onDelete',
+            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
         foreach ($attrs as $attr) {
             if ($field->$attr != $this->$attr) {
                 return true;
             }
         }
-
         return false;
     }
 }
