@@ -223,5 +223,14 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      *
      * @return string
      */
+    public function quote(string $string);
+
+    /**
+     * Return a quoted string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
     public function quoteBinary(string $string);
 }
