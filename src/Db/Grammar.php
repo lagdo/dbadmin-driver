@@ -18,6 +18,8 @@ use function is_string;
 use function trim;
 use function rtrim;
 use function intval;
+use function implode;
+use function array_map;
 
 abstract class Grammar implements GrammarInterface
 {
@@ -84,28 +86,45 @@ abstract class Grammar implements GrammarInterface
     }
 
     /**
+     * @param ForeignKeyEntity $foreignKey
+     *
+     * @return array
+     */
+    private function fkFields(ForeignKeyEntity $foreignKey)
+    {
+        $escape = function ($idf) { return $this->escapeId($idf); };
+        return [
+            implode(', ', array_map($escape, $foreignKey->source)),
+            implode(', ', array_map($escape, $foreignKey->target)),
+        ];
+    }
+
+    /**
+     * @param ForeignKeyEntity $foreignKey
+     *
+     * @return string
+     */
+    private function fkTablePrefix(ForeignKeyEntity $foreignKey)
+    {
+        $prefix = '';
+        if ($foreignKey->database !== '' && $foreignKey->database !== $this->driver->database()) {
+            $prefix .= $this->escapeId($foreignKey->database) . '.';
+        }
+        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->driver->schema()) {
+            $prefix .= $this->escapeId($foreignKey->schema) . '.';
+        }
+        return $prefix;
+    }
+
+    /**
      * @inheritDoc
      */
     public function formatForeignKey(ForeignKeyEntity $foreignKey)
     {
-        $database = $foreignKey->database;
-        $schema = $foreignKey->schema;
+        [$sources, $targets] = $this->fkFields($foreignKey);
         $onActions = $this->driver->actions();
-        $sources = implode(', ', array_map(function ($idf) {
-            return $this->escapeId($idf);
-        }, $foreignKey->source));
-        $targets = implode(', ', array_map(function ($idf) {
-            return $this->escapeId($idf);
-        }, $foreignKey->target));
-
-        $query = " FOREIGN KEY ($sources) REFERENCES ";
-        if ($database != '' && $database != $this->driver->database()) {
-            $query .= $this->escapeId($database) . '.';
-        }
-        if ($schema != '' && $schema != $this->driver->schema()) {
-            $query .= $this->escapeId($schema) . '.';
-        }
-        $query .= $this->table($foreignKey->table) . " ($targets)";
+        $query = " FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
+            $this->table($foreignKey->table) . " ($targets)";
         if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
             $query .= " ON DELETE {$foreignKey->onDelete}";
         }
@@ -191,20 +210,6 @@ abstract class Grammar implements GrammarInterface
     }
 
     /**
-     * @param QueryEntity $queryEntity
-     * @param string $found
-     * @param array $match
-     *
-     * @return bool
-     */
-    private function notQuery(QueryEntity $queryEntity, string $found, array &$match)
-    {
-        return preg_match('(' . ($found == '/*' ? '\*/' : ($found == '[' ? ']' :
-            (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\."))) . '|$)s',
-            $queryEntity->queries, $match, PREG_OFFSET_CAPTURE, $queryEntity->offset) > 0;
-    }
-
-    /**
      * Return the regular expression for queries
      *
      * @return string
@@ -219,6 +224,40 @@ abstract class Grammar implements GrammarInterface
     //         ($this->driver->jush() == "pgsql" ? '|\$[^$]*\$' : '');
     //     return "\\s*|$parse";
     // }
+
+    /**
+     * @param QueryEntity $queryEntity
+     * @param string $found
+     * @param array $match
+     *
+     * @return bool
+     */
+    private function notQuery(QueryEntity $queryEntity, string $found, array &$match)
+    {
+        return preg_match('(' . ($found == '/*' ? '\*/' : ($found == '[' ? ']' :
+            (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\."))) . '|$)s',
+            $queryEntity->queries, $match, PREG_OFFSET_CAPTURE, $queryEntity->offset) > 0;
+    }
+
+    /**
+     * @param QueryEntity $queryEntity
+     * @param string $found
+     *
+     * @return void
+     */
+    private function skipComments(QueryEntity $queryEntity, string $found)
+    {
+        // Find matching quote or comment end
+        $match = [];
+        while ($this->notQuery($queryEntity, $found, $match)) {
+            //! Respect sql_mode NO_BACKSLASH_ESCAPES
+            $s = $match[0][0];
+            $queryEntity->offset = $match[0][1] + strlen($s);
+            if ($s[0] != "\\") {
+                break;
+            }
+        }
+    }
 
     /**
      * @param QueryEntity $queryEntity
@@ -242,15 +281,7 @@ abstract class Grammar implements GrammarInterface
             return intval($pos);
         }
         // Find matching quote or comment end
-        $match = [];
-        while ($this->notQuery($queryEntity, $found, $match)) {
-            //! Respect sql_mode NO_BACKSLASH_ESCAPES
-            $s = $match[0][0];
-            $queryEntity->offset = $match[0][1] + strlen($s);
-            if ($s[0] != "\\") {
-                break;
-            }
-        }
+        $this->skipComments($queryEntity, $found);
         return 0;
     }
 
