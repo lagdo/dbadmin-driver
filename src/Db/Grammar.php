@@ -2,7 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
@@ -16,11 +15,14 @@ use function preg_quote;
 use function substr;
 use function strlen;
 use function is_string;
+use function trim;
 use function rtrim;
 use function intval;
 
 abstract class Grammar implements GrammarInterface
 {
+    use GrammarTrait;
+
     /**
      * @var DriverInterface
      */
@@ -56,23 +58,6 @@ abstract class Grammar implements GrammarInterface
         $this->util = $util;
         $this->trans = $trans;
         $this->connection = $connection;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function escapeId(string $idf)
-    {
-        return $idf;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function unescapeId(string $idf)
-    {
-        $last = substr($idf, -1);
-        return str_replace($last . $last, $last, substr($idf, 1, -1));
     }
 
     /**
@@ -157,22 +142,6 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function convertField(TableFieldEntity $field)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function unconvertField(TableFieldEntity $field, string $value)
-    {
-        return $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function convertFields(array $columns, array $fields, array $select = [])
     {
         $clause = '';
@@ -198,62 +167,6 @@ abstract class Grammar implements GrammarInterface
             ? 'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query"
             : 'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " . implode(', ', $groups) . ') x' : $query)
         );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function sqlForCreateTable(string $table, bool $autoIncrement, string $style)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function sqlForCreateIndex(string $table, string $type, string $name, string $columns)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function sqlForUseDatabase(string $database)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function sqlForForeignKeys(string $table)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function sqlForTruncateTable(string $table)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function sqlForCreateTrigger(string $table)
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function autoIncrement()
-    {
-        return '';
     }
 
     /**
@@ -284,7 +197,7 @@ abstract class Grammar implements GrammarInterface
     {
         return preg_match('(' . ($found == '/*' ? '\*/' : ($found == '[' ? ']' :
             (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\."))) . '|$)s',
-            $queryEntity->queries, $match, PREG_OFFSET_CAPTURE, $queryEntity->offset);
+            $queryEntity->queries, $match, PREG_OFFSET_CAPTURE, $queryEntity->offset) > 0;
     }
 
     /**
@@ -317,7 +230,7 @@ abstract class Grammar implements GrammarInterface
         preg_match("($delimiter$parse)", $queryEntity->queries, $match,
             PREG_OFFSET_CAPTURE, $queryEntity->offset);
         [$found, $pos] = $match[0];
-        if (!is_string($found) && rtrim($queryEntity->queries) == '') {
+        if (!is_string($found) && $queryEntity->queries == '') {
             return -1;
         }
         $queryEntity->offset = $pos + strlen($found);
@@ -342,6 +255,7 @@ abstract class Grammar implements GrammarInterface
      */
     public function parseQueries(QueryEntity $queryEntity)
     {
+        $queryEntity->queries = trim($queryEntity->queries);
         while ($queryEntity->queries !== '') {
             if ($this->setDelimiter($queryEntity)) {
                 continue;

@@ -15,6 +15,7 @@ use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
 abstract class Driver implements DriverInterface
 {
+    use ErrorTrait;
     use ConfigTrait;
     use ServerTrait;
     use TableTrait;
@@ -81,20 +82,6 @@ abstract class Driver implements DriverInterface
      * @var int
      */
     protected $start = 0;
-
-    /**
-     * The last error code
-     *
-     * @var int
-     */
-    protected $errno = 0;
-
-    /**
-     * The last error message
-     *
-     * @var string
-     */
-    protected $error = '';
 
     /**
      * The constructor
@@ -196,62 +183,6 @@ abstract class Driver implements DriverInterface
             return 'SET NAMES ' . $this->charset() . ";\n\n";
         }
         return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setError(string $error = '')
-    {
-        $this->error = $error;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function error()
-    {
-        return $this->error;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasError()
-    {
-        return $this->error !== '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setErrno($errno)
-    {
-        $this->errno = $errno;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function errno()
-    {
-        return $this->errno;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasErrno()
-    {
-        return $this->errno !== 0;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function errorMessage()
-    {
-        return $this->hasErrno() ? '(' . $this->errno() . '): ' . $this->error() : $this->error();
     }
 
     /**
