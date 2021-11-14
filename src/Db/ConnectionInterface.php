@@ -94,7 +94,7 @@ interface ConnectionInterface
     /**
      * Get the result saved by the multiQuery() method
      *
-     * @return StatementInterface|null
+     * @return StatementInterface|bool
      */
     public function storedResult();
 

@@ -94,7 +94,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function countRowsSql(string $table, array $where, bool $isGroup, array $groups);
+    public function sqlForRowCount(string $table, array $where, bool $isGroup, array $groups);
 
     /**
      * Get default value clause

@@ -122,9 +122,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function countRowsSql(string $table, array $where, bool $isGroup, array $groups)
+    public function sqlForRowCount(string $table, array $where, bool $isGroup, array $groups)
     {
-        return $this->grammar->countRowsSql($table, $where, $isGroup, $groups);
+        return $this->grammar->sqlForRowCount($table, $where, $isGroup, $groups);
     }
 
     /**

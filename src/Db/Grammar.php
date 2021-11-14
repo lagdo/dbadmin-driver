@@ -160,12 +160,16 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function countRowsSql(string $table, array $where, bool $isGroup, array $groups)
+    public function sqlForRowCount(string $table, array $where, bool $isGroup, array $groups)
     {
-        $query = ' FROM ' . $this->table($table) . ($where ? ' WHERE ' . implode(' AND ', $where) : '');
-        return ($isGroup && ($this->driver->jush() == 'sql' || count($groups) == 1)
-            ? 'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query"
-            : 'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " . implode(', ', $groups) . ') x' : $query)
+        $query = ' FROM ' . $this->table($table);
+        if (!empty($where)) {
+            $query .= ' WHERE ' . implode(' AND ', $where);
+        }
+        return ($isGroup && ($this->driver->jush() == 'sql' || count($groups) == 1) ?
+            'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query" :
+            'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " .
+            implode(', ', $groups) . ') x' : $query)
         );
     }
 
