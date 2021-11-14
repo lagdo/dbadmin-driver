@@ -5,6 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
+use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
 interface GrammarInterface
 {
@@ -73,6 +74,15 @@ interface GrammarInterface
      * @return string
      */
     public function buildSelectQuery(TableSelectEntity $select);
+
+    /**
+     * Parse a string containing SQL queries
+     *
+     * @param QueryEntity $queryEntity
+     *
+     * @return bool
+     */
+    public function parseQueries(QueryEntity $queryEntity);
 
     /**
      * Get query to compute number of found rows

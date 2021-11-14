@@ -9,6 +9,7 @@ use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
+use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
 trait GrammarTrait
 {
@@ -97,6 +98,18 @@ trait GrammarTrait
     public function buildSelectQuery(TableSelectEntity $select)
     {
         return $this->grammar->buildSelectQuery($select);
+    }
+
+    /**
+     * Parse a string containing SQL queries
+     *
+     * @param QueryEntity $queryEntity
+     *
+     * @return bool
+     */
+    public function parseQueries(QueryEntity $queryEntity)
+    {
+        return $this->grammar->parseQueries($queryEntity);
     }
 
     /**
