@@ -249,6 +249,14 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
+    public function errorMessage()
+    {
+        return $this->hasErrno() ? '(' . $this->errno() . '): ' . $this->error() : $this->error();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function execute(string $query)
     {
         if (!$this->start) {

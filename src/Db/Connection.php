@@ -162,4 +162,25 @@ abstract class Connection implements ConnectionInterface
     {
         return;
     }
+
+    /**
+     * Return the regular expression for spaces
+     *
+     * @return string
+     */
+    protected function spaceRegex()
+    {
+        return "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execUseQuery(string $query)
+    {
+        $space = $this->spaceRegex();
+        if (\preg_match("~^$space*+USE\\b~i", $query)) {
+            $this->query($query);
+        }
+    }
 }

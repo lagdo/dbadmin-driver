@@ -83,6 +83,15 @@ interface ConnectionInterface
     public function multiQuery(string $query);
 
     /**
+     * Execute a query if it is of type "USE".
+     *
+     * @param string $query
+     *
+     * @return bool
+     */
+    public function execUseQuery(string $query);
+
+    /**
      * Get the result saved by the multiQuery() method
      *
      * @return StatementInterface|null

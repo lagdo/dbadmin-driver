@@ -142,6 +142,13 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
     public function hasErrno();
 
     /**
+     * Get the full error message
+     *
+     * @return string
+     */
+    public function errorMessage();
+
+    /**
      * Get the number of rows affected by the last query
      *
      * @return integer
