@@ -180,7 +180,7 @@ abstract class Connection implements ConnectionInterface
     {
         $space = $this->spaceRegex();
         if (\preg_match("~^$space*+USE\\b~i", $query)) {
-            $this->query($query);
+            $this->driver->execute($query);
         }
     }
 }

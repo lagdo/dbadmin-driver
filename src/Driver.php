@@ -13,6 +13,10 @@ use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
+use function preg_match;
+use function version_compare;
+use function is_object;
+
 abstract class Driver implements DriverInterface
 {
     use ErrorTrait;
@@ -70,18 +74,9 @@ abstract class Driver implements DriverInterface
     protected $config;
 
     /**
-     * Executed queries
-     *
-     * @var array
+     * @var History
      */
-    protected $queries = [];
-
-    /**
-     * Query start timestamp
-     *
-     * @var int
-     */
-    protected $start = 0;
+    protected $history;
 
     /**
      * The constructor
@@ -96,6 +91,7 @@ abstract class Driver implements DriverInterface
         $this->util->setDriver($this);
         $this->trans = $trans;
         $this->config = new ConfigEntity($options);
+        $this->history = new History($trans);
         $this->initConfig();
         $this->createConnection();
     }
@@ -109,6 +105,7 @@ abstract class Driver implements DriverInterface
 
     /**
      * @inheritDoc
+     * @throws AuthException
      */
     public function connect(string $database, string $schema)
     {
@@ -190,10 +187,7 @@ abstract class Driver implements DriverInterface
      */
     public function execute(string $query)
     {
-        if (!$this->start) {
-            $this->start = intval(microtime(true));
-        }
-        $this->queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
+        $this->history->save($query);
         return $this->connection->query($query);
     }
 
@@ -202,7 +196,7 @@ abstract class Driver implements DriverInterface
      */
     public function queries()
     {
-        return [implode("\n", $this->queries), $this->trans->formatTime($this->start)];
+        return $this->history->queries();
     }
 
     /**

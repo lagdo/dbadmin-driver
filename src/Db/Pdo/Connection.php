@@ -76,7 +76,7 @@ abstract class Connection extends AbstractConnection
      */
     public function multiQuery(string $query)
     {
-        $this->statement = $this->query($query);
+        $this->statement = $this->driver->execute($query);
         return $this->statement !== false;
     }
 
@@ -115,7 +115,7 @@ abstract class Connection extends AbstractConnection
         if ($field < 0) {
             $field = $this->defaultField();
         }
-        if (!($statement = $this->query($query))) {
+        if (!($statement = $this->driver->execute($query))) {
             return null;
         }
         if (!($row = $statement->fetch())) {

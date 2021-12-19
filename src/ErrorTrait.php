@@ -45,7 +45,7 @@ trait ErrorTrait
     /**
      * @inheritDoc
      */
-    public function setErrno($errno)
+    public function setErrno(int $errno)
     {
         $this->errno = $errno;
     }
