@@ -25,29 +25,29 @@ interface UtilInterface
     /**
      * Escape for HTML
      *
-     * @param string $string
+     * @param string|null $string
      *
      * @return string
      */
-    public function html(?string $string);
+    public function html($string);
 
     /**
      * Remove non-digits from a string
      *
-     * @param string $val
+     * @param string $value
      *
      * @return string
      */
-    public function number(string $val);
+    public function number(string $value);
 
     /**
      * Check if the string is in UTF-8
      *
-     * @param string $val
+     * @param string $value
      *
      * @return bool
      */
-    public function isUtf8(string $val);
+    public function isUtf8(string $value);
 
     /**
      * Get INI boolean value
