@@ -223,7 +223,7 @@ abstract class Driver implements DriverInterface
     public function values(string $query, $column = 0)
     {
         $values = [];
-        $statement = $this->connection->query($query);
+        $statement = $this->execute($query);
         if (is_object($statement)) {
             while ($row = $statement->fetchRow()) {
                 $values[] = $row[$column];
@@ -241,6 +241,7 @@ abstract class Driver implements DriverInterface
             $connection = $this->connection;
         }
         $values = [];
+        $this->history->save($query);
         $statement = $connection->query($query);
         if (is_object($statement)) {
             while ($row = $statement->fetchRow()) {
@@ -262,6 +263,7 @@ abstract class Driver implements DriverInterface
         if (!$connection) {
             $connection = $this->connection;
         }
+        $this->history->save($query);
         $statement = $connection->query($query);
         if (!is_object($statement)) { // can return true
             return [];
