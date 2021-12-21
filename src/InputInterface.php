@@ -9,68 +9,64 @@ interface InputInterface
      *
      * @return string
      */
-    public function getTable();
+    public function getTable(): string;
 
     /**
      * Return true if a table was defined
      *
      * @return bool
      */
-    public function hasTable();
+    public function hasTable(): bool;
 
     /**
      * Get the select query fields
      *
      * @return array
      */
-    public function getSelect();
+    public function getSelect(): array;
 
     /**
      * Get the query filters
      *
      * @return array
      */
-    public function getWhere();
+    public function getWhere(): array;
 
     /**
      * Get the query limit
      *
      * @return int
      */
-    public function getLimit();
+    public function getLimit(): int;
 
     /**
      * Get the query fields
      *
      * @return array
      */
-    public function getFields();
+    public function getFields(): array;
 
     /**
      * Get the auto increment step
      *
      * @return string
      */
-    public function getAutoIncrementStep();
+    public function getAutoIncrementStep(): string;
 
     /**
      * Get the auto increment field
      *
      * @return string
      */
-    public function getAutoIncrementField();
+    public function getAutoIncrementField(): string;
 
     /**
-     * Get the ??
-     *
      * @return array
      */
-    public function getChecks();
+    public function getChecks(): array;
 
     /**
-     * Get the ??
-     *
      * @return bool
      */
-    public function getOverwrite();
+    public function getOverwrite(): bool;
 }

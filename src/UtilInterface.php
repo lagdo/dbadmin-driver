@@ -2,10 +2,15 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-
 interface UtilInterface
 {
+    /**
+     * Name in title and navigation
+     *
+     * @return string
+     */
+    public function name(): string;
+
     /**
      * Set the driver
      *
@@ -20,7 +25,7 @@ interface UtilInterface
      *
      * @return InputInterface
      */
-    public function input();
+    public function input(): InputInterface;
 
     /**
      * Escape for HTML
@@ -29,7 +34,7 @@ interface UtilInterface
      *
      * @return string
      */
-    public function html($string);
+    public function html($string): string;
 
     /**
      * Remove non-digits from a string
@@ -38,7 +43,7 @@ interface UtilInterface
      *
      * @return string
      */
-    public function number(string $value);
+    public function number(string $value): string;
 
     /**
      * Check if the string is in UTF-8
@@ -47,40 +52,5 @@ interface UtilInterface
      *
      * @return bool
      */
-    public function isUtf8(string $value);
-
-    /**
-     * Get INI boolean value
-     *
-     * @param string $ini
-     *
-     * @return bool
-     */
-    public function iniBool(string $ini);
-
-    /**
-     * Convert \n to <br>
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public function convertEolToHtml(string $string);
-
-    /**
-     * Compute fields() from input edit data
-     *
-     * @return array
-     */
-    public function getFieldsFromEdit();
-
-    /**
-     * Create SQL string from field
-     *
-     * @param TableFieldEntity $field Basic field information
-     * @param TableFieldEntity $typeField Information about field type
-     *
-     * @return array
-     */
-    public function processField(TableFieldEntity $field, TableFieldEntity $typeField);
+    public function isUtf8(string $value): bool;
 }
