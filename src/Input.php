@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-class Input implements InputInterface
+class Input
 {
     /**
      * @var string
@@ -13,6 +13,16 @@ class Input implements InputInterface
      * @var array
      */
     public $values = [];
+
+    /**
+     * Set the input values
+     *
+     * @param array $values
+     */
+    public function setValues(array $values)
+    {
+        $this->values = $values;
+    }
 
     /**
      * @inheritDoc

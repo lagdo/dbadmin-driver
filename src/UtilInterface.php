@@ -23,9 +23,9 @@ interface UtilInterface
     /**
      * Get the request inputs
      *
-     * @return InputInterface
+     * @return Input
      */
-    public function input(): InputInterface;
+    public function input(): Input;
 
     /**
      * Escape for HTML

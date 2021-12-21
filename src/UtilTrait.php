@@ -20,7 +20,7 @@ trait UtilTrait
     protected $trans;
 
     /**
-     * @var InputInterface
+     * @var Input
      */
     public $input;
 
@@ -39,7 +39,7 @@ trait UtilTrait
     /**
      * @inheritDoc
      */
-    public function input(): InputInterface
+    public function input(): Input
     {
         return $this->input;
     }
