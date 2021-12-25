@@ -53,4 +53,15 @@ interface UtilInterface
      * @return bool
      */
     public function isUtf8(string $value): bool;
+
+    /**
+     * Shorten UTF-8 string
+     *
+     * @param string $string
+     * @param int $length
+     * @param string $suffix
+     *
+     * @return string
+     */
+    public function shortenUtf8(string $string, int $length = 80, string $suffix = ''): string;
 }
