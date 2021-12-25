@@ -13,7 +13,7 @@ interface TranslatorInterface
      *
      * @return string
      */
-    public function lang(string $idf, $number = null);
+    public function lang(string $idf, $number = null): string;
 
     /**
      * Format a decimal number
@@ -22,7 +22,7 @@ interface TranslatorInterface
      *
      * @return string
      */
-    public function formatNumber(int $number);
+    public function formatNumber(int $number): string;
 
     /**
      * Format elapsed time
@@ -31,5 +31,5 @@ interface TranslatorInterface
      *
      * @return string
      */
-    public function formatTime(float $time);
+    public function formatTime(float $time): string;
 }

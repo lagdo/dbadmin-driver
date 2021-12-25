@@ -26,7 +26,7 @@ interface QueryInterface
      *
      * @param string $table
      * @param array $select Result of processSelectColumns()[0]
-     * @param array $where Result of processSelectSearch()
+     * @param array $where Result of processSelectWhere()
      * @param array $group Result of processSelectColumns()[1]
      * @param array $order Result of processSelectOrder()
      * @param int $limit Result of processSelectLimit()
