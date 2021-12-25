@@ -115,6 +115,17 @@ interface ServerInterface
     public function processes();
 
     /**
+     * Get a process attribute
+     *
+     * @param array $process
+     * @param string $key
+     * @param string $val
+     *
+     * @return string
+     */
+    public function processAttr(array $process, string $key, string $val): string;
+
+    /**
      * Kill a process
      *
      * @param int

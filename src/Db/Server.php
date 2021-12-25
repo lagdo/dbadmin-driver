@@ -114,4 +114,12 @@ abstract class Server implements ServerInterface
     {
         return [];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function processAttr(array $process, string $key, string $val): string
+    {
+        return $this->util->html($val);
+    }
 }

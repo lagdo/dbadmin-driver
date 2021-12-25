@@ -167,6 +167,20 @@ trait ServerTrait
     }
 
     /**
+     * Get a process name
+     *
+     * @param array $process
+     * @param string $key
+     * @param string $val
+     *
+     * @return string
+     */
+    public function processAttr(array $process, string $key, string $val): string
+    {
+        return $this->server->processAttr($process, $key, $val);
+    }
+
+    /**
      * Kill a process
      *
      * @param int
