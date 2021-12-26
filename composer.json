@@ -19,10 +19,5 @@
         "psr-4": {
             "Lagdo\\DbAdmin\\Driver\\": "src/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Lagdo\\DbAdmin\\Driver\\Tests\\": "tests/"
-        }
     }
 }
