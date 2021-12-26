@@ -4,6 +4,12 @@ namespace Lagdo\DbAdmin\Driver\Entity;
 
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
+use function trim;
+use function array_keys;
+use function array_merge;
+use function array_key_exists;
+use function explode;
+
 class ConfigEntity
 {
     /**
@@ -136,7 +142,7 @@ class ConfigEntity
         if (!($name = trim($name))) {
             return $this->options;
         }
-        if (\array_key_exists($name, $this->options)) {
+        if (array_key_exists($name, $this->options)) {
             return $this->options[$name];
         }
         if ($name === 'server') {
@@ -160,6 +166,6 @@ class ConfigEntity
      */
     public function onActions()
     {
-        return \explode('|', $this->onActions);
+        return explode('|', $this->onActions);
     }
 }
