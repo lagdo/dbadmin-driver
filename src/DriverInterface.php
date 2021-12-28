@@ -52,11 +52,10 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      *
      * @param string $version required version
      * @param string $mariaDb required MariaDB version
-     * @param ConnectionInterface|null $connection
      *
      * @return bool
      */
-    public function minVersion(string $version, string $mariaDb = "", ConnectionInterface $connection = null);
+    public function minVersion(string $version, string $mariaDb = '');
 
     /**
      * Get connection charset
@@ -183,16 +182,6 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
     public function applyQueries(string $query, array $tables, $escape = null);
 
     /**
-     * Get list of values from database
-     *
-     * @param string $query
-     * @param string|int $column
-     *
-     * @return array
-     */
-    public function values(string $query, $column = 0);
-
-    /**
      * Convert value returned by database to actual value
      *
      * @param string|resource|null $value
@@ -203,25 +192,44 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
     public function value($value, TableFieldEntity $field);
 
     /**
-     * Get keys from first column and values from second
+     * Get list of values from database
      *
      * @param string $query
-     * @param ConnectionInterface $connection
-     * @param bool $setKeys
+     * @param int $column
      *
      * @return array
      */
-    public function keyValues(string $query, ConnectionInterface $connection = null, bool $setKeys = true);
+    public function values(string $query, int $column = 0);
+
+    /**
+     * Get list of values from database
+     *
+     * @param string $query
+     * @param string $column
+     *
+     * @return array
+     */
+    public function colValues(string $query, string $column);
+
+    /**
+     * Get keys from first column and values from second
+     *
+     * @param string $query
+     * @param int $keyColumn
+     * @param int $valueColumn
+     *
+     * @return array
+     */
+    public function keyValues(string $query, int $keyColumn = 0, int $valueColumn = 1);
 
     /**
      * Get all rows of result
      *
      * @param string $query
-     * @param ConnectionInterface $connection
      *
      * @return array
      */
-    public function rows(string $query, ConnectionInterface $connection = null);
+    public function rows(string $query);
 
     /**
      * Return a quoted string

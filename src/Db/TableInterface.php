@@ -76,11 +76,10 @@ interface TableInterface
      * Get table indexes
      *
      * @param string $table
-     * @param ConnectionInterface  $connection
      *
      * @return array
      */
-    public function indexes(string $table, ConnectionInterface $connection = null);
+    public function indexes(string $table);
 
     /**
      * Get foreign keys in table

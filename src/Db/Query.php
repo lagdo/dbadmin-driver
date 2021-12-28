@@ -35,25 +35,17 @@ abstract class Query implements QueryInterface
     protected $trans;
 
     /**
-     * @var ConnectionInterface
-     */
-    protected $connection;
-
-    /**
      * The constructor
      *
      * @param DriverInterface $driver
      * @param UtilInterface $util
      * @param TranslatorInterface $trans
-     * @param ConnectionInterface $connection
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util,
-        TranslatorInterface $trans, ConnectionInterface $connection)
+    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans)
     {
         $this->driver = $driver;
         $this->util = $util;
         $this->trans = $trans;
-        $this->connection = $connection;
     }
 
     /**
@@ -84,7 +76,7 @@ abstract class Query implements QueryInterface
         $entity = new TableSelectEntity($table, $select, $where, $group, $order, $limit, $page);
         $query = $this->driver->buildSelectQuery($entity);
         // $this->start = intval(microtime(true));
-        return $this->connection->query($query);
+        return $this->driver->query($query);
     }
 
     /**

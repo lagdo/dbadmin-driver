@@ -100,13 +100,12 @@ trait TableTrait
      * Get table indexes
      *
      * @param string $table
-     * @param ConnectionInterface $connection
      *
      * @return array
      */
-    public function indexes(string $table, ConnectionInterface $connection = null)
+    public function indexes(string $table)
     {
-        return $this->table->indexes($table, $connection);
+        return $this->table->indexes($table);
     }
 
     /**

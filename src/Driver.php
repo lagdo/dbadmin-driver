@@ -69,6 +69,11 @@ abstract class Driver implements DriverInterface
     protected $connection;
 
     /**
+     * @var ConnectionInterface
+     */
+    protected $mainConnection;
+
+    /**
      * @var ConfigEntity
      */
     protected $config;
@@ -94,6 +99,28 @@ abstract class Driver implements DriverInterface
         $this->history = new History($trans);
         $this->initConfig();
         $this->createConnection();
+        // Set the current connection as the main connection.
+        $this->mainConnection = $this->connection;
+    }
+
+    /**
+     * @param ConnectionInterface $connection
+     *
+     * @return Driver
+     */
+    public function useConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    /**
+     * @return Driver
+     */
+    public function useMainConnection()
+    {
+        $this->connection = $this->mainConnection;
+        return $this;
     }
 
     /**
@@ -119,12 +146,9 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function minVersion(string $version, string $mariaDb = '', ConnectionInterface $connection = null)
+    public function minVersion(string $version, string $mariaDb = '')
     {
-        if (!$connection) {
-            $connection = $this->connection;
-        }
-        $info = $connection->serverInfo();
+        $info = $this->connection->serverInfo();
         if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
             $info = $match[1];
             $version = $mariaDb;
@@ -220,37 +244,15 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function values(string $query, $column = 0)
+    public function values(string $query, int $column = 0)
     {
-        $values = [];
         $statement = $this->execute($query);
-        if (is_object($statement)) {
-            while ($row = $statement->fetchRow()) {
-                $values[] = $row[$column];
-            }
-        }
-        return $values;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function keyValues(string $query, ConnectionInterface $connection = null, bool $setKeys = true)
-    {
-        if (!is_object($connection)) {
-            $connection = $this->connection;
+        if (!is_object($statement)) {
+            return [];
         }
         $values = [];
-        $this->history->save($query);
-        $statement = $connection->query($query);
-        if (is_object($statement)) {
-            while ($row = $statement->fetchRow()) {
-                if ($setKeys) {
-                    $values[$row[0]] = $row[1];
-                } else {
-                    $values[] = $row[0];
-                }
-            }
+        while ($row = $statement->fetchRow()) {
+            $values[] = $row[$column];
         }
         return $values;
     }
@@ -258,13 +260,41 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function rows(string $query, ConnectionInterface $connection = null)
+    public function colValues(string $query, string $column)
     {
-        if (!$connection) {
-            $connection = $this->connection;
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
         }
-        $this->history->save($query);
-        $statement = $connection->query($query);
+        $values = [];
+        while ($row = $statement->fetchAssoc()) {
+            $values[] = $row[$column];
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function keyValues(string $query, int $keyColumn = 0, int $valueColumn = 1)
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            $values[$row[$keyColumn]] = $row[$valueColumn];
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rows(string $query)
+    {
+        $statement = $this->execute($query);
         if (!is_object($statement)) { // can return true
             return [];
         }
