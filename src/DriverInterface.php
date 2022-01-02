@@ -95,6 +95,16 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
     public function setUtf8mb4(string $create);
 
     /**
+     * Execute a query on the current database and fetch the specified field
+     *
+     * @param string $query
+     * @param int $field
+     *
+     * @return mixed
+     */
+    public function result(string $query, int $field = -1);
+
+    /**
      * Set the error message
      *
      * @param string $error
