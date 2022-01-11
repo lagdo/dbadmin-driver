@@ -134,10 +134,11 @@ class ConfigEntity
      * Get the driver options
      *
      * @param string $name The option name
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function options(string $name = '')
+    public function options(string $name = '', $default = '')
     {
         if (!($name = trim($name))) {
             return $this->options;
@@ -158,7 +159,7 @@ class ConfigEntity
         //     return false; // No SSL options yet
         // }
         // Option not found
-        return '';
+        return $default;
     }
 
     /**
