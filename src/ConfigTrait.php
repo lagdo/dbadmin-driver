@@ -115,12 +115,13 @@ trait ConfigTrait
      * Get the driver options
      *
      * @param string $name The option name
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function options(string $name = '')
+    public function options(string $name = '', $default = '')
     {
-        return $this->config->options($name);
+        return $this->config->options($name, $default);
     }
 
     /**
