@@ -58,7 +58,7 @@ interface ServerInterface
     public function isInformationSchema(string $database);
 
     /**
-     * Create database
+     * Create a database
      *
      * @param string $database
      * @param string $collation
@@ -68,13 +68,13 @@ interface ServerInterface
     public function createDatabase(string $database, string $collation) ;
 
     /**
-     * Drop databases
+     * Drop a database
      *
-     * @param array $databases
+     * @param string $database
      *
      * @return bool
      */
-    public function dropDatabases(array $databases);
+    public function dropDatabase(string $database);
 
     /**
      * Rename database from DB

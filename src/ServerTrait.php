@@ -76,7 +76,7 @@ trait ServerTrait
     }
 
     /**
-     * Create database
+     * Create a database
      *
      * @param string $database
      * @param string $collation
@@ -89,15 +89,15 @@ trait ServerTrait
     }
 
     /**
-     * Drop databases
+     * Drop a database
      *
-     * @param array $databases
+     * @param string $database
      *
      * @return bool
      */
-    public function dropDatabases(array $databases)
+    public function dropDatabase(string $database)
     {
-        return $this->server->dropDatabases($databases);
+        return $this->server->dropDatabase($database);
     }
 
     /**
