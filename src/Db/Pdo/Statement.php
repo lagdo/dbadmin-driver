@@ -4,7 +4,6 @@ namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
-
 use PDOStatement;
 use PDO;
 

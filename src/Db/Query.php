@@ -5,17 +5,12 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use function implode;
 use function array_keys;
-use function intval;
-use function microtime;
-use function is_object;
-use function preg_replace;
 
 abstract class Query implements QueryInterface
 {

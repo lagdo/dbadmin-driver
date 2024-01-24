@@ -2,12 +2,11 @@
 
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
+use Exception;
 use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
 use Lagdo\DbAdmin\Driver\Db\Pdo\Statement;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
-
 use PDO;
-use Exception;
 
 use function count;
 
@@ -118,7 +117,7 @@ abstract class Connection extends AbstractConnection
         if (!($statement = $this->driver->execute($query))) {
             return null;
         }
-        if (!($row = $statement->fetch())) {
+        if (!($row = $statement->fetchRow())) {
             return null;
         }
         return count($row) > $field ? $row[$field] : null;

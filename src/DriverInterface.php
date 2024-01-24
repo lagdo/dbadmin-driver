@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Exception;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
@@ -11,7 +12,7 @@ use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
-interface DriverInterface extends ConfigInterface, ServerInterface,
+interface DriverInterface extends ConfigInterface, ConnectionInterface, ServerInterface,
     DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
 {
     /**
@@ -258,4 +259,36 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      * @return string
      */
     public function quoteBinary(string $string);
+
+    /**
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    public function removeDefiner(string $query): string;
+
+    /**
+     * Execute query
+     *
+     * @param string $query
+     * @param bool $execute
+     * @param bool $failed
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function executeQuery(string $query, bool $execute = true,
+        bool $failed = false/*, string $time = ''*/): bool;
+
+    /**
+     * Create SQL condition from parsed query string
+     *
+     * @param array $where Parsed query string
+     * @param array $fields
+     *
+     * @return string
+     */
+    public function where(array $where, array $fields = []): string;
 }

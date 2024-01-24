@@ -2,13 +2,9 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
+use Exception;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
-
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 trait DatabaseTrait
 {
@@ -145,6 +141,46 @@ trait DatabaseTrait
     public function copyTables(array $tables, array $views, string $target)
     {
         return $this->database->copyTables($tables, $views, $target);
+    }
+
+    /**
+     * Create a view
+     *
+     * @param array $values The view values
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function createView(array $values)
+    {
+        return $this->database->createView($values);
+    }
+
+    /**
+     * Update a view
+     *
+     * @param string $view The view name
+     * @param array $values The view values
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function updateView(string $view, array $values): string
+    {
+        return $this->database->updateView($view, $values);
+    }
+
+    /**
+     * Drop a view
+     *
+     * @param string $view The view name
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function dropView(string $view): bool
+    {
+        return $this->database->dropView($view);
     }
 
     /**

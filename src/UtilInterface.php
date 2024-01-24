@@ -64,4 +64,26 @@ interface UtilInterface
      * @return string
      */
     public function shortenUtf8(string $string, int $length = 80, string $suffix = ''): string;
+
+
+
+
+    /**
+     * Escape or unescape string to use inside form []
+     *
+     * @param string $idf
+     * @param bool $back
+     *
+     * @return string
+     */
+    public function bracketEscape(string $idf, bool $back = false): string;
+
+    /**
+     * Escape column key used in where()
+     *
+     * @param string
+     *
+     * @return string
+     */
+    public function escapeKey(string $key): string;
 }

@@ -2,10 +2,38 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
+use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 
 interface ServerInterface
 {
+    /**
+     * Get the users and hosts
+     *
+     * @param string $database  The database name
+     *
+     * @return array
+     */
+    public function getUsers(string $database): array;
+
+    /**
+     * Get the grants of a user on a given host
+     *
+     * @param string $user      The username
+     * @param string $host      The host name
+     *
+     * @return UserEntity
+     */
+    public function getUserGrants(string $user, string $host): UserEntity;
+
+    /**
+     * Get the user privileges
+     *
+     * @param UserEntity $user
+     *
+     * @return void
+     */
+    public function getUserPrivileges(UserEntity $user);
+
     /**
      * Get cached list of databases
      *

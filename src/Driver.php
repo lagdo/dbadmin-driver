@@ -2,31 +2,33 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
-
+use Exception;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
-
+use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
-use function preg_match;
-use function version_compare;
 use function is_object;
+use function preg_match;
+use function preg_replace;
+use function substr;
+use function strlen;
+use function version_compare;
 
 abstract class Driver implements DriverInterface
 {
     use ErrorTrait;
     use ConfigTrait;
+    use ConnectionTrait;
     use ServerTrait;
     use TableTrait;
     use DatabaseTrait;
     use QueryTrait;
     use GrammarTrait;
-    use ConnectionTrait;
 
     /**
      * @var UtilInterface
@@ -303,5 +305,97 @@ abstract class Driver implements DriverInterface
             $rows[] = $row;
         }
         return $rows;
+    }
+
+    /**
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    public function removeDefiner(string $query): string
+    {
+        return preg_replace('~^([A-Z =]+) DEFINER=`' .
+            preg_replace('~@(.*)~', '`@`(%|\1)', $this->user()) .
+            '`~', '\1', $query); //! proper escaping of user
+    }
+
+    /**
+     * Query printed after execution in the message
+     *
+     * @param string $query Executed query
+     *
+     * @return string
+     */
+    private function queryToLog(string $query/*, string $time*/): string
+    {
+        if (strlen($query) > 1e6) {
+            // [\x80-\xFF] - valid UTF-8, \n - can end by one-line comment
+            $query = preg_replace('~[\x80-\xFF]+$~', '', substr($query, 0, 1e6)) . "\n…";
+        }
+        return $query;
+    }
+
+    /**
+     * Execute query
+     *
+     * @param string $query
+     * @param bool $execute
+     * @param bool $failed
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function executeQuery(string $query, bool $execute = true,
+        bool $failed = false/*, string $time = ''*/): bool
+    {
+        if ($execute) {
+            // $start = microtime(true);
+            $failed = !$this->execute($query);
+            // $time = $this->trans->formatTime($start);
+        }
+        if ($failed) {
+            $sql = '';
+            if ($query) {
+                $sql = $this->queryToLog($query/*, $time*/);
+            }
+            throw new Exception($this->error() . $sql);
+        }
+        return true;
+    }
+
+    /**
+     * Create SQL condition from parsed query string
+     *
+     * @param array $where Parsed query string
+     * @param array $fields
+     *
+     * @return string
+     */
+    public function where(array $where, array $fields = []): string
+    {
+        $clauses = [];
+        $wheres = $where["where"] ?? [];
+        foreach ((array) $wheres as $key => $value) {
+            $key = $this->util->bracketEscape($key, 1); // 1 - back
+            $column = $this->util->escapeKey($key);
+            $clauses[] = $column .
+                // LIKE because of floats but slow with ints
+                ($this->jush() == "sql" && is_numeric($value) && preg_match('~\.~', $value) ? " LIKE " .
+                $this->quote($value) : ($this->jush() == "mssql" ? " LIKE " .
+                $this->quote(preg_replace('~[_%[]~', '[\0]', $value)) : " = " . // LIKE because of text
+                $this->unconvertField($fields[$key], $this->quote($value)))); //! enum and set
+            if ($this->jush() == "sql" &&
+                preg_match('~char|text~', $fields[$key]->type) && preg_match("~[^ -@]~", $value)) {
+                // not just [a-z] to catch non-ASCII characters
+                $clauses[] = "$column = " . $this->quote($value) . " COLLATE " . $this->charset() . "_bin";
+            }
+        }
+        $nulls = $where["null"] ?? [];
+        foreach ((array) $nulls as $key) {
+            $clauses[] = $this->util->escapeKey($key) . " IS NULL";
+        }
+        return implode(" AND ", $clauses);
     }
 }

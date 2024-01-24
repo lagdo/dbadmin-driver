@@ -2,9 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 trait ConnectionTrait

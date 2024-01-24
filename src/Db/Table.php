@@ -5,7 +5,6 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
-
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
 abstract class Table implements TableInterface

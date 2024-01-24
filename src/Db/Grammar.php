@@ -5,7 +5,6 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
-
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\UtilInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;

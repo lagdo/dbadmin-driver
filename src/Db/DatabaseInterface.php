@@ -2,10 +2,9 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Exception;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
-
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 
 interface DatabaseInterface
 {
@@ -110,6 +109,37 @@ interface DatabaseInterface
      * @return bool
      */
     public function copyTables(array $tables, array $views, string $target);
+
+    /**
+     * Create a view
+     *
+     * @param array $values The view values
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function createView(array $values);
+
+    /**
+     * Update a view
+     *
+     * @param string $view The view name
+     * @param array $values The view values
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function updateView(string $view, array $values): string;
+
+    /**
+     * Drop a view
+     *
+     * @param string $view The view name
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function dropView(string $view): bool;
 
     /**
      * Get user defined types

@@ -2,10 +2,47 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
+use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 
 trait ServerTrait
 {
+    /**
+     * Get the users and hosts
+     *
+     * @param string $database  The database name
+     *
+     * @return array
+     */
+    public function getUsers(string $database): array
+    {
+        return $this->server->getUsers($database);
+    }
+
+    /**
+     * Get the grants of a user on a given host
+     *
+     * @param string $user      The username
+     * @param string $host      The host name
+     *
+     * @return UserEntity
+     */
+    public function getUserGrants(string $user, string $host): UserEntity
+    {
+        return $this->server->getUserGrants($user, $host);
+    }
+
+    /**
+     * Get the user privileges
+     *
+     * @param UserEntity $user
+     *
+     * @return void
+     */
+    public function getUserPrivileges(UserEntity $user)
+    {
+        $this->server->getUserPrivileges($user);
+    }
+
     /**
      * Get cached list of databases
      *
