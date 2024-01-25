@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver;
 
 use Exception;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\DriverConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
@@ -12,8 +13,8 @@ use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
-interface DriverInterface extends ConfigInterface, ConnectionInterface, ServerInterface,
-    DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
+interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
+    ServerInterface, DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
 {
     /**
      * Get the driver name
