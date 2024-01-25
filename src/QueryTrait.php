@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Exception;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
@@ -125,6 +126,47 @@ trait QueryTrait
     public function slowQuery(string $query, int $timeout)
     {
         return $this->query->slowQuery($query, $timeout);
+    }
+
+    /**
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    public function removeDefiner(string $query): string
+    {
+        return $this->query->removeDefiner($query);
+    }
+
+    /**
+     * Execute query
+     *
+     * @param string $query
+     * @param bool $execute
+     * @param bool $failed
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function executeQuery(string $query, bool $execute = true,
+        bool $failed = false/*, string $time = ''*/): bool
+    {
+        return $this->query->executeQuery($query, $execute, $failed/*, $time*/);
+    }
+
+    /**
+     * Create SQL condition from parsed query string
+     *
+     * @param array $where Parsed query string
+     * @param array $fields
+     *
+     * @return string
+     */
+    public function where(array $where, array $fields = []): string
+    {
+        return $this->query->where($where, $fields);
     }
 
     /**

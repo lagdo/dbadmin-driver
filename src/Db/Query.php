@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Exception;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
@@ -11,6 +12,10 @@ use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use function implode;
 use function array_keys;
+use function preg_match;
+use function preg_replace;
+use function substr;
+use function strlen;
 
 abstract class Query implements QueryInterface
 {
@@ -159,5 +164,126 @@ abstract class Query implements QueryInterface
     public function view(string $name)
     {
         return [];
+    }
+
+    /**
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    public function removeDefiner(string $query): string
+    {
+        return preg_replace('~^([A-Z =]+) DEFINER=`' .
+            preg_replace('~@(.*)~', '`@`(%|\1)', $this->user()) .
+            '`~', '\1', $query); //! proper escaping of user
+    }
+
+    /**
+     * Query printed after execution in the message
+     *
+     * @param string $query Executed query
+     *
+     * @return string
+     */
+    private function queryToLog(string $query/*, string $time*/): string
+    {
+        if (strlen($query) > 1e6) {
+            // [\x80-\xFF] - valid UTF-8, \n - can end by one-line comment
+            $query = preg_replace('~[\x80-\xFF]+$~', '', substr($query, 0, 1e6)) . "\n…";
+        }
+        return $query;
+    }
+
+    /**
+     * Execute query
+     *
+     * @param string $query
+     * @param bool $execute
+     * @param bool $failed
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function executeQuery(string $query, bool $execute = true,
+        bool $failed = false/*, string $time = ''*/): bool
+    {
+        if ($execute) {
+            // $start = microtime(true);
+            $failed = !$this->driver->execute($query);
+            // $time = $this->trans->formatTime($start);
+        }
+        if ($failed) {
+            $sql = '';
+            if ($query) {
+                $sql = $this->queryToLog($query/*, $time*/);
+            }
+            throw new Exception($this->driver->error() . $sql);
+        }
+        return true;
+    }
+
+    /**
+     * @param TableFieldEntity $field
+     * @param string $column
+     * @param string $value
+     *
+     * @return string
+     */
+    private function getWhereColumnClause(TableFieldEntity $field, string $column, string $value): string
+    {
+        $bUseSqlLike = $this->driver->jush() === 'sql' && is_numeric($value) && preg_match('~\.~', $value);
+        return $column . ($bUseSqlLike ?
+            // LIKE because of floats but slow with ints
+            " LIKE " . $this->driver->quote($value) :
+            ($this->driver->jush() === 'mssql' ?
+                // LIKE because of text
+                " LIKE " . $this->driver->quote(preg_replace('~[_%[]~', '[\0]', $value)) :
+                //! enum and set
+                " = " . $this->driver->unconvertField($field, $this->driver->quote($value))));
+    }
+
+    /**
+     * @param TableFieldEntity $field
+     * @param string $column
+     * @param string $value
+     *
+     * @return string
+     */
+    private function getWhereCollateClause(TableFieldEntity $field, string $column, string $value): string
+    {
+        $bCollate = $this->driver->jush() === 'sql' &&
+            preg_match('~char|text~', $field->type) && preg_match("~[^ -@]~", $value);
+        return !$bCollate ? '' :
+            // not just [a-z] to catch non-ASCII characters
+            "$column = " . $this->driver->quote($value) . " COLLATE " . $this->driver->charset() . "_bin";
+    }
+
+    /**
+     * Create SQL condition from parsed query string
+     *
+     * @param array $where Parsed query string
+     * @param array<TableFieldEntity> $fields
+     *
+     * @return string
+     */
+    public function where(array $where, array $fields = []): string
+    {
+        $clauses = [];
+        $wheres = $where["where"] ?? [];
+        foreach ((array) $wheres as $key => $value) {
+            $key = $this->util->bracketEscape($key, 1); // 1 - back
+            $column = $this->util->escapeKey($key);
+            $clauses[] = $this->getWhereColumnClause($fields[$key], $column, $value);
+            if (($clause = $this->getWhereCollateClause($fields[$key], $column, $value))) {
+                $clauses[] = $clause;
+            }
+        }
+        $nulls = $where["null"] ?? [];
+        foreach ((array) $nulls as $key) {
+            $clauses[] = $this->util->escapeKey($key) . " IS NULL";
+        }
+        return implode(" AND ", $clauses);
     }
 }

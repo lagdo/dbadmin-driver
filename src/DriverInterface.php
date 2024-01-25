@@ -2,7 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Exception;
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\DriverConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
@@ -260,36 +259,4 @@ interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
      * @return string
      */
     public function quoteBinary(string $string);
-
-    /**
-     * Remove current user definer from SQL command
-     *
-     * @param string $query
-     *
-     * @return string
-     */
-    public function removeDefiner(string $query): string;
-
-    /**
-     * Execute query
-     *
-     * @param string $query
-     * @param bool $execute
-     * @param bool $failed
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function executeQuery(string $query, bool $execute = true,
-        bool $failed = false/*, string $time = ''*/): bool;
-
-    /**
-     * Create SQL condition from parsed query string
-     *
-     * @param array $where Parsed query string
-     * @param array $fields
-     *
-     * @return string
-     */
-    public function where(array $where, array $fields = []): string;
 }
