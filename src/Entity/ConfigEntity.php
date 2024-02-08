@@ -35,6 +35,11 @@ class ConfigEntity
     /**
      * @var array
      */
+    public $features = [];
+
+    /**
+     * @var array
+     */
     public $structuredTypes = [];
 
     /**
@@ -105,29 +110,35 @@ class ConfigEntity
     public $schema = '';
 
     /**
-     * Set the supported types
-     *
-     * @param array $types
-     * @param TranslatorInterface $trans
-     *
-     * @return void
+     * @var TranslatorInterface
      */
-    public function setTypes(array $types, TranslatorInterface $trans)
-    {
-        foreach ($types as $group => $_types) {
-            $this->structuredTypes[$trans->lang($group)] = array_keys($_types);
-            $this->types = array_merge($this->types, $_types);
-        }
-    }
+    public $trans;
 
     /**
      * The constructor
      *
+     * @param TranslatorInterface $trans
      * @param array $options
      */
-    public function __construct(array $options)
+    public function __construct(TranslatorInterface $trans, array $options)
     {
+        $this->trans = $trans;
         $this->options = $options;
+    }
+
+    /**
+     * Set the supported types
+     *
+     * @param array $types
+     *
+     * @return void
+     */
+    public function setTypes(array $types)
+    {
+        foreach ($types as $group => $_types) {
+            $this->structuredTypes[$this->trans->lang($group)] = array_keys($_types);
+            $this->types = array_merge($this->types, $_types);
+        }
     }
 
     /**

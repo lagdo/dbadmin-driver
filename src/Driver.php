@@ -93,9 +93,9 @@ abstract class Driver implements DriverInterface
         $this->util = $util;
         $this->util->setDriver($this);
         $this->trans = $trans;
-        $this->config = new ConfigEntity($options);
+        $this->config = new ConfigEntity($trans, $options);
         $this->history = new History($trans);
-        $this->initConfig();
+        $this->initDriver();
         $this->createConnection();
         // Set the current connection as the main connection.
         $this->mainConnection = $this->connection;
@@ -126,7 +126,15 @@ abstract class Driver implements DriverInterface
      *
      * @return void
      */
-    abstract protected function initConfig();
+    abstract protected function initDriver();
+
+    /**
+     * @inheritDoc
+     */
+    public function support(string $feature)
+    {
+        return !in_array($feature, $this->config->features);
+    }
 
     /**
      * @inheritDoc
