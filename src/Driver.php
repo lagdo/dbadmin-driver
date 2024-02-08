@@ -11,6 +11,7 @@ use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
+use function in_array;
 use function is_object;
 use function preg_match;
 use function version_compare;
@@ -133,7 +134,7 @@ abstract class Driver implements DriverInterface
      */
     public function support(string $feature)
     {
-        return !in_array($feature, $this->config->features);
+        return in_array($feature, $this->config->features);
     }
 
     /**
