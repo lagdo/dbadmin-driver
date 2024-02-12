@@ -96,11 +96,31 @@ abstract class Driver implements DriverInterface
         $this->trans = $trans;
         $this->config = new ConfigEntity($trans, $options);
         $this->history = new History($trans);
-        $this->initDriver();
-        $this->createConnection();
-        // Set the current connection as the main connection.
-        $this->mainConnection = $this->connection;
+        $this->initConfig();
+        // Create and set the main connection.
+        $this->mainConnection = $this->createConnection();
     }
+
+    /**
+     * Set driver config
+     *
+     * @return void
+     */
+    abstract protected function initConfig();
+
+    /**
+     * Set driver config
+     *
+     * @return void
+     */
+    abstract protected function postConnectConfig();
+
+    /**
+     * Create a connection to the server, based on the config and available packages
+     *
+     * @return ConnectionInterface|null
+     */
+    abstract protected function createConnection();
 
     /**
      * @param ConnectionInterface $connection
@@ -123,13 +143,6 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Set driver config
-     *
-     * @return void
-     */
-    abstract protected function initDriver();
-
-    /**
      * @inheritDoc
      */
     public function support(string $feature)
@@ -141,13 +154,26 @@ abstract class Driver implements DriverInterface
      * @inheritDoc
      * @throws AuthException
      */
-    public function connect(string $database, string $schema)
+    public function open(string $database, string $schema = '')
     {
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->error());
         }
         $this->config->database = $database;
         $this->config->schema = $schema;
+
+        $this->postConnectConfig();
+        return $this->connection;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws AuthException
+     */
+    public function connect(string $database, string $schema = '')
+    {
+        $this->createConnection();
+        return $this->open($database, $schema);
     }
 
     /**

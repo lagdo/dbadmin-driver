@@ -23,21 +23,24 @@ interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
     public function name();
 
     /**
-     * Create a connection to the server, based on the config and available packages
-     *
-     * @return ConnectionInterface|null
-     */
-    public function createConnection();
-
-    /**
      * Connect to a database and a schema
      *
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return void
+     * @return ConnectionInterface
      */
-    public function connect(string $database, string $schema);
+    public function open(string $database, string $schema = '');
+
+    /**
+     * Create a new connection to a database and a schema
+     *
+     * @param string $database  The database name
+     * @param string $schema    The database schema
+     *
+     * @return ConnectionInterface
+     */
+    public function connect(string $database, string $schema = '');
 
     /**
      * Check if a feature is supported
