@@ -96,7 +96,7 @@ abstract class Driver implements DriverInterface
         $this->trans = $trans;
         $this->config = new ConfigEntity($trans, $options);
         $this->history = new History($trans);
-        $this->initConfig();
+        $this->beforeConnectConfig();
         // Create and set the main connection.
         $this->mainConnection = $this->createConnection();
     }
@@ -106,14 +106,14 @@ abstract class Driver implements DriverInterface
      *
      * @return void
      */
-    abstract protected function initConfig();
+    abstract protected function beforeConnectConfig();
 
     /**
      * Set driver config
      *
      * @return void
      */
-    abstract protected function postConnectConfig();
+    abstract protected function afterConnectConfig();
 
     /**
      * Create a connection to the server, based on the config and available packages
@@ -162,7 +162,7 @@ abstract class Driver implements DriverInterface
         $this->config->database = $database;
         $this->config->schema = $schema;
 
-        $this->postConnectConfig();
+        $this->afterConnectConfig();
         return $this->connection;
     }
 
