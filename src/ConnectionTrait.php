@@ -32,11 +32,11 @@ trait ConnectionTrait
      *
      * @param string $charset
      *
-     * @return bool
+     * @return void
      */
     public function setCharset(string $charset)
     {
-        return $this->connection->setCharset($charset);
+        $this->connection->setCharset($charset);
     }
 
     /**

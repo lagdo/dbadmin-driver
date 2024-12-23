@@ -29,7 +29,7 @@ interface DriverConnectionInterface
      *
      * @param string $charset
      *
-     * @return bool
+     * @return void
      */
     public function setCharset(string $charset);
 
