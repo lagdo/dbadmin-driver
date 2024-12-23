@@ -6,7 +6,7 @@ use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 use Lagdo\DbAdmin\Driver\DriverInterface;
-use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\AdminInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use function preg_match;
@@ -30,9 +30,9 @@ abstract class Grammar implements GrammarInterface
     protected $driver;
 
     /**
-     * @var UtilInterface
+     * @var AdminInterface
      */
-    protected $util;
+    protected $admin;
 
     /**
      * @var TranslatorInterface
@@ -43,13 +43,13 @@ abstract class Grammar implements GrammarInterface
      * The constructor
      *
      * @param DriverInterface $driver
-     * @param UtilInterface $util
+     * @param AdminInterface $admin
      * @param TranslatorInterface $trans
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans)
+    public function __construct(DriverInterface $driver, AdminInterface $admin, TranslatorInterface $trans)
     {
         $this->driver = $driver;
-        $this->util = $util;
+        $this->admin = $admin;
         $this->trans = $trans;
     }
 

@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-interface UtilInterface
+interface AdminInterface
 {
     /**
      * Name in title and navigation
@@ -64,9 +64,6 @@ interface UtilInterface
      * @return string
      */
     public function shortenUtf8(string $string, int $length = 80, string $suffix = ''): string;
-
-
-
 
     /**
      * Escape or unescape string to use inside form []

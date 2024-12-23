@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
-use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\AdminInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use function preg_match;
@@ -18,9 +18,9 @@ abstract class Server implements ServerInterface
     protected $driver;
 
     /**
-     * @var UtilInterface
+     * @var AdminInterface
      */
-    protected $util;
+    protected $admin;
 
     /**
      * @var TranslatorInterface
@@ -31,13 +31,13 @@ abstract class Server implements ServerInterface
      * The constructor
      *
      * @param DriverInterface $driver
-     * @param UtilInterface $util
+     * @param AdminInterface $admin
      * @param TranslatorInterface $trans
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans)
+    public function __construct(DriverInterface $driver, AdminInterface $admin, TranslatorInterface $trans)
     {
         $this->driver = $driver;
-        $this->util = $util;
+        $this->admin = $admin;
         $this->trans = $trans;
     }
 
@@ -194,6 +194,6 @@ abstract class Server implements ServerInterface
      */
     public function processAttr(array $process, string $key, string $val): string
     {
-        return $this->util->html($val);
+        return $this->admin->html($val);
     }
 }

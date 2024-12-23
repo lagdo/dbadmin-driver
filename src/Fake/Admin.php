@@ -4,15 +4,15 @@ namespace Lagdo\DbAdmin\Driver\Fake;
 
 use Lagdo\DbAdmin\Driver\Input;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
-use Lagdo\DbAdmin\Driver\UtilInterface;
-use Lagdo\DbAdmin\Driver\UtilTrait;
+use Lagdo\DbAdmin\Driver\AdminInterface;
+use Lagdo\DbAdmin\Driver\AdminTrait;
 
 /**
- * Fake Util class for testing
+ * Fake Admin class for testing
  */
-class Util implements UtilInterface
+class Admin implements AdminInterface
 {
-    use UtilTrait;
+    use AdminTrait;
 
     /**
      * The constructor

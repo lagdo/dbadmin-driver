@@ -7,7 +7,7 @@ use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\DriverInterface;
-use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\AdminInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 
 use function implode;
@@ -25,9 +25,9 @@ abstract class Query implements QueryInterface
     protected $driver;
 
     /**
-     * @var UtilInterface
+     * @var AdminInterface
      */
-    protected $util;
+    protected $admin;
 
     /**
      * @var TranslatorInterface
@@ -38,13 +38,13 @@ abstract class Query implements QueryInterface
      * The constructor
      *
      * @param DriverInterface $driver
-     * @param UtilInterface $util
+     * @param AdminInterface $admin
      * @param TranslatorInterface $trans
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans)
+    public function __construct(DriverInterface $driver, AdminInterface $admin, TranslatorInterface $trans)
     {
         $this->driver = $driver;
-        $this->util = $util;
+        $this->admin = $admin;
         $this->trans = $trans;
     }
 
@@ -273,8 +273,8 @@ abstract class Query implements QueryInterface
         $clauses = [];
         $wheres = $where["where"] ?? [];
         foreach ((array) $wheres as $key => $value) {
-            $key = $this->util->bracketEscape($key, 1); // 1 - back
-            $column = $this->util->escapeKey($key);
+            $key = $this->admin->bracketEscape($key, 1); // 1 - back
+            $column = $this->admin->escapeKey($key);
             $clauses[] = $this->getWhereColumnClause($fields[$key], $column, $value);
             if (($clause = $this->getWhereCollateClause($fields[$key], $column, $value))) {
                 $clauses[] = $clause;
@@ -282,7 +282,7 @@ abstract class Query implements QueryInterface
         }
         $nulls = $where["null"] ?? [];
         foreach ((array) $nulls as $key) {
-            $clauses[] = $this->util->escapeKey($key) . " IS NULL";
+            $clauses[] = $this->admin->escapeKey($key) . " IS NULL";
         }
         return implode(" AND ", $clauses);
     }

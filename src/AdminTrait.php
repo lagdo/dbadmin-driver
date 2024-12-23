@@ -7,7 +7,7 @@ use function preg_replace;
 use function preg_match;
 use function htmlspecialchars;
 
-trait UtilTrait
+trait AdminTrait
 {
     /**
      * @var DriverInterface

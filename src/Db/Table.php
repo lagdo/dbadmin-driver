@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
-use Lagdo\DbAdmin\Driver\UtilInterface;
+use Lagdo\DbAdmin\Driver\AdminInterface;
 use Lagdo\DbAdmin\Driver\TranslatorInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
@@ -15,9 +15,9 @@ abstract class Table implements TableInterface
     protected $driver;
 
     /**
-     * @var UtilInterface
+     * @var AdminInterface
      */
-    protected $util;
+    protected $admin;
 
     /**
      * @var TranslatorInterface
@@ -28,13 +28,13 @@ abstract class Table implements TableInterface
      * The constructor
      *
      * @param DriverInterface $driver
-     * @param UtilInterface $util
+     * @param AdminInterface $admin
      * @param TranslatorInterface $trans
      */
-    public function __construct(DriverInterface $driver, UtilInterface $util, TranslatorInterface $trans)
+    public function __construct(DriverInterface $driver, AdminInterface $admin, TranslatorInterface $trans)
     {
         $this->driver = $driver;
-        $this->util = $util;
+        $this->admin = $admin;
         $this->trans = $trans;
     }
 

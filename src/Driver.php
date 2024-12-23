@@ -28,9 +28,9 @@ abstract class Driver implements DriverInterface
     use GrammarTrait;
 
     /**
-     * @var UtilInterface
+     * @var AdminInterface
      */
-    protected $util;
+    protected $admin;
 
     /**
      * @var TranslatorInterface
@@ -85,14 +85,14 @@ abstract class Driver implements DriverInterface
     /**
      * The constructor
      *
-     * @param UtilInterface $util
+     * @param AdminInterface $admin
      * @param TranslatorInterface $trans
      * @param array $options
      */
-    public function __construct(UtilInterface $util, TranslatorInterface $trans, array $options)
+    public function __construct(AdminInterface $admin, TranslatorInterface $trans, array $options)
     {
-        $this->util = $util;
-        $this->util->setDriver($this);
+        $this->admin = $admin;
+        $this->admin->setDriver($this);
         $this->trans = $trans;
         $this->config = new ConfigEntity($trans, $options);
         $this->history = new History($trans);
