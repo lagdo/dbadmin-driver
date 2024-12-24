@@ -16,9 +16,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function table(string $idf)
+    public function escapeTableName(string $idf)
     {
-        return $this->grammar->table($idf);
+        return $this->grammar->escapeTableName($idf);
     }
 
     /**
@@ -118,9 +118,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForRowCount(string $table, array $where, bool $isGroup, array $groups)
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
     {
-        return $this->grammar->sqlForRowCount($table, $where, $isGroup, $groups);
+        return $this->grammar->getRowCountQuery($table, $where, $isGroup, $groups);
     }
 
     /**
@@ -130,9 +130,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function defaultValue(TableFieldEntity $field)
+    public function getDefaultValueClause(TableFieldEntity $field)
     {
-        return $this->grammar->defaultValue($field);
+        return $this->grammar->getDefaultValueClause($field);
     }
 
     /**
@@ -145,9 +145,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function limit(string $query, string $where, int $limit, int $offset = 0)
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
     {
-        return $this->grammar->limit($query, $where, $limit, $offset);
+        return $this->grammar->getLimitClause($query, $where, $limit, $offset);
     }
 
     /**
@@ -167,9 +167,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function autoIncrement()
+    public function getAutoIncrementModifier()
     {
-        return $this->grammar->autoIncrement();
+        return $this->grammar->getAutoIncrementModifier();
     }
 
     /**
@@ -181,9 +181,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForCreateTable(string $table, bool $autoIncrement, string $style)
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
     {
-        return $this->grammar->sqlForCreateTable($table, $autoIncrement, $style);
+        return $this->grammar->getCreateTableQuery($table, $autoIncrement, $style);
     }
 
     /**
@@ -196,16 +196,16 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForCreateIndex(string $table, string $type, string $name, string $columns)
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
     {
-        return $this->grammar->sqlForCreateIndex($table, $type, $name, $columns);
+        return $this->grammar->getCreateIndexQuery($table, $type, $name, $columns);
     }
 
     /**
      * Get SQL command to create foreign keys
      *
-     * sqlForCreateTable() produces CREATE TABLE without FK CONSTRAINTs
-     * sqlForForeignKeys() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
+     * getCreateTableQuery() produces CREATE TABLE without FK CONSTRAINTs
+     * getForeignKeysQuery() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
      * so that all FKs can be added after all tables have been created, avoiding any need
      * to reorder CREATE TABLE statements in order of their FK dependencies
      *
@@ -213,9 +213,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForForeignKeys(string $table)
+    public function getForeignKeysQuery(string $table)
     {
-        return $this->grammar->sqlForForeignKeys($table);
+        return $this->grammar->getForeignKeysQuery($table);
     }
 
     /**
@@ -225,9 +225,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForTruncateTable(string $table)
+    public function getTruncateTableQuery(string $table)
     {
-        return $this->grammar->sqlForTruncateTable($table);
+        return $this->grammar->getTruncateTableQuery($table);
     }
 
     /**
@@ -237,9 +237,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForUseDatabase(string $database)
+    public function getUseDatabaseQuery(string $database)
     {
-        return $this->grammar->sqlForUseDatabase($database);
+        return $this->grammar->getUseDatabaseQuery($database);
     }
 
     /**
@@ -249,9 +249,9 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function sqlForCreateTrigger(string $table)
+    public function getCreateTriggerQuery(string $table)
     {
-        return $this->grammar->sqlForCreateTrigger($table);
+        return $this->grammar->getCreateTriggerQuery($table);
     }
 
     /**

@@ -259,7 +259,7 @@ abstract class Driver implements DriverInterface
     {
         if (!$escape) {
             $escape = function ($table) {
-                return $this->table($table);
+                return $this->escapeTableName($table);
             };
         }
         foreach ($tables as $table) {
@@ -427,8 +427,8 @@ abstract class Driver implements DriverInterface
             $comment = ' COMMENT ' . $this->quote($field->comment);
         }
         $null = $field->null ? ' NULL' : ' NOT NULL'; // NULL for timestamp
-        $autoIncrement = $field->autoIncrement ? $this->autoIncrement() : null;
+        $autoIncrement = $field->autoIncrement ? $this->getAutoIncrementModifier() : null;
         return [$this->escapeId(trim($field->name)), $this->processType($typeField),
-            $null, $this->defaultValue($field), $onUpdate, $comment, $autoIncrement];
+            $null, $this->getDefaultValueClause($field), $onUpdate, $comment, $autoIncrement];
     }
 }

@@ -76,7 +76,7 @@ abstract class Database implements DatabaseInterface
         $type = $values['materialized'] ? ' MATERIALIZED VIEW ' : ' VIEW ';
 
         $sql = ($this->driver->jush() === 'mssql' ? 'ALTER' : 'CREATE OR REPLACE') .
-            $type . $this->driver->table($name) . " AS\n" . $values['select'];
+            $type . $this->driver->escapeTableName($name) . " AS\n" . $values['select'];
         return $this->driver->executeQuery($sql);
     }
     /**
@@ -149,11 +149,11 @@ abstract class Database implements DatabaseInterface
         $type = $values['materialized'] ? 'MATERIALIZED VIEW' : 'VIEW';
         $tempName = $name . '_adminer_' . uniqid();
 
-        return $this->dropAndCreate("DROP $origType " . $this->driver->table($view),
-            "CREATE $type " . $this->driver->table($name) . " AS\n" . $values['select'],
-            "DROP $type " . $this->driver->table($name),
-            "CREATE $type " . $this->driver->table($tempName) . " AS\n" . $values['select'],
-            "DROP $type " . $this->driver->table($tempName), $view, $name);
+        return $this->dropAndCreate("DROP $origType " . $this->driver->escapeTableName($view),
+            "CREATE $type " . $this->driver->escapeTableName($name) . " AS\n" . $values['select'],
+            "DROP $type " . $this->driver->escapeTableName($name),
+            "CREATE $type " . $this->driver->escapeTableName($tempName) . " AS\n" . $values['select'],
+            "DROP $type " . $this->driver->escapeTableName($tempName), $view, $name);
     }
 
     /**
@@ -173,7 +173,7 @@ abstract class Database implements DatabaseInterface
             $origType = strtoupper($status->engine);
         }
 
-        $sql = "DROP $origType " . $this->driver->table($view);
+        $sql = "DROP $origType " . $this->driver->escapeTableName($view);
         return $this->driver->executeQuery($sql);
     }
 

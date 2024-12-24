@@ -76,7 +76,7 @@ abstract class Query implements QueryInterface
      */
     public function insert(string $table, array $values)
     {
-        $table = $this->driver->table($table);
+        $table = $this->driver->escapeTableName($table);
         if (empty($values)) {
             $result = $this->driver->execute("INSERT INTO $table DEFAULT VALUES");
             return $result !== false;
@@ -95,7 +95,7 @@ abstract class Query implements QueryInterface
         foreach ($values as $name => $value) {
             $assignments[] = "$name = $value";
         }
-        $query = $this->driver->table($table) . ' SET ' . implode(', ', $assignments);
+        $query = $this->driver->escapeTableName($table) . ' SET ' . implode(', ', $assignments);
         if (!$limit) {
             $result = $this->driver->execute('UPDATE ' . $query . $queryWhere);
             return $result !== false;
@@ -109,7 +109,7 @@ abstract class Query implements QueryInterface
      */
     public function delete(string $table, string $queryWhere, int $limit = 0)
     {
-        $query = 'FROM ' . $this->driver->table($table);
+        $query = 'FROM ' . $this->driver->escapeTableName($table);
         if (!$limit) {
             $result = $this->driver->execute("DELETE $query $queryWhere");
             return $result !== false;

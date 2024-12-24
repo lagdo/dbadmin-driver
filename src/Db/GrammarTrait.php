@@ -45,7 +45,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function sqlForCreateTable(string $table, bool $autoIncrement, string $style)
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
     {
         return '';
     }
@@ -53,7 +53,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function sqlForCreateIndex(string $table, string $type, string $name, string $columns)
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
     {
         return '';
     }
@@ -61,7 +61,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function sqlForUseDatabase(string $database)
+    public function getUseDatabaseQuery(string $database)
     {
         return '';
     }
@@ -69,7 +69,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function sqlForForeignKeys(string $table)
+    public function getForeignKeysQuery(string $table)
     {
         return '';
     }
@@ -77,7 +77,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function sqlForTruncateTable(string $table)
+    public function getTruncateTableQuery(string $table)
     {
         return '';
     }
@@ -85,7 +85,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function sqlForCreateTrigger(string $table)
+    public function getCreateTriggerQuery(string $table)
     {
         return '';
     }
@@ -93,7 +93,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function autoIncrement()
+    public function getAutoIncrementModifier()
     {
         return '';
     }

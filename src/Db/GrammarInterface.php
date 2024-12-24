@@ -16,7 +16,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function table(string $idf);
+    public function escapeTableName(string $idf);
 
     /**
      * Escape database identifier
@@ -94,7 +94,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForRowCount(string $table, array $where, bool $isGroup, array $groups);
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups);
 
     /**
      * Get default value clause
@@ -103,7 +103,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function defaultValue(TableFieldEntity $field);
+    public function getDefaultValueClause(TableFieldEntity $field);
 
     /**
      * Formulate SQL query with limit
@@ -115,7 +115,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function limit(string $query, string $where, int $limit, int $offset = 0);
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0);
 
     /**
      * Format foreign key to use in SQL query
@@ -131,7 +131,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function autoIncrement();
+    public function getAutoIncrementModifier();
 
     /**
      * Get SQL command to create table
@@ -142,7 +142,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForCreateTable(string $table, bool $autoIncrement, string $style);
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style);
 
     /**
      * Command to create an index
@@ -154,13 +154,13 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForCreateIndex(string $table, string $type, string $name, string $columns);
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns);
 
     /**
      * Get SQL command to create foreign keys
      *
-     * sqlForCreateTable() produces CREATE TABLE without FK CONSTRAINTs
-     * sqlForForeignKeys() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
+     * getCreateTableQuery() produces CREATE TABLE without FK CONSTRAINTs
+     * getForeignKeysQuery() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
      * so that all FKs can be added after all tables have been created, avoiding any need
      * to reorder CREATE TABLE statements in order of their FK dependencies
      *
@@ -168,7 +168,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForForeignKeys(string $table);
+    public function getForeignKeysQuery(string $table);
 
     /**
      * Get SQL command to truncate table
@@ -177,7 +177,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForTruncateTable(string $table);
+    public function getTruncateTableQuery(string $table);
 
     /**
      * Get SQL command to change database
@@ -186,7 +186,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForUseDatabase(string $database);
+    public function getUseDatabaseQuery(string $database);
 
     /**
      * Get SQL commands to create triggers
@@ -195,7 +195,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function sqlForCreateTrigger(string $table);
+    public function getCreateTriggerQuery(string $table);
 
     /**
      * Return query to get connection ID

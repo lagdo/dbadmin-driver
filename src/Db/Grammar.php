@@ -48,7 +48,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function table(string $idf)
+    public function escapeTableName(string $idf)
     {
         return $this->escapeId($idf);
     }
@@ -56,7 +56,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function limit(string $query, string $where, int $limit, int $offset = 0)
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
     {
         $sql = " $query$where";
         if ($limit > 0) {
@@ -107,7 +107,7 @@ abstract class Grammar implements GrammarInterface
         [$sources, $targets] = $this->fkFields($foreignKey);
         $onActions = $this->driver->actions();
         $query = " FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
-            $this->table($foreignKey->table) . " ($targets)";
+            $this->escapeTableName($foreignKey->table) . " ($targets)";
         if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
             $query .= " ON DELETE {$foreignKey->onDelete}";
         }
@@ -123,17 +123,17 @@ abstract class Grammar implements GrammarInterface
      */
     public function buildSelectQuery(TableSelectEntity $select)
     {
-        $query = \implode(', ', $select->fields) . ' FROM ' . $this->table($select->table);
+        $query = \implode(', ', $select->fields) . ' FROM ' . $this->escapeTableName($select->table);
         $limit = +$select->limit;
         $offset = $select->page ? $limit * $select->page : 0;
 
-        return 'SELECT' . $this->limit($query, $select->clauses, $limit, $offset);
+        return 'SELECT' . $this->getLimitClause($query, $select->clauses, $limit, $offset);
     }
 
     /**
      * @inheritDoc
      */
-    public function defaultValue($field)
+    public function getDefaultValueClause($field)
     {
         $default = $field->default;
         return ($default === null ? '' : ' DEFAULT ' .
@@ -162,9 +162,9 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function sqlForRowCount(string $table, array $where, bool $isGroup, array $groups)
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
     {
-        $query = ' FROM ' . $this->table($table);
+        $query = ' FROM ' . $this->escapeTableName($table);
         if (!empty($where)) {
             $query .= ' WHERE ' . implode(' AND ', $where);
         }
