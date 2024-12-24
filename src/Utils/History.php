@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Utils;
 
 use function intval;
 use function microtime;
@@ -9,26 +9,11 @@ use function preg_match;
 class History
 {
     /**
-     * @var TranslatorInterface
-     */
-    protected $trans;
-
-    /**
      * Executed queries
      *
      * @var array
      */
     protected $queries = [];
-
-    /**
-     * The constructor
-     *
-     * @param TranslatorInterface $trans
-     */
-    public function __construct(TranslatorInterface $trans)
-    {
-        $this->trans = $trans;
-    }
 
     /**
      * Save a query in the history

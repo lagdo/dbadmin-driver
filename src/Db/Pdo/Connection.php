@@ -28,7 +28,7 @@ abstract class Connection extends AbstractConnection
             $this->client = new PDO($dsn, $username, $password, $options);
         } catch (Exception $ex) {
             // auth_error(h($ex->getMessage()));
-            throw new AuthException($this->admin->html($ex->getMessage()));
+            throw new AuthException($this->utils->str->html($ex->getMessage()));
         }
         $this->client->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(Statement::class));
@@ -60,7 +60,7 @@ abstract class Connection extends AbstractConnection
         if (!$statement) {
             list(, $errno, $error) = $this->client->errorInfo();
             $this->driver->setErrno($errno);
-            $this->driver->setError(($error) ? $error : $this->trans->lang('Unknown error.'));
+            $this->driver->setError(($error) ? $error : $this->utils->trans->lang('Unknown error.'));
             return false;
         }
         // rowCount() is not guaranteed to work with all drivers

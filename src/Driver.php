@@ -8,13 +8,23 @@ use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
+use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 use function in_array;
 use function is_object;
 use function preg_match;
 use function version_compare;
+use function array_flip;
+use function preg_quote;
+use function str_replace;
+use function strtr;
+use function implode;
+use function preg_replace;
+use function preg_match_all;
+use function trim;
 
 abstract class Driver implements DriverInterface
 {
@@ -28,14 +38,9 @@ abstract class Driver implements DriverInterface
     use GrammarTrait;
 
     /**
-     * @var AdminInterface
+     * @var Utils
      */
-    protected $admin;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $trans;
+    protected $utils;
 
     /**
      * @var ServerInterface
@@ -78,24 +83,15 @@ abstract class Driver implements DriverInterface
     protected $config;
 
     /**
-     * @var History
-     */
-    protected $history;
-
-    /**
      * The constructor
      *
-     * @param AdminInterface $admin
-     * @param TranslatorInterface $trans
+     * @param Utils $utils
      * @param array $options
      */
-    public function __construct(AdminInterface $admin, TranslatorInterface $trans, array $options)
+    public function __construct(Utils $utils, array $options)
     {
-        $this->admin = $admin;
-        $this->admin->setDriver($this);
-        $this->trans = $trans;
-        $this->config = new ConfigEntity($trans, $options);
-        $this->history = new History($trans);
+        $this->utils = $utils;
+        $this->config = new ConfigEntity($utils->trans, $options);
         $this->beforeConnectConfig();
         // Create and set the main connection.
         $this->mainConnection = $this->createConnection();
@@ -244,7 +240,7 @@ abstract class Driver implements DriverInterface
      */
     public function execute(string $query)
     {
-        $this->history->save($query);
+        $this->utils->history->save($query);
         return $this->connection->query($query);
     }
 
@@ -253,7 +249,7 @@ abstract class Driver implements DriverInterface
      */
     public function queries()
     {
-        return $this->history->queries();
+        return $this->utils->history->queries();
     }
 
     /**
@@ -336,5 +332,103 @@ abstract class Driver implements DriverInterface
             $rows[] = $row;
         }
         return $rows;
+    }
+
+    /**
+     * Escape column key used in where()
+     *
+     * @param string
+     *
+     * @return string
+     */
+    public function escapeKey(string $key): string
+    {
+        if (preg_match('(^([\w(]+)(' . str_replace('_', '.*',
+                preg_quote($this->escapeId('_'))) . ')([ \w)]+)$)', $key, $match)) {
+            //! columns looking like functions
+            return $match[1] . $this->escapeId($this->unescapeId($match[2])) . $match[3]; //! SQL injection
+        }
+        return $this->escapeId($key);
+    }
+
+    /**
+     * Escape or unescape string to use inside form []
+     *
+     * @param string $idf
+     * @param bool $back
+     *
+     * @return string
+     */
+    public function bracketEscape(string $idf, bool $back = false): string
+    {
+        // escape brackets inside name='x[]'
+        static $trans = [':' => ':1', ']' => ':2', '[' => ':3', '"' => ':4'];
+        return strtr($idf, ($back ? array_flip($trans) : $trans));
+    }
+
+    /**
+     * Filter length value including enums
+     *
+     * @param string $length
+     *
+     * @return string
+     */
+    public function processLength(string $length): string
+    {
+        if (!$length) {
+            return '';
+        }
+        $enumLength = $this->enumLength();
+        if (preg_match("~^\\s*\\(?\\s*$enumLength(?:\\s*,\\s*$enumLength)*+\\s*\\)?\\s*\$~", $length) &&
+            preg_match_all("~$enumLength~", $length, $matches)) {
+            return '(' . implode(',', $matches[0]) . ')';
+        }
+        return preg_replace('~^[0-9].*~', '(\0)', preg_replace('~[^-0-9,+()[\]]~', '', $length));
+    }
+
+    /**
+     * Create SQL string from field type
+     *
+     * @param TableFieldEntity $field
+     * @param string $collate
+     *
+     * @return string
+     */
+    private function processType(TableFieldEntity $field, string $collate = 'COLLATE'): string
+    {
+        $collation = '';
+        if (preg_match('~char|text|enum|set~', $field->type) && $field->collation) {
+            $collation = " $collate " . $this->quote($field->collation);
+        }
+        $sign = '';
+        if (preg_match($this->numberRegex(), $field->type) &&
+            in_array($field->unsigned, $this->unsigned())) {
+            $sign = ' ' . $field->unsigned;
+        }
+        return ' ' . $field->type . $this->processLength($field->length) . $sign . $collation;
+    }
+
+    /**
+     * Create SQL string from field
+     *
+     * @param TableFieldEntity $field Basic field information
+     * @param TableFieldEntity $typeField Information about field type
+     *
+     * @return array
+     */
+    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array
+    {
+        $onUpdate = '';
+        if (preg_match('~timestamp|datetime~', $field->type) && $field->onUpdate) {
+            $onUpdate = ' ON UPDATE ' . $field->onUpdate;
+        }
+        $comment = '';
+        if ($this->support('comment') && $field->comment !== '') {
+            $comment = ' COMMENT ' . $this->quote($field->comment);
+        }
+        $null = $field->null ? ' NULL' : ' NOT NULL'; // NULL for timestamp
+        $autoIncrement = $field->autoIncrement ? $this->autoIncrement() : null;
+        return [$this->escapeId(trim($field->name)), $this->processType($typeField),
+            $null, $this->defaultValue($field), $onUpdate, $comment, $autoIncrement];
     }
 }

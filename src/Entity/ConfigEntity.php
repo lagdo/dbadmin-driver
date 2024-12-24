@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-use Lagdo\DbAdmin\Driver\TranslatorInterface;
+use Lagdo\DbAdmin\Driver\Utils\TranslatorInterface;
 
 use function trim;
 use function array_keys;
@@ -136,7 +136,7 @@ class ConfigEntity
     public function setTypes(array $types)
     {
         foreach ($types as $group => $_types) {
-            $this->structuredTypes[$this->trans->lang($group)] = array_keys($_types);
+            $this->structuredTypes[$this->utils->trans->lang($group)] = array_keys($_types);
             $this->types = array_merge($this->types, $_types);
         }
     }

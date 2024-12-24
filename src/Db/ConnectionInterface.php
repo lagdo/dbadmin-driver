@@ -33,7 +33,7 @@ interface ConnectionInterface extends DriverConnectionInterface
      *
      * @param string $query
      *
-     * @return bool
+     * @return void
      */
     public function execUseQuery(string $query);
 

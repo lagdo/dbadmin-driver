@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Utils;
 
 class Input
 {

@@ -168,7 +168,7 @@ interface DatabaseInterface
      * @param string $name
      * @param string $type "FUNCTION" or "PROCEDURE"
      *
-     * @return RoutineEntity
+     * @return RoutineEntity|null
      */
     public function routine(string $name, string $type);
 

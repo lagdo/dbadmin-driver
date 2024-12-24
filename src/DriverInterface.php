@@ -262,4 +262,42 @@ interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
      * @return string
      */
     public function quoteBinary(string $string);
+
+    /**
+     * Escape or unescape string to use inside form []
+     *
+     * @param string $idf
+     * @param bool $back
+     *
+     * @return string
+     */
+    public function bracketEscape(string $idf, bool $back = false): string;
+
+    /**
+     * Escape column key used in where()
+     *
+     * @param string
+     *
+     * @return string
+     */
+    public function escapeKey(string $key): string;
+
+    /**
+     * Filter length value including enums
+     *
+     * @param string $length
+     *
+     * @return string
+     */
+    public function processLength(string $length): string;
+
+    /**
+     * Create SQL string from field
+     *
+     * @param TableFieldEntity $field Basic field information
+     * @param TableFieldEntity $typeField Information about field type
+     *
+     * @return array
+     */
+    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array;
 }

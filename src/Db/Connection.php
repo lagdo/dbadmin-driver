@@ -3,8 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
-use Lagdo\DbAdmin\Driver\AdminInterface;
-use Lagdo\DbAdmin\Driver\TranslatorInterface;
+use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 use function is_resource;
@@ -18,14 +17,9 @@ abstract class Connection implements ConnectionInterface
     protected $driver;
 
     /**
-     * @var AdminInterface
+     * @var Utils
      */
-    protected $admin;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $trans;
+    protected $utils;
 
     /**
      * The extension name
@@ -57,15 +51,13 @@ abstract class Connection implements ConnectionInterface
      * The constructor
      *
      * @param DriverInterface $driver
-     * @param AdminInterface $admin
-     * @param TranslatorInterface $trans
+     * @param Utils $utils
      * @param string $extension
      */
-    public function __construct(DriverInterface $driver, AdminInterface $admin, TranslatorInterface $trans, string $extension)
+    public function __construct(DriverInterface $driver, Utils $utils, string $extension)
     {
         $this->driver = $driver;
-        $this->admin = $admin;
-        $this->trans = $trans;
+        $this->utils = $utils;
         $this->extension = $extension;
     }
 

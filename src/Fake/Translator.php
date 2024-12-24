@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Fake;
 
-use Lagdo\DbAdmin\Driver\TranslatorInterface;
+use Lagdo\DbAdmin\Driver\Utils\TranslatorInterface;
 
 /**
  * Fake Translator class for testing

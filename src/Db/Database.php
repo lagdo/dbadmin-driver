@@ -4,8 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Exception;
 use Lagdo\DbAdmin\Driver\DriverInterface;
-use Lagdo\DbAdmin\Driver\AdminInterface;
-use Lagdo\DbAdmin\Driver\TranslatorInterface;
+use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function trim;
 use function strtoupper;
@@ -19,27 +18,20 @@ abstract class Database implements DatabaseInterface
     protected $driver;
 
     /**
-     * @var AdminInterface
+     * @var Utils
      */
-    protected $admin;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $trans;
+    protected $utils;
 
     /**
      * The constructor
      *
      * @param DriverInterface $driver
-     * @param AdminInterface $admin
-     * @param TranslatorInterface $trans
+     * @param Utils $utils
      */
-    public function __construct(DriverInterface $driver, AdminInterface $admin, TranslatorInterface $trans)
+    public function __construct(DriverInterface $driver, Utils $utils)
     {
         $this->driver = $driver;
-        $this->admin = $admin;
-        $this->trans = $trans;
+        $this->utils = $utils;
     }
 
     /**
