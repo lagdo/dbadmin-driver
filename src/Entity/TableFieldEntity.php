@@ -169,12 +169,17 @@ class TableFieldEntity
     {
         $entity = new static();
 
-        $attrs = ['name', 'type', 'fullType', 'primary', 'unsigned', 'length', 'autoIncrement',
-            'onUpdate', 'onDelete', 'collation', 'privileges', 'generated', 'lengthRequired',
-            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden', 'comment'];
+        $attrs = ['primary', 'length', 'autoIncrement', 'privileges', 'generated', 'lengthRequired',
+            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden', 'default'];
+        $strings = ['name', 'type', 'fullType', 'unsigned', 'onUpdate', 'onDelete', 'collation', 'comment'];
         foreach ($attrs as $attr) {
             if (isset($field[$attr])) {
                 $entity->$attr = $field[$attr];
+            }
+        }
+        foreach ($strings as $attr) {
+            if (isset($field[$attr])) {
+                $entity->$attr = $field[$attr] ?? '';
             }
         }
         $entity->null = isset($field['null']);
@@ -183,6 +188,30 @@ class TableFieldEntity
         }
 
         return $entity;
+    }
+
+    public static function fromArray(array $field): self
+    {
+        $attrs = ['name', 'type', 'fullType', 'unsigned', 'length', 'hasDefault', 'default',
+            'null', 'autoIncrement', 'onUpdate', 'onDelete', 'collation', 'privileges',
+            'comment', 'primary', 'generated', 'types', 'lengthRequired', 'collationHidden',
+            'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
+        $entity = new static();
+        foreach ($attrs as $attr) {
+            $entity->$attr = $field[$attr];
+        }
+        return $entity;
+    }
+
+    public function toArray(): array
+    {
+        $attrs = ['name', 'type', 'fullType', 'unsigned', 'length', 'hasDefault', 'default',
+            'null', 'autoIncrement', 'onUpdate', 'onDelete', 'collation', 'privileges',
+            'comment', 'primary', 'generated', 'types', 'lengthRequired', 'collationHidden',
+            'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
+        return array_map(function($attr) {
+            return $this->$attr;
+        }, $attrs);
     }
 
     /**
