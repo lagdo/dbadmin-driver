@@ -15,6 +15,11 @@ class Statement extends PDOStatement implements StatementInterface
     public $offset = 0;
 
     /**
+     * @var int
+     */
+    public $numRows = 0;
+
+    /**
      * @inheritDoc
      */
     public function fetchAssoc()
