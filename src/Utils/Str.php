@@ -50,7 +50,8 @@ class Str
     {
         // fix for Compilation failed: number too big in {} quantifier
         // can create {0,0} which is OK
-        return str_repeat("$pattern{0,65535}", $length / 65535) . "$pattern{0," . ($length % 65535) . '}';
+        $times = round($length / 65535, 0, PHP_ROUND_HALF_DOWN);
+        return str_repeat("$pattern{0,65535}", $times) . "$pattern{0," . ($length % 65535) . '}';
     }
 
     /**
