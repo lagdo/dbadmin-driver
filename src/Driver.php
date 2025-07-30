@@ -2,12 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
-use Lagdo\DbAdmin\Driver\Db\ServerInterface;
-use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
-use Lagdo\DbAdmin\Driver\Db\TableInterface;
-use Lagdo\DbAdmin\Driver\Db\QueryInterface;
-use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
@@ -43,46 +37,6 @@ abstract class Driver implements DriverInterface
     protected $utils;
 
     /**
-     * @var ServerInterface
-     */
-    protected $server;
-
-    /**
-     * @var DatabaseInterface
-     */
-    protected $database;
-
-    /**
-     * @var TableInterface
-     */
-    protected $table;
-
-    /**
-     * @var QueryInterface
-     */
-    protected $query;
-
-    /**
-     * @var GrammarInterface
-     */
-    protected $grammar;
-
-    /**
-     * @var ConnectionInterface
-     */
-    protected $connection;
-
-    /**
-     * @var ConnectionInterface
-     */
-    protected $mainConnection;
-
-    /**
-     * @var ConfigEntity
-     */
-    protected $config;
-
-    /**
      * The constructor
      *
      * @param Utils $utils
@@ -92,58 +46,9 @@ abstract class Driver implements DriverInterface
     {
         $this->utils = $utils;
         $this->config = new ConfigEntity($utils->trans, $options);
-        $this->beforeConnectConfig();
+        $this->beforeConnection();
         // Create and set the main connection.
         $this->mainConnection = $this->createConnection();
-    }
-
-    /**
-     * Set driver config
-     *
-     * @return void
-     */
-    abstract protected function beforeConnectConfig();
-
-    /**
-     * Set driver config
-     *
-     * @return void
-     */
-    abstract protected function afterConnectConfig();
-
-    /**
-     * Create a connection to the server, based on the config and available packages
-     *
-     * @return ConnectionInterface|null
-     */
-    abstract protected function createConnection();
-
-    /**
-     * @param ConnectionInterface $connection
-     *
-     * @return Driver
-     */
-    public function useConnection(ConnectionInterface $connection)
-    {
-        $this->connection = $connection;
-        return $this;
-    }
-
-    /**
-     * @return Driver
-     */
-    public function useMainConnection()
-    {
-        $this->connection = $this->mainConnection;
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function support(string $feature)
-    {
-        return in_array($feature, $this->config->features);
     }
 
     /**
@@ -158,7 +63,7 @@ abstract class Driver implements DriverInterface
         $this->config->database = $database;
         $this->config->schema = $schema;
 
-        $this->afterConnectConfig();
+        $this->afterConnection();
         return $this->connection;
     }
 
@@ -188,37 +93,18 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
+    public function support(string $feature)
+    {
+        return in_array($feature, $this->config->features);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function charset()
     {
         // SHOW CHARSET would require an extra query
         return ($this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function begin()
-    {
-        $result = $this->connection->query("BEGIN");
-        return $result !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function commit()
-    {
-        $result = $this->connection->query("COMMIT");
-        return $result !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rollback()
-    {
-        $result = $this->connection->query("ROLLBACK");
-        return $result !== false;
     }
 
     /**

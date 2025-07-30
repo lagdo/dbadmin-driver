@@ -2,10 +2,16 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 
 trait ServerTrait
 {
+    /**
+     * @var ServerInterface
+     */
+    protected $server;
+
     /**
      * Get the users and hosts
      *
@@ -158,19 +164,6 @@ trait ServerTrait
     public function routineLanguages()
     {
         return $this->server->routineLanguages();
-    }
-
-    /**
-     * Get routine signature
-     *
-     * @param string $name
-     * @param array $row result of routine()
-     *
-     * @return string
-     */
-    public function routineId(string $name, array $row)
-    {
-        return $this->server->routineId($name, $row);
     }
 
     /**

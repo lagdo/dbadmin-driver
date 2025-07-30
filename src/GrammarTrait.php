@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
@@ -9,6 +10,11 @@ use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
 trait GrammarTrait
 {
+    /**
+     * @var GrammarInterface
+     */
+    protected $grammar;
+
     /**
      * Get escaped table name
      *

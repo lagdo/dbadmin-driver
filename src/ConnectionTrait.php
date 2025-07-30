@@ -2,11 +2,63 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 trait ConnectionTrait
 {
+    /**
+     * @var ConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @var ConnectionInterface
+     */
+    protected $mainConnection;
+
+    /**
+     * Set driver config
+     *
+     * @return void
+     */
+    abstract protected function beforeConnection();
+
+    /**
+     * Set driver config
+     *
+     * @return void
+     */
+    abstract protected function afterConnection();
+
+    /**
+     * Create a connection to the server, based on the config and available packages
+     *
+     * @return ConnectionInterface|null
+     */
+    abstract protected function createConnection();
+
+    /**
+     * @param ConnectionInterface $connection
+     *
+     * @return Driver
+     */
+    public function useConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    /**
+     * @return Driver
+     */
+    public function useMainConnection()
+    {
+        $this->connection = $this->mainConnection;
+        return $this;
+    }
+
     /**
      * Get the server description
      *
@@ -142,5 +194,32 @@ trait ConnectionTrait
     public function value($value, TableFieldEntity $field)
     {
         return $this->connection->value($value, $field);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function begin()
+    {
+        $result = $this->connection->query("BEGIN");
+        return $result !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function commit()
+    {
+        $result = $this->connection->query("COMMIT");
+        return $result !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rollback()
+    {
+        $result = $this->connection->query("ROLLBACK");
+        return $result !== false;
     }
 }

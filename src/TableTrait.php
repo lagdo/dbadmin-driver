@@ -2,11 +2,17 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 
 trait TableTrait
 {
+    /**
+     * @var TableInterface
+     */
+    protected $table;
+
     /**
      * Get table status
      *

@@ -2,8 +2,15 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
+
 trait ConfigTrait
 {
+    /**
+     * @var ConfigEntity
+     */
+    protected $config;
+
     /**
      * Get the server jush
      *
@@ -175,7 +182,7 @@ trait ConfigTrait
      */
     public function actions()
     {
-        return $this->config->onActions;
+        return $this->config->actions;
     }
 
     /**

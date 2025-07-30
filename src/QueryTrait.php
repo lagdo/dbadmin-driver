@@ -3,13 +3,19 @@
 namespace Lagdo\DbAdmin\Driver;
 
 use Exception;
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\QueryInterface;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
-use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 trait QueryTrait
 {
+    /**
+     * @var QueryInterface
+     */
+    protected $query;
+
     /**
      * Get logged user
      *

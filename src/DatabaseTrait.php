@@ -3,11 +3,17 @@
 namespace Lagdo\DbAdmin\Driver;
 
 use Exception;
+use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
 trait DatabaseTrait
 {
+    /**
+     * @var DatabaseInterface
+     */
+    protected $database;
+
     /**
      * Create table
      *
@@ -234,5 +240,18 @@ trait DatabaseTrait
     public function routines()
     {
         return $this->database->routines();
+    }
+
+    /**
+     * Get routine signature
+     *
+     * @param string $name
+     * @param array $row result of routine()
+     *
+     * @return string
+     */
+    public function routineId(string $name, array $row)
+    {
+        return $this->database->routineId($name, $row);
     }
 }
