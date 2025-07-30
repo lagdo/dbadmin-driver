@@ -74,14 +74,16 @@ class ConfigEntity
 
     /**
      * From bootstrap.inc.php
+     * /// used in foreignKeys()
      * @var string
      */
-    public $onActions = 'RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT'; ///< @var string used in foreignKeys()
+    public $actions = 'RESTRICT|NO ACTION|CASCADE|SET NULL|SET DEFAULT';
 
     /**
+     * // not point, not interval
      * @var string
      */
-    public $numberRegex = '((?<!o)int(?!er)|numeric|real|float|double|decimal|money)'; // not point, not interval
+    public $numberRegex = '((?<!o)int(?!er)|numeric|real|float|double|decimal|money)';
 
     /**
      * From index.php
@@ -135,9 +137,9 @@ class ConfigEntity
      */
     public function setTypes(array $types)
     {
-        foreach ($types as $group => $_types) {
-            $this->structuredTypes[$this->trans->lang($group)] = array_keys($_types);
-            $this->types = array_merge($this->types, $_types);
+        foreach ($types as $group => $typeGroup) {
+            $this->structuredTypes[$this->trans->lang($group)] = array_keys($typeGroup);
+            $this->types = array_merge($this->types, $typeGroup);
         }
     }
 
@@ -178,6 +180,6 @@ class ConfigEntity
      */
     public function onActions()
     {
-        return explode('|', $this->onActions);
+        return explode('|', $this->actions);
     }
 }
