@@ -159,6 +159,40 @@ class TableFieldEntity
     public $onDeleteHidden = true;
 
     /**
+     * The field status when the table is edited
+     *
+     * @var string
+     */
+    public $editStatus = 'existing';
+
+    /**
+     * The field position in the edit form
+     *
+     * @var string
+     */
+    public $editPosition = 0;
+
+    /**
+     * The entity attributes
+     *
+     * @var array
+     */
+    private static $attrs = ['name', 'type', 'fullType', 'unsigned', 'length', 'null',
+        'hasDefault', 'default', 'autoIncrement', 'onUpdate', 'onDelete', 'collation',
+        'privileges', 'comment', 'primary', 'generated', 'types', 'lengthRequired',
+        'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden',
+        'editStatus', 'editPosition'];
+
+    /**
+     * The entity attributes
+     *
+     * @var array
+     */
+    private static $fields = ['name', 'type', 'primary', 'autoIncrement', 'unsigned',
+        'length', 'comment', 'collation', 'generated', 'lengthRequired', 'onUpdate',
+        'onDelete', 'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
+
+    /**
      * Create an entity from array data
      *
      * @param array $field
@@ -192,26 +226,27 @@ class TableFieldEntity
 
     public static function fromArray(array $field): self
     {
-        $attrs = ['name', 'type', 'fullType', 'unsigned', 'length', 'hasDefault', 'default',
-            'null', 'autoIncrement', 'onUpdate', 'onDelete', 'collation', 'privileges',
-            'comment', 'primary', 'generated', 'types', 'lengthRequired', 'collationHidden',
-            'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
         $entity = new static();
-        foreach ($attrs as $attr) {
+        foreach (self::$attrs as $attr) {
             $entity->$attr = $field[$attr];
         }
         return $entity;
     }
 
+    public function update(array $values): self
+    {
+        $fieldValues = $values[$this->editPosition] ?? [];
+        foreach (self::$fields as $attr) {
+            isset($fieldValues[$attr]) && $this->$attr = $fieldValues[$attr];
+        }
+        return $this;
+    }
+
     public function toArray(): array
     {
-        $attrs = ['name', 'type', 'fullType', 'unsigned', 'length', 'hasDefault', 'default',
-            'null', 'autoIncrement', 'onUpdate', 'onDelete', 'collation', 'privileges',
-            'comment', 'primary', 'generated', 'types', 'lengthRequired', 'collationHidden',
-            'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
         return array_map(function($attr) {
             return $this->$attr;
-        }, $attrs);
+        }, self::$attrs);
     }
 
     /**
@@ -223,10 +258,7 @@ class TableFieldEntity
      */
     public function changed(TableFieldEntity $field)
     {
-        $attrs = ['type', 'primary', 'autoIncrement', 'unsigned', 'length', 'comment',
-            'collation', 'generated', 'lengthRequired', 'onUpdate', 'onDelete',
-            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
-        foreach ($attrs as $attr) {
+        foreach (self::$fields as $attr) {
             if ($field->$attr != $this->$attr) {
                 return true;
             }
