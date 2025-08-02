@@ -121,7 +121,7 @@ class TableFieldEntity
      *
      * @var array
      */
-    public $types;
+    public $types = [];
 
     /**
      * If the field length is required
@@ -163,7 +163,7 @@ class TableFieldEntity
      *
      * @var string
      */
-    public $editStatus = 'existing';
+    public $editStatus = 'unchanged';
 
     /**
      * The field position in the edit form
@@ -177,11 +177,10 @@ class TableFieldEntity
      *
      * @var array
      */
-    private static $attrs = ['name', 'type', 'fullType', 'unsigned', 'length', 'null',
-        'hasDefault', 'default', 'autoIncrement', 'onUpdate', 'onDelete', 'collation',
-        'privileges', 'comment', 'primary', 'generated', 'types', 'lengthRequired',
+    private static $attrs = ['name', 'type', 'fullType', 'primary', 'null', 'length',
+        'unsigned', 'hasDefault', 'default', 'autoIncrement', 'collation', 'comment',
         'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden',
-        'editStatus', 'editPosition'];
+        'generated', 'lengthRequired', 'onUpdate', 'onDelete', 'editStatus', 'editPosition'];
 
     /**
      * The entity attributes
@@ -193,37 +192,37 @@ class TableFieldEntity
         'onDelete', 'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
 
     /**
-     * Create an entity from array data
+     * Create an entity from database data
      *
      * @param array $field
      *
      * @return TableFieldEntity
      */
-    public static function make(array $field)
+    public static function make(array $field): self
     {
         $entity = new static();
-
-        $attrs = ['primary', 'length', 'autoIncrement', 'privileges', 'generated', 'lengthRequired',
-            'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden', 'default'];
-        $strings = ['name', 'type', 'fullType', 'unsigned', 'onUpdate', 'onDelete', 'collation', 'comment'];
-        foreach ($attrs as $attr) {
-            if (isset($field[$attr])) {
-                $entity->$attr = $field[$attr];
-            }
-        }
-        foreach ($strings as $attr) {
-            if (isset($field[$attr])) {
-                $entity->$attr = $field[$attr] ?? '';
-            }
-        }
         $entity->null = isset($field['null']);
         if (!empty($field['default'])) {
             $entity->hasDefault = true;
         }
-
+        foreach (self::$attrs as $attr) {
+            if ($attr !== 'null' && $attr !== 'hasDefault') {
+                // Attributes are set only when present.
+                if (isset($field[$attr])) {
+                    $entity->$attr = $field[$attr];
+                }
+            }
+        }
         return $entity;
     }
 
+    /**
+     * Create an entity from js app data
+     *
+     * @param array $field
+     *
+     * @return TableFieldEntity
+     */
     public static function fromArray(array $field): self
     {
         $entity = new static();
@@ -233,36 +232,71 @@ class TableFieldEntity
         return $entity;
     }
 
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $array = [];
+        foreach (self::$attrs as $attr) {
+            $array[$attr] = $this->$attr;
+        }
+        return $array;
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return TableFieldEntity
+     */
     public function update(array $values): self
     {
-        $fieldValues = $values[$this->editPosition] ?? [];
         foreach (self::$fields as $attr) {
-            isset($fieldValues[$attr]) && $this->$attr = $fieldValues[$attr];
+            isset($values[$attr]) && $this->$attr = $values[$attr];
         }
         return $this;
     }
 
-    public function toArray(): array
+    /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    public function edited(array $values): bool
     {
-        return array_map(function($attr) {
-            return $this->$attr;
-        }, self::$attrs);
+        foreach (self::$fields as $attr) {
+            if (isset($values[$attr]) && $this->$attr != $values[$attr]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Check if the values of the field are changed
+     * @param array $values
+     *
+     * @return TableFieldEntity
+     */
+    public function updateStatus(array $values): self
+    {
+        $this->editStatus = $this->edited($values) ? 'edited' : 'unchanged';
+        return $this;
+    }
+
+    /**
+     * Check if the values in two fields are equals
      *
      * @param TableFieldEntity $field
      *
      * @return bool
      */
-    public function changed(TableFieldEntity $field)
+    public function equals(TableFieldEntity $field)
     {
         foreach (self::$fields as $attr) {
             if ($field->$attr != $this->$attr) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }
