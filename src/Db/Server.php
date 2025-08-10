@@ -133,10 +133,19 @@ abstract class Server implements ServerInterface
     {
         return '';
     }
+
     /**
      * @inheritDoc
      */
     public function isInformationSchema(string $database)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isSystemSchema(string $database)
     {
         return false;
     }

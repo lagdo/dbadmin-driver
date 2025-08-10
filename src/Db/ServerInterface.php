@@ -86,6 +86,15 @@ interface ServerInterface
     public function isInformationSchema(string $database);
 
     /**
+     * Find out if database is a system database
+     *
+     * @param string $database
+     *
+     * @return bool
+     */
+    public function isSystemSchema(string $database);
+
+    /**
      * Create a database
      *
      * @param string $database

@@ -119,6 +119,18 @@ trait ServerTrait
     }
 
     /**
+     * Find out if database is a system database
+     *
+     * @param string $database
+     *
+     * @return bool
+     */
+    public function isSystemSchema(string $database)
+    {
+        return $this->server->isSystemSchema($database);
+    }
+
+    /**
      * Create a database
      *
      * @param string $database
