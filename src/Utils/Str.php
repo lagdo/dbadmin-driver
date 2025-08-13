@@ -12,12 +12,12 @@ class Str
     /**
      * @inheritDoc
      */
-    public function html($string): string
+    public function html(?string $string): string
     {
         if(!$string) {
             return '';
         }
-        $string =  str_replace("\n", '<br>', $string);
+        $string = str_replace("\n", '<br>', $string);
         return str_replace("\0", '&#0;', htmlspecialchars($string, ENT_QUOTES, 'utf-8'));
     }
 

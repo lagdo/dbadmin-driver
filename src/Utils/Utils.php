@@ -37,4 +37,14 @@ class Utils
         $this->str = $str;
         $this->history = $history;
     }
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    public function html(string $string): string
+    {
+        return $this->str->html($string);
+    }
 }
