@@ -15,16 +15,6 @@ class Input
     public $values = [];
 
     /**
-     * Set the input values
-     *
-     * @param array $values
-     */
-    public function setValues(array $values)
-    {
-        $this->values = $values;
-    }
-
-    /**
      * @inheritDoc
      */
     public function getTable(): string
