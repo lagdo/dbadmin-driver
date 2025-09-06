@@ -79,19 +79,6 @@ abstract class Database implements DatabaseInterface
             $type . $this->driver->escapeTableName($name) . " AS\n" . $values['select'];
         return $this->driver->executeQuery($sql);
     }
-    /**
-     * Execute remembered queries
-     *
-     * @param bool $failed
-     *
-     * @return bool
-     * @throws Exception
-     */
-    private function executeSavedQuery(bool $failed): bool
-    {
-        list($queries/*, $time*/) = $this->driver->queries();
-        return $this->driver->executeQuery($queries, false, $failed/*, $time*/);
-    }
 
     /**
      * Drop old object and create a new one
@@ -127,9 +114,9 @@ abstract class Database implements DatabaseInterface
             }
             return 'altered';
         }
-        $this->executeSavedQuery(!($this->driver->execute($test) &&
+        /*$this->executeSavedQuery(!($this->driver->execute($test) &&
             $this->driver->execute($dropTest) &&
-            $this->driver->execute($drop) && $this->driver->execute($create)));
+            $this->driver->execute($drop) && $this->driver->execute($create)));*/
         return 'altered';
     }
 
