@@ -58,7 +58,7 @@ abstract class Connection extends AbstractConnection
         $statement = $this->client->query($query);
         $this->driver->setError();
         if (!$statement) {
-            list(, $errno, $error) = $this->client->errorInfo();
+            [, $errno, $error] = $this->client->errorInfo();
             $this->driver->setErrno($errno);
             $this->driver->setError(($error) ? $error : $this->utils->trans->lang('Unknown error.'));
             return false;
@@ -117,10 +117,8 @@ abstract class Connection extends AbstractConnection
         if (!($statement = $this->driver->execute($query))) {
             return null;
         }
-        if (!($row = $statement->fetchRow())) {
-            return null;
-        }
-        return count($row) > $field ? $row[$field] : null;
+        $row = $statement->fetchRow();
+        return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
 
     /**

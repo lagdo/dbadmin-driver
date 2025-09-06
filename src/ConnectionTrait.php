@@ -33,11 +33,13 @@ trait ConnectionTrait
     abstract protected function afterConnection();
 
     /**
-     * Create a connection to the server, based on the config and available packages
+     * Create a connection to a server
+     *
+     * @param array $options
      *
      * @return ConnectionInterface|null
      */
-    abstract protected function createConnection();
+    abstract public function createConnection(array $options);
 
     /**
      * @param ConnectionInterface $connection

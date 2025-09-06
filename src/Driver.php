@@ -48,7 +48,7 @@ abstract class Driver implements DriverInterface
         $this->config = new ConfigEntity($utils->trans, $options);
         $this->beforeConnection();
         // Create and set the main connection.
-        $this->mainConnection = $this->createConnection();
+        $this->mainConnection = $this->createConnection($options);
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class Driver implements DriverInterface
      */
     public function connect(string $database, string $schema = '')
     {
-        $this->createConnection();
+        $this->createConnection($this->config->options());
         return $this->open($database, $schema);
     }
 
@@ -126,16 +126,7 @@ abstract class Driver implements DriverInterface
      */
     public function execute(string $query)
     {
-        $this->utils->history->save($query);
         return $this->connection->query($query);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function queries()
-    {
-        return $this->utils->history->queries();
     }
 
     /**

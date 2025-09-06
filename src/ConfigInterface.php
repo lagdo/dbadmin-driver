@@ -78,12 +78,9 @@ interface ConfigInterface
     /**
      * Get the driver options
      *
-     * @param string $name The option name
-     * @param mixed $default
-     *
-     * @return mixed
+     * @return array
      */
-    public function options(string $name = '', $default = '');
+    public function options();
 
     /**
      * Get the selected database

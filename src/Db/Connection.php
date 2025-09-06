@@ -6,28 +6,14 @@ use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
+use function array_key_exists;
 use function is_resource;
+use function preg_match;
 use function stream_get_contents;
+use function trim;
 
 abstract class Connection implements ConnectionInterface
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
-
-    /**
-     * @var Utils
-     */
-    protected $utils;
-
-    /**
-     * The extension name
-     *
-     * @var string
-     */
-    protected $extension;
-
     /**
      * The client object used to query the database driver
      *
@@ -52,13 +38,44 @@ abstract class Connection implements ConnectionInterface
      *
      * @param DriverInterface $driver
      * @param Utils $utils
-     * @param string $extension
+     * @param array $options
+     * @param string $extension The extension name
      */
-    public function __construct(DriverInterface $driver, Utils $utils, string $extension)
+    public function __construct(protected DriverInterface $driver,
+        protected Utils $utils, protected array $options, protected string $extension)
+    {}
+
+    /**
+     * Get the driver options
+     *
+     * @param string $name The option name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    protected function options(string $name, $default = '')
     {
-        $this->driver = $driver;
-        $this->utils = $utils;
-        $this->extension = $extension;
+        if (!($name = trim($name))) {
+            return $this->options;
+        }
+        if (array_key_exists($name, $this->options)) {
+            return $this->options[$name];
+        }
+        if ($name === 'server') {
+            $server = $this->options['host'] ?? '';
+            $port = $this->options['port'] ?? ''; // Optional
+            // Append the port to the host if it is defined.
+            if (($port)) {
+                $server .= ":$port";
+            }
+            return $server;
+        }
+        // if ($name === 'ssl') {
+        //     return false; // No SSL options yet
+        // }
+
+        // Option not found
+        return $default;
     }
 
     /**
@@ -170,7 +187,7 @@ abstract class Connection implements ConnectionInterface
     public function execUseQuery(string $query)
     {
         $space = $this->spaceRegex();
-        if (\preg_match("~^$space*+USE\\b~i", $query)) {
+        if (preg_match("~^$space*+USE\\b~i", $query)) {
             $this->driver->execute($query);
         }
     }

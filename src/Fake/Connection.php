@@ -82,7 +82,7 @@ class Connection extends AbstractConnection
             return null;
         }
         $row = $this->statement->fetchRow();
-        return count($row) > $field ? $row[$field] : null;
+        return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
 
     /**
