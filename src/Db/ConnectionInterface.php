@@ -43,4 +43,57 @@ interface ConnectionInterface extends DriverConnectionInterface
      * @return string
      */
     public function warnings();
+
+    /**
+     * Set the error message
+     *
+     * @param string $error
+     *
+     * @return void
+     */
+    public function setError(string $error = '');
+
+    /**
+     * Get the raw error message
+     *
+     * @return string
+     */
+    public function error(): string;
+
+    /**
+     * Check if the last query returned an error message
+     *
+     * @return bool
+     */
+    public function hasError();
+
+    /**
+     * Set the error number
+     *
+     * @param int $errno
+     *
+     * @return void
+     */
+    public function setErrno(int $errno);
+
+    /**
+     * Get the last error number
+     *
+     * @return string
+     */
+    public function errno();
+
+    /**
+     * Check if the last query returned an error number
+     *
+     * @return bool
+     */
+    public function hasErrno();
+
+    /**
+     * Get the full error message
+     *
+     * @return string
+     */
+    public function errorMessage();
 }

@@ -29,7 +29,7 @@ trait ErrorTrait
     /**
      * @inheritDoc
      */
-    public function error()
+    public function error(): string
     {
         return $this->error;
     }

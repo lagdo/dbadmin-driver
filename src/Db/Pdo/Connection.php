@@ -56,11 +56,11 @@ abstract class Connection extends AbstractConnection
     public function query(string $query, bool $unbuffered = false)
     {
         $statement = $this->client->query($query);
-        $this->driver->setError();
+        $this->setError();
         if (!$statement) {
             [, $errno, $error] = $this->client->errorInfo();
-            $this->driver->setErrno($errno);
-            $this->driver->setError(($error) ? $error : $this->utils->trans->lang('Unknown error.'));
+            $this->setErrno($errno);
+            $this->setError(($error) ? $error : $this->utils->trans->lang('Unknown error.'));
             return false;
         }
         // rowCount() is not guaranteed to work with all drivers

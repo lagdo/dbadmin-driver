@@ -224,4 +224,12 @@ trait ConnectionTrait
         $result = $this->connection->query("ROLLBACK");
         return $result !== false;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function error(): string
+    {
+        return $this->connection->error();
+    }
 }

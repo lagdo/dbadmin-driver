@@ -22,7 +22,6 @@ use function trim;
 
 abstract class Driver implements DriverInterface
 {
-    use ErrorTrait;
     use ConfigTrait;
     use ConnectionTrait;
     use ServerTrait;

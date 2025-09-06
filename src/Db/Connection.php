@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
+use Lagdo\DbAdmin\Driver\ErrorTrait;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
@@ -14,6 +15,8 @@ use function trim;
 
 abstract class Connection implements ConnectionInterface
 {
+    use ErrorTrait;
+
     /**
      * The client object used to query the database driver
      *
