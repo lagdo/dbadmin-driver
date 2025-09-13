@@ -2,13 +2,13 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\ServerInterface;
+use Lagdo\DbAdmin\Driver\Db\Server;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 
 trait ServerTrait
 {
     /**
-     * @var ServerInterface
+     * @var Server
      */
     protected $server;
 

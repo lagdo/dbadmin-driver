@@ -211,6 +211,17 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function execUseQuery(string $query)
+    {
+        $space = $this->utils->str->spaceRegex();
+        if (preg_match("~^$space*+USE\\b~i", $query)) {
+            $this->execute($query);
+        }
+    }
+
+    /**
      * Escape column key used in where()
      *
      * @param string

@@ -8,8 +8,9 @@ use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 use function array_key_exists;
+use function count;
+use function is_array;
 use function is_resource;
-use function preg_match;
 use function stream_get_contents;
 use function trim;
 
@@ -143,9 +144,26 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function defaultField()
+    public function defaultField(): int
     {
         return 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function result(string $query, int $field = -1)
+    {
+        if ($field < 0) {
+            $field = $this->defaultField();
+        }
+        $result = $this->query($query);
+        if (!$result || !$result->rowCount()) {
+            return null;
+        }
+        // return pg_fetch_result($result->result, 0, $field);
+        $row = $result->fetchRow();
+        return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
 
     /**
@@ -162,26 +180,5 @@ abstract class Connection implements ConnectionInterface
     public function close()
     {
         return;
-    }
-
-    /**
-     * Return the regular expression for spaces
-     *
-     * @return string
-     */
-    protected function spaceRegex()
-    {
-        return "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function execUseQuery(string $query)
-    {
-        $space = $this->spaceRegex();
-        if (preg_match("~^$space*+USE\\b~i", $query)) {
-            $this->driver->execute($query);
-        }
     }
 }

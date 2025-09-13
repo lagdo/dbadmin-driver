@@ -75,7 +75,7 @@ abstract class Connection extends AbstractConnection
      */
     public function multiQuery(string $query)
     {
-        $this->statement = $this->driver->execute($query);
+        $this->statement = $this->query($query);
         return $this->statement !== false;
     }
 
@@ -104,21 +104,6 @@ abstract class Connection extends AbstractConnection
         }
         $this->statement->offset = 0;
         return $this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function result(string $query, int $field = -1)
-    {
-        if ($field < 0) {
-            $field = $this->defaultField();
-        }
-        if (!($statement = $this->driver->execute($query))) {
-            return null;
-        }
-        $row = $statement->fetchRow();
-        return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
 
     /**

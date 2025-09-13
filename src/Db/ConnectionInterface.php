@@ -24,13 +24,14 @@ interface ConnectionInterface extends DriverConnectionInterface
     public function close();
 
     /**
-     * Execute a query if it is of type "USE".
+     * Execute a query on the current database
      *
      * @param string $query
+     * @param bool $unbuffered
      *
-     * @return void
+     * @return StatementInterface|bool
      */
-    public function execUseQuery(string $query);
+    public function query(string $query, bool $unbuffered = false);
 
     /**
      * Get warnings about the last command

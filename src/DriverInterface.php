@@ -99,16 +99,6 @@ interface DriverInterface extends ConfigInterface, ConnectionInterface,
     public function setUtf8mb4(string $create);
 
     /**
-     * Execute a query on the current database and fetch the specified field
-     *
-     * @param string $query
-     * @param int $field
-     *
-     * @return mixed
-     */
-    public function result(string $query, int $field = -1);
-
-    /**
      * Get the raw error message
      *
      * @return string
@@ -191,6 +181,15 @@ interface DriverInterface extends ConfigInterface, ConnectionInterface,
      * @return array
      */
     public function rows(string $query);
+
+    /**
+     * Execute a query if it is of type "USE".
+     *
+     * @param string $query
+     *
+     * @return void
+     */
+    public function execUseQuery(string $query);
 
     /**
      * Return a quoted string

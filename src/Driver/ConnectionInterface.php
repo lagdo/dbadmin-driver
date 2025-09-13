@@ -53,31 +53,11 @@ interface ConnectionInterface
     public function quoteBinary(string $string);
 
     /**
-     * Execute a query on the current database
-     *
-     * @param string $query
-     * @param bool $unbuffered
-     *
-     * @return StatementInterface|bool
-     */
-    public function query(string $query, bool $unbuffered = false);
-
-    /**
      * Get the number of rows affected by the last query
      *
      * @return integer
      */
     public function affectedRows();
-
-    /**
-     * Execute a query on the current database and fetch the specified field
-     *
-     * @param string $query
-     * @param int $field
-     *
-     * @return mixed
-     */
-    public function result(string $query, int $field = -1);
 
     /**
      * Execute a query on the current database and store the result
@@ -111,6 +91,21 @@ interface ConnectionInterface
      * @return string
      */
     public function value($value, TableFieldEntity $field);
+
+    /**
+     * Execute a query on the current database and fetch the specified field
+     *
+     * @param string $query
+     * @param int $field
+     *
+     * @return mixed
+     */
+    public function result(string $query, int $field = -1);
+
+    /**
+     * @return int
+     */
+    public function defaultField(): int;
 
     /**
      * Explain select

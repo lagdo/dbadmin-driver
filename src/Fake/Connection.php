@@ -71,21 +71,6 @@ class Connection extends AbstractConnection
     }
 
     /**
-     * @inheritDoc
-     */
-    public function result(string $query, int $field = -1)
-    {
-        if ($field < 0) {
-            $field = $this->defaultField();
-        }
-        if (!is_a($this->statement, Statement::class)) {
-            return null;
-        }
-        $row = $this->statement->fetchRow();
-        return is_array($row) && count($row) > $field ? $row[$field] : null;
-    }
-
-    /**
      * @param string $query
      *
      * @return array

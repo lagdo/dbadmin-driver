@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
@@ -13,14 +14,9 @@ use function preg_match_all;
 abstract class Server implements ServerInterface
 {
     /**
-     * @var DriverInterface
+     * @var ConnectionInterface
      */
-    protected $driver;
-
-    /**
-     * @var Utils
-     */
-    protected $utils;
+    protected $connection;
 
     /**
      * The constructor
@@ -28,10 +24,17 @@ abstract class Server implements ServerInterface
      * @param DriverInterface $driver
      * @param Utils $utils
      */
-    public function __construct(DriverInterface $driver, Utils $utils)
+    public function __construct(protected DriverInterface $driver, protected Utils $utils)
+    {}
+
+    /**
+     * @param ConnectionInterface $connection
+     *
+     * @return void
+     */
+    public function setConnection(ConnectionInterface $connection): void
     {
-        $this->driver = $driver;
-        $this->utils = $utils;
+        $this->connection = $connection;
     }
 
     /**
@@ -40,13 +43,13 @@ abstract class Server implements ServerInterface
     public function getUsers(string $database): array
     {
         // From privileges.inc.php
-        $clause = ($database == '' ? 'user' : 'db WHERE ' . $this->driver->quote($database) . ' LIKE Db');
+        $clause = ($database == '' ? 'user' : 'db WHERE ' . $this->connection->quote($database) . ' LIKE Db');
         $query = "SELECT User, Host FROM mysql.$clause ORDER BY Host, User";
-        $statement = $this->driver->query($query);
+        $statement = $this->connection->query($query);
         // $grant = $statement;
         if (!$statement) {
             // list logged user, information_schema.USER_PRIVILEGES lists just the current user too
-            $statement = $this->driver->query("SELECT SUBSTRING_INDEX(CURRENT_USER, '@', 1) " .
+            $statement = $this->connection->query("SELECT SUBSTRING_INDEX(CURRENT_USER, '@', 1) " .
                 "AS User, SUBSTRING_INDEX(CURRENT_USER, '@', -1) AS Host");
         }
         $users = [];
@@ -92,8 +95,8 @@ abstract class Server implements ServerInterface
 
         // From user.inc.php
         //! use information_schema for MySQL 5 - column names in column privileges are not escaped
-        $query = 'SHOW GRANTS FOR ' . $this->driver->quote($user) . '@' . $this->driver->quote($host);
-        if (!($statement = $this->driver->query($query))) {
+        $query = 'SHOW GRANTS FOR ' . $this->connection->quote($user) . '@' . $this->connection->quote($host);
+        if (!($statement = $this->connection->query($query))) {
             return $entity;
         }
 
