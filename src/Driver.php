@@ -22,13 +22,13 @@ use function trim;
 
 abstract class Driver implements DriverInterface
 {
-    use ConfigTrait;
-    use ConnectionTrait;
-    use ServerTrait;
-    use TableTrait;
-    use DatabaseTrait;
-    use QueryTrait;
-    use GrammarTrait;
+    use Driver\ConfigTrait;
+    use Driver\ConnectionTrait;
+    use Driver\ServerTrait;
+    use Driver\TableTrait;
+    use Driver\DatabaseTrait;
+    use Driver\QueryTrait;
+    use Driver\GrammarTrait;
 
     /**
      * @var Utils

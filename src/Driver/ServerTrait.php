@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ServerInterface;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;

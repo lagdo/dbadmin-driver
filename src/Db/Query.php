@@ -3,10 +3,11 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Exception;
+use Lagdo\DbAdmin\Driver\DriverInterface;
+use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function implode;
@@ -116,14 +117,6 @@ abstract class Query implements QueryInterface
         }
         $result = $this->driver->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
         return $result !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function explain(ConnectionInterface $connection, string $query)
-    {
-        return false;
     }
 
     /**

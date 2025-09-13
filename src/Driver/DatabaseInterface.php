@@ -1,19 +1,13 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
-use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
-trait DatabaseTrait
+interface DatabaseInterface
 {
-    /**
-     * @var DatabaseInterface
-     */
-    protected $database;
-
     /**
      * Create table
      *
@@ -21,10 +15,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function createTable(TableEntity $tableAttrs)
-    {
-        return $this->database->createTable($tableAttrs);
-    }
+    public function createTable(TableEntity $tableAttrs);
 
     /**
      * Alter table
@@ -34,10 +25,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function alterTable(string $table, TableEntity $tableAttrs)
-    {
-        return $this->database->alterTable($table, $tableAttrs);
-    }
+    public function alterTable(string $table, TableEntity $tableAttrs);
 
     /**
      * Alter indexes
@@ -48,30 +36,21 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function alterIndexes(string $table, array $alter, array $drop)
-    {
-        return $this->database->alterIndexes($table, $alter, $drop);
-    }
+    public function alterIndexes(string $table, array $alter, array $drop);
 
     /**
      * Get tables list
      *
      * @return array
      */
-    public function tables()
-    {
-        return $this->database->tables();
-    }
+    public function tables();
 
     /**
      * Get sequences list
      *
      * @return array
      */
-    public function sequences()
-    {
-        return $this->database->sequences();
-    }
+    public function sequences();
 
     /**
      * Count tables in all databases
@@ -80,10 +59,7 @@ trait DatabaseTrait
      *
      * @return array
      */
-    public function countTables(array $databases)
-    {
-        return $this->database->countTables($databases);
-    }
+    public function countTables(array $databases);
 
     /**
      * Drop views
@@ -92,10 +68,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function dropViews(array $views)
-    {
-        return $this->database->dropViews($views);
-    }
+    public function dropViews(array $views);
 
     /**
      * Truncate tables
@@ -104,10 +77,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function truncateTables(array $tables)
-    {
-        return $this->database->truncateTables($tables);
-    }
+    public function truncateTables(array $tables);
 
     /**
      * Drop tables
@@ -116,10 +86,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function dropTables(array $tables)
-    {
-        return $this->database->dropTables($tables);
-    }
+    public function dropTables(array $tables);
 
     /**
      * Move tables to other schema
@@ -130,10 +97,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function moveTables(array $tables, array $views, string $target)
-    {
-        return $this->database->moveTables($tables, $views, $target);
-    }
+    public function moveTables(array $tables, array $views, string $target);
 
     /**
      * Copy tables to other schema
@@ -144,10 +108,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function copyTables(array $tables, array $views, string $target)
-    {
-        return $this->database->copyTables($tables, $views, $target);
-    }
+    public function copyTables(array $tables, array $views, string $target);
 
     /**
      * Create a view
@@ -157,10 +118,7 @@ trait DatabaseTrait
      * @return bool
      * @throws Exception
      */
-    public function createView(array $values)
-    {
-        return $this->database->createView($values);
-    }
+    public function createView(array $values);
 
     /**
      * Update a view
@@ -171,10 +129,7 @@ trait DatabaseTrait
      * @return string
      * @throws Exception
      */
-    public function updateView(string $view, array $values): string
-    {
-        return $this->database->updateView($view, $values);
-    }
+    public function updateView(string $view, array $values): string;
 
     /**
      * Drop a view
@@ -184,40 +139,28 @@ trait DatabaseTrait
      * @return bool
      * @throws Exception
      */
-    public function dropView(string $view): bool
-    {
-        return $this->database->dropView($view);
-    }
+    public function dropView(string $view): bool;
 
     /**
      * Get user defined types
      *
      * @return array
      */
-    public function userTypes()
-    {
-        return $this->database->userTypes();
-    }
+    public function userTypes() ;
 
     /**
      * Get existing schemas
      *
      * @return array
      */
-    public function schemas()
-    {
-        return $this->database->schemas();
-    }
+    public function schemas();
 
     /**
      * Get events
      *
      * @return array
      */
-    public function events()
-    {
-        return $this->database->events();
-    }
+    public function events();
 
     /**
      * Get information about stored routine
@@ -225,22 +168,16 @@ trait DatabaseTrait
      * @param string $name
      * @param string $type "FUNCTION" or "PROCEDURE"
      *
-     * @return RoutineEntity
+     * @return RoutineEntity|null
      */
-    public function routine(string $name, string $type)
-    {
-        return $this->database->routine($name, $type);
-    }
+    public function routine(string $name, string $type);
 
     /**
      * Get list of routines
      *
      * @return array
      */
-    public function routines()
-    {
-        return $this->database->routines();
-    }
+    public function routines();
 
     /**
      * Get routine signature
@@ -250,8 +187,5 @@ trait DatabaseTrait
      *
      * @return string
      */
-    public function routineId(string $name, array $row)
-    {
-        return $this->database->routineId($name, $row);
-    }
+    public function routineId(string $name, array $row);
 }

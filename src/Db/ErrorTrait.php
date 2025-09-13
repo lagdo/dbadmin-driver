@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Db;
 
 trait ErrorTrait
 {
@@ -53,24 +53,8 @@ trait ErrorTrait
     /**
      * @inheritDoc
      */
-    public function errno()
-    {
-        return $this->errno;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasErrno()
-    {
-        return $this->errno !== 0;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function errorMessage()
     {
-        return $this->hasErrno() ? '(' . $this->errno() . '): ' . $this->error() : $this->error();
+        return $this->errno !== 0 ? "({$this->errno}) {$this->error}" : $this->error;
     }
 }

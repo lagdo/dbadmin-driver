@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
+use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 

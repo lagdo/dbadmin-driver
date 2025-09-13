@@ -1,8 +1,9 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 
@@ -130,16 +131,6 @@ interface QueryInterface
      * @return string
      */
     public function where(array $where, array $fields = []): string;
-
-    /**
-     * Explain select
-     *
-     * @param ConnectionInterface $connection
-     * @param string $query
-     *
-     * @return StatementInterface|bool
-     */
-    public function explain(ConnectionInterface $connection, string $query);
 
     /**
      * Get approximate number of rows

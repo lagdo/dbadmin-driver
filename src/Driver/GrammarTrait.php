@@ -1,14 +1,20 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
-interface GrammarInterface
+trait GrammarTrait
 {
+    /**
+     * @var GrammarInterface
+     */
+    protected $grammar;
+
     /**
      * Get escaped table name
      *
@@ -16,7 +22,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function escapeTableName(string $idf);
+    public function escapeTableName(string $idf)
+    {
+        return $this->grammar->escapeTableName($idf);
+    }
 
     /**
      * Escape database identifier
@@ -25,7 +34,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function escapeId(string $idf);
+    public function escapeId(string $idf)
+    {
+        return $this->grammar->escapeId($idf);
+    }
 
     /**
      * Unescape database identifier
@@ -34,7 +46,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function unescapeId(string $idf);
+    public function unescapeId(string $idf)
+    {
+        return $this->grammar->unescapeId($idf);
+    }
 
     /**
      * Convert field in select and edit
@@ -43,7 +58,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function convertField(TableFieldEntity $field);
+    public function convertField(TableFieldEntity $field)
+    {
+        return $this->grammar->convertField($field);
+    }
 
     /**
      * Convert value in edit after applying functions back
@@ -53,7 +71,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function unconvertField(TableFieldEntity $field, string $value);
+    public function unconvertField(TableFieldEntity $field, string $value)
+    {
+        return $this->grammar->unconvertField($field, $value);
+    }
 
     /**
      * Get select clause for convertible fields
@@ -64,7 +85,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function convertFields(array $columns, array $fields, array $select = []);
+    public function convertFields(array $columns, array $fields, array $select = [])
+    {
+        return $this->grammar->convertFields($columns, $fields, $select);
+    }
 
     /**
      * Select data from table
@@ -73,7 +97,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function buildSelectQuery(TableSelectEntity $select);
+    public function buildSelectQuery(TableSelectEntity $select)
+    {
+        return $this->grammar->buildSelectQuery($select);
+    }
 
     /**
      * Parse a string containing SQL queries
@@ -82,7 +109,10 @@ interface GrammarInterface
      *
      * @return bool
      */
-    public function parseQueries(QueryEntity $queryEntity);
+    public function parseQueries(QueryEntity $queryEntity)
+    {
+        return $this->grammar->parseQueries($queryEntity);
+    }
 
     /**
      * Get query to compute number of found rows
@@ -94,7 +124,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups);
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
+    {
+        return $this->grammar->getRowCountQuery($table, $where, $isGroup, $groups);
+    }
 
     /**
      * Get default value clause
@@ -103,7 +136,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getDefaultValueClause(TableFieldEntity $field);
+    public function getDefaultValueClause(TableFieldEntity $field)
+    {
+        return $this->grammar->getDefaultValueClause($field);
+    }
 
     /**
      * Formulate SQL query with limit
@@ -115,7 +151,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0);
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
+    {
+        return $this->grammar->getLimitClause($query, $where, $limit, $offset);
+    }
 
     /**
      * Format foreign key to use in SQL query
@@ -124,14 +163,20 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey);
+    public function formatForeignKey(ForeignKeyEntity $foreignKey)
+    {
+        return $this->grammar->formatForeignKey($foreignKey);
+    }
 
     /**
      * Generate modifier for auto increment column
      *
      * @return string
      */
-    public function getAutoIncrementModifier();
+    public function getAutoIncrementModifier()
+    {
+        return $this->grammar->getAutoIncrementModifier();
+    }
 
     /**
      * Get SQL command to create table
@@ -142,7 +187,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style);
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
+    {
+        return $this->grammar->getCreateTableQuery($table, $autoIncrement, $style);
+    }
 
     /**
      * Command to create an index
@@ -154,7 +202,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns);
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
+    {
+        return $this->grammar->getCreateIndexQuery($table, $type, $name, $columns);
+    }
 
     /**
      * Get SQL command to create foreign keys
@@ -168,7 +219,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getForeignKeysQuery(string $table);
+    public function getForeignKeysQuery(string $table)
+    {
+        return $this->grammar->getForeignKeysQuery($table);
+    }
 
     /**
      * Get SQL command to truncate table
@@ -177,7 +231,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getTruncateTableQuery(string $table);
+    public function getTruncateTableQuery(string $table)
+    {
+        return $this->grammar->getTruncateTableQuery($table);
+    }
 
     /**
      * Get SQL command to change database
@@ -186,7 +243,10 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getUseDatabaseQuery(string $database);
+    public function getUseDatabaseQuery(string $database)
+    {
+        return $this->grammar->getUseDatabaseQuery($database);
+    }
 
     /**
      * Get SQL commands to create triggers
@@ -195,12 +255,18 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateTriggerQuery(string $table);
+    public function getCreateTriggerQuery(string $table)
+    {
+        return $this->grammar->getCreateTriggerQuery($table);
+    }
 
     /**
      * Return query to get connection ID
      *
      * @return string
      */
-    // public function connectionId();
+    // public function connectionId()
+    // {
+    //     return $this->grammar->connectionId();
+    // }
 }

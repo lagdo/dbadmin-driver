@@ -2,8 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Db\ErrorTrait;
 use Lagdo\DbAdmin\Driver\DriverInterface;
-use Lagdo\DbAdmin\Driver\ErrorTrait;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
@@ -122,16 +122,6 @@ abstract class Connection implements ConnectionInterface
      */
     public function setCharset(string $charset)
     {
-    }
-
-    /**
-     * Get the client
-     *
-     * @return mixed
-     */
-    public function client()
-    {
-        return $this->client;
     }
 
     /**

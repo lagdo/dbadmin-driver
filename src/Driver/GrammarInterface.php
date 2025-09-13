@@ -1,20 +1,14 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
-trait GrammarTrait
+interface GrammarInterface
 {
-    /**
-     * @var GrammarInterface
-     */
-    protected $grammar;
-
     /**
      * Get escaped table name
      *
@@ -22,10 +16,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function escapeTableName(string $idf)
-    {
-        return $this->grammar->escapeTableName($idf);
-    }
+    public function escapeTableName(string $idf);
 
     /**
      * Escape database identifier
@@ -34,10 +25,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function escapeId(string $idf)
-    {
-        return $this->grammar->escapeId($idf);
-    }
+    public function escapeId(string $idf);
 
     /**
      * Unescape database identifier
@@ -46,10 +34,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function unescapeId(string $idf)
-    {
-        return $this->grammar->unescapeId($idf);
-    }
+    public function unescapeId(string $idf);
 
     /**
      * Convert field in select and edit
@@ -58,10 +43,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function convertField(TableFieldEntity $field)
-    {
-        return $this->grammar->convertField($field);
-    }
+    public function convertField(TableFieldEntity $field);
 
     /**
      * Convert value in edit after applying functions back
@@ -71,10 +53,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function unconvertField(TableFieldEntity $field, string $value)
-    {
-        return $this->grammar->unconvertField($field, $value);
-    }
+    public function unconvertField(TableFieldEntity $field, string $value);
 
     /**
      * Get select clause for convertible fields
@@ -85,10 +64,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function convertFields(array $columns, array $fields, array $select = [])
-    {
-        return $this->grammar->convertFields($columns, $fields, $select);
-    }
+    public function convertFields(array $columns, array $fields, array $select = []);
 
     /**
      * Select data from table
@@ -97,10 +73,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function buildSelectQuery(TableSelectEntity $select)
-    {
-        return $this->grammar->buildSelectQuery($select);
-    }
+    public function buildSelectQuery(TableSelectEntity $select);
 
     /**
      * Parse a string containing SQL queries
@@ -109,10 +82,7 @@ trait GrammarTrait
      *
      * @return bool
      */
-    public function parseQueries(QueryEntity $queryEntity)
-    {
-        return $this->grammar->parseQueries($queryEntity);
-    }
+    public function parseQueries(QueryEntity $queryEntity);
 
     /**
      * Get query to compute number of found rows
@@ -124,10 +94,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
-    {
-        return $this->grammar->getRowCountQuery($table, $where, $isGroup, $groups);
-    }
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups);
 
     /**
      * Get default value clause
@@ -136,10 +103,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getDefaultValueClause(TableFieldEntity $field)
-    {
-        return $this->grammar->getDefaultValueClause($field);
-    }
+    public function getDefaultValueClause(TableFieldEntity $field);
 
     /**
      * Formulate SQL query with limit
@@ -151,10 +115,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
-    {
-        return $this->grammar->getLimitClause($query, $where, $limit, $offset);
-    }
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0);
 
     /**
      * Format foreign key to use in SQL query
@@ -163,20 +124,14 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey)
-    {
-        return $this->grammar->formatForeignKey($foreignKey);
-    }
+    public function formatForeignKey(ForeignKeyEntity $foreignKey);
 
     /**
      * Generate modifier for auto increment column
      *
      * @return string
      */
-    public function getAutoIncrementModifier()
-    {
-        return $this->grammar->getAutoIncrementModifier();
-    }
+    public function getAutoIncrementModifier();
 
     /**
      * Get SQL command to create table
@@ -187,10 +142,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
-    {
-        return $this->grammar->getCreateTableQuery($table, $autoIncrement, $style);
-    }
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style);
 
     /**
      * Command to create an index
@@ -202,10 +154,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
-    {
-        return $this->grammar->getCreateIndexQuery($table, $type, $name, $columns);
-    }
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns);
 
     /**
      * Get SQL command to create foreign keys
@@ -219,10 +168,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getForeignKeysQuery(string $table)
-    {
-        return $this->grammar->getForeignKeysQuery($table);
-    }
+    public function getForeignKeysQuery(string $table);
 
     /**
      * Get SQL command to truncate table
@@ -231,10 +177,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getTruncateTableQuery(string $table)
-    {
-        return $this->grammar->getTruncateTableQuery($table);
-    }
+    public function getTruncateTableQuery(string $table);
 
     /**
      * Get SQL command to change database
@@ -243,10 +186,7 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getUseDatabaseQuery(string $database)
-    {
-        return $this->grammar->getUseDatabaseQuery($database);
-    }
+    public function getUseDatabaseQuery(string $database);
 
     /**
      * Get SQL commands to create triggers
@@ -255,18 +195,12 @@ trait GrammarTrait
      *
      * @return string
      */
-    public function getCreateTriggerQuery(string $table)
-    {
-        return $this->grammar->getCreateTriggerQuery($table);
-    }
+    public function getCreateTriggerQuery(string $table);
 
     /**
      * Return query to get connection ID
      *
      * @return string
      */
-    // public function connectionId()
-    // {
-    //     return $this->grammar->connectionId();
-    // }
+    // public function connectionId();
 }

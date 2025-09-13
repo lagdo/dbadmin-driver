@@ -2,15 +2,10 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface as DriverConnectionInterface;
+
 interface ConnectionInterface extends DriverConnectionInterface
 {
-    /**
-     * Get the client
-     *
-     * @return mixed
-     */
-    public function client();
-
     /**
      * Connect to a database and a schema
      *
@@ -75,20 +70,6 @@ interface ConnectionInterface extends DriverConnectionInterface
      * @return void
      */
     public function setErrno(int $errno);
-
-    /**
-     * Get the last error number
-     *
-     * @return string
-     */
-    public function errno();
-
-    /**
-     * Check if the last query returned an error number
-     *
-     * @return bool
-     */
-    public function hasErrno();
 
     /**
      * Get the full error message

@@ -2,17 +2,17 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
-use Lagdo\DbAdmin\Driver\Db\DriverConnectionInterface;
-use Lagdo\DbAdmin\Driver\Db\ServerInterface;
-use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
-use Lagdo\DbAdmin\Driver\Db\TableInterface;
-use Lagdo\DbAdmin\Driver\Db\QueryInterface;
-use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+use Lagdo\DbAdmin\Driver\Driver\ConfigInterface;
+use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
+use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
+use Lagdo\DbAdmin\Driver\Driver\TableInterface;
+use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
+use Lagdo\DbAdmin\Driver\Driver\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
-interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
+interface DriverInterface extends ConfigInterface, ConnectionInterface,
     ServerInterface, DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
 {
     /**
@@ -28,7 +28,7 @@ interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return ConnectionInterface
+     * @return Db\ConnectionInterface
      */
     public function open(string $database, string $schema = '');
 
@@ -38,7 +38,7 @@ interface DriverInterface extends ConfigInterface, DriverConnectionInterface,
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return ConnectionInterface
+     * @return Db\ConnectionInterface
      */
     public function connect(string $database, string $schema = '');
 

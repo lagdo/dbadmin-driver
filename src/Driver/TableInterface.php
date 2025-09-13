@@ -1,18 +1,12 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\TableInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 
-trait TableTrait
+interface TableInterface
 {
-    /**
-     * @var TableInterface
-     */
-    protected $table;
-
     /**
      * Get table status
      *
@@ -21,10 +15,7 @@ trait TableTrait
      *
      * @return TableEntity|null
      */
-    public function tableStatus(string $table, bool $fast = false)
-    {
-        return $this->table->tableStatus($table, $fast);
-    }
+    public function tableStatus(string $table, bool $fast = false);
 
     /**
      * Get all tables statuses
@@ -33,20 +24,14 @@ trait TableTrait
      *
      * @return TableEntity[]
      */
-    public function tableStatuses(bool $fast = false)
-    {
-        return $this->table->tableStatuses($fast);
-    }
+    public function tableStatuses(bool $fast = false);
 
     /**
      * Get all tables names
      *
      * @return array
      */
-    public function tableNames()
-    {
-        return $this->table->tableNames();
-    }
+    public function tableNames();
 
     /**
      * Get status of a single table and fall back to name on error
@@ -56,10 +41,7 @@ trait TableTrait
      *
      * @return TableEntity
      */
-    public function tableStatusOrName(string $table, bool $fast = false)
-    {
-        return $this->table->tableStatusOrName($table, $fast);
-    }
+    public function tableStatusOrName(string $table, bool $fast = false);
 
     /**
      * Find out whether the identifier is view
@@ -68,10 +50,7 @@ trait TableTrait
      *
      * @return bool
      */
-    public function isView(TableEntity $tableStatus)
-    {
-        return $this->table->isView($tableStatus);
-    }
+    public function isView(TableEntity $tableStatus);
 
     /**
      * Check if table supports foreign keys
@@ -80,10 +59,7 @@ trait TableTrait
      *
      * @return bool
      */
-    public function supportForeignKeys(TableEntity $tableStatus)
-    {
-        return $this->table->supportForeignKeys($tableStatus);
-    }
+    public function supportForeignKeys(TableEntity $tableStatus);
 
     /**
      * Get information about fields
@@ -92,10 +68,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function fields(string $table)
-    {
-        return $this->table->fields($table);
-    }
+    public function fields(string $table);
 
     /**
      * Get table indexes
@@ -104,22 +77,16 @@ trait TableTrait
      *
      * @return array
      */
-    public function indexes(string $table)
-    {
-        return $this->table->indexes($table);
-    }
+    public function indexes(string $table);
 
     /**
      * Get foreign keys in table
      *
      * @param string $table
      *
-     * @return array array($name => array("db" => , "ns" => , "table" => , "source" => [], "target" => [], "onDelete" => , "onUpdate" => ))
+     * @return array
      */
-    public function foreignKeys(string $table)
-    {
-        return $this->table->foreignKeys($table);
-    }
+    public function foreignKeys(string $table);
 
     /**
      * Get information about a trigger
@@ -129,10 +96,7 @@ trait TableTrait
      *
      * @return TriggerEntity
      */
-    public function trigger(string $name, string $table = '')
-    {
-        return $this->table->trigger($name, $table);
-    }
+    public function trigger(string $name, string $table = '');
 
     /**
      * Get defined triggers
@@ -141,20 +105,14 @@ trait TableTrait
      *
      * @return array
      */
-    public function triggers(string $table)
-    {
-        return $this->table->triggers($table);
-    }
+    public function triggers(string $table);
 
     /**
      * Get trigger options
      *
      * @return array ("Timing" => [], "Event" => [], "Type" => [])
      */
-    public function triggerOptions()
-    {
-        return $this->table->triggerOptions();
-    }
+    public function triggerOptions();
 
     /**
      * Get referencable tables with single column primary key except self
@@ -163,10 +121,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function referencableTables(string $table)
-    {
-        return $this->table->referencableTables($table);
-    }
+    public function referencableTables(string $table);
 
     /**
      * Get help link for table
@@ -175,8 +130,5 @@ trait TableTrait
      *
      * @return string relative URL or null
      */
-    public function tableHelp(string $name)
-    {
-        return $this->table->tableHelp($name);
-    }
+    public function tableHelp(string $name);
 }

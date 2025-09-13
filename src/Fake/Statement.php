@@ -3,7 +3,6 @@
 namespace Lagdo\DbAdmin\Driver\Fake;
 
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
 
 use function count;
 use function array_values;

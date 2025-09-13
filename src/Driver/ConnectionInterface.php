@@ -1,14 +1,15 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 /**
  * Functions of the ConnectionInterface interface that are
  * included in the DriverInterface interface.
  */
-interface DriverConnectionInterface
+interface ConnectionInterface
 {
     /**
      * Get the server description
@@ -110,4 +111,13 @@ interface DriverConnectionInterface
      * @return string
      */
     public function value($value, TableFieldEntity $field);
+
+    /**
+     * Explain select
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
+     */
+    public function explain(string $query);
 }

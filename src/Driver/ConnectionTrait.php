@@ -1,9 +1,10 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+use Lagdo\DbAdmin\Driver\Driver;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 trait ConnectionTrait
@@ -196,6 +197,18 @@ trait ConnectionTrait
     public function value($value, TableFieldEntity $field)
     {
         return $this->connection->value($value, $field);
+    }
+
+    /**
+     * Explain select
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
+     */
+    public function explain(string $query)
+    {
+        return $this->connection->explain($query);
     }
 
     /**

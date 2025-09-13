@@ -1,9 +1,8 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\QueryInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
@@ -173,19 +172,6 @@ trait QueryTrait
     public function where(array $where, array $fields = []): string
     {
         return $this->query->where($where, $fields);
-    }
-
-    /**
-     * Explain select
-     *
-     * @param ConnectionInterface $connection
-     * @param string $query
-     *
-     * @return StatementInterface|bool
-     */
-    public function explain(ConnectionInterface $connection, string $query)
-    {
-        return $this->query->explain($connection, $query);
     }
 
     /**

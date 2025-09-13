@@ -1,13 +1,19 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
+use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 
-interface DatabaseInterface
+trait DatabaseTrait
 {
+    /**
+     * @var DatabaseInterface
+     */
+    protected $database;
+
     /**
      * Create table
      *
@@ -15,7 +21,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function createTable(TableEntity $tableAttrs);
+    public function createTable(TableEntity $tableAttrs)
+    {
+        return $this->database->createTable($tableAttrs);
+    }
 
     /**
      * Alter table
@@ -25,7 +34,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function alterTable(string $table, TableEntity $tableAttrs);
+    public function alterTable(string $table, TableEntity $tableAttrs)
+    {
+        return $this->database->alterTable($table, $tableAttrs);
+    }
 
     /**
      * Alter indexes
@@ -36,21 +48,30 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function alterIndexes(string $table, array $alter, array $drop);
+    public function alterIndexes(string $table, array $alter, array $drop)
+    {
+        return $this->database->alterIndexes($table, $alter, $drop);
+    }
 
     /**
      * Get tables list
      *
      * @return array
      */
-    public function tables();
+    public function tables()
+    {
+        return $this->database->tables();
+    }
 
     /**
      * Get sequences list
      *
      * @return array
      */
-    public function sequences();
+    public function sequences()
+    {
+        return $this->database->sequences();
+    }
 
     /**
      * Count tables in all databases
@@ -59,7 +80,10 @@ interface DatabaseInterface
      *
      * @return array
      */
-    public function countTables(array $databases);
+    public function countTables(array $databases)
+    {
+        return $this->database->countTables($databases);
+    }
 
     /**
      * Drop views
@@ -68,7 +92,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function dropViews(array $views);
+    public function dropViews(array $views)
+    {
+        return $this->database->dropViews($views);
+    }
 
     /**
      * Truncate tables
@@ -77,7 +104,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function truncateTables(array $tables);
+    public function truncateTables(array $tables)
+    {
+        return $this->database->truncateTables($tables);
+    }
 
     /**
      * Drop tables
@@ -86,7 +116,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function dropTables(array $tables);
+    public function dropTables(array $tables)
+    {
+        return $this->database->dropTables($tables);
+    }
 
     /**
      * Move tables to other schema
@@ -97,7 +130,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function moveTables(array $tables, array $views, string $target);
+    public function moveTables(array $tables, array $views, string $target)
+    {
+        return $this->database->moveTables($tables, $views, $target);
+    }
 
     /**
      * Copy tables to other schema
@@ -108,7 +144,10 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function copyTables(array $tables, array $views, string $target);
+    public function copyTables(array $tables, array $views, string $target)
+    {
+        return $this->database->copyTables($tables, $views, $target);
+    }
 
     /**
      * Create a view
@@ -118,7 +157,10 @@ interface DatabaseInterface
      * @return bool
      * @throws Exception
      */
-    public function createView(array $values);
+    public function createView(array $values)
+    {
+        return $this->database->createView($values);
+    }
 
     /**
      * Update a view
@@ -129,7 +171,10 @@ interface DatabaseInterface
      * @return string
      * @throws Exception
      */
-    public function updateView(string $view, array $values): string;
+    public function updateView(string $view, array $values): string
+    {
+        return $this->database->updateView($view, $values);
+    }
 
     /**
      * Drop a view
@@ -139,28 +184,40 @@ interface DatabaseInterface
      * @return bool
      * @throws Exception
      */
-    public function dropView(string $view): bool;
+    public function dropView(string $view): bool
+    {
+        return $this->database->dropView($view);
+    }
 
     /**
      * Get user defined types
      *
      * @return array
      */
-    public function userTypes() ;
+    public function userTypes()
+    {
+        return $this->database->userTypes();
+    }
 
     /**
      * Get existing schemas
      *
      * @return array
      */
-    public function schemas();
+    public function schemas()
+    {
+        return $this->database->schemas();
+    }
 
     /**
      * Get events
      *
      * @return array
      */
-    public function events();
+    public function events()
+    {
+        return $this->database->events();
+    }
 
     /**
      * Get information about stored routine
@@ -168,16 +225,22 @@ interface DatabaseInterface
      * @param string $name
      * @param string $type "FUNCTION" or "PROCEDURE"
      *
-     * @return RoutineEntity|null
+     * @return RoutineEntity
      */
-    public function routine(string $name, string $type);
+    public function routine(string $name, string $type)
+    {
+        return $this->database->routine($name, $type);
+    }
 
     /**
      * Get list of routines
      *
      * @return array
      */
-    public function routines();
+    public function routines()
+    {
+        return $this->database->routines();
+    }
 
     /**
      * Get routine signature
@@ -187,5 +250,8 @@ interface DatabaseInterface
      *
      * @return string
      */
-    public function routineId(string $name, array $row);
+    public function routineId(string $name, array $row)
+    {
+        return $this->database->routineId($name, $row);
+    }
 }

@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Exception;
 use Lagdo\DbAdmin\Driver\DriverInterface;
+use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function trim;
