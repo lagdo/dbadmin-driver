@@ -11,9 +11,11 @@ use Lagdo\DbAdmin\Driver\Driver\TableInterface;
 use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
 use Lagdo\DbAdmin\Driver\Driver\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Closure;
 
 interface DriverInterface extends ConfigInterface, ConnectionInterface,
-    ServerInterface, DatabaseInterface, TableInterface, QueryInterface, GrammarInterface
+    ServerInterface, DatabaseInterface, TableInterface, QueryInterface,
+    GrammarInterface
 {
     /**
      * Get the driver name
@@ -30,7 +32,7 @@ interface DriverInterface extends ConfigInterface, ConnectionInterface,
      *
      * @return Db\ConnectionInterface
      */
-    public function open(string $database, string $schema = '');
+    public function open(string $database, string $schema = ''): Db\ConnectionInterface;
 
     /**
      * Create a new connection to a database and a schema
@@ -40,7 +42,7 @@ interface DriverInterface extends ConfigInterface, ConnectionInterface,
      *
      * @return Db\ConnectionInterface
      */
-    public function connect(string $database, string $schema = '');
+    public function newConnection(string $database, string $schema = ''): Db\ConnectionInterface;
 
     /**
      * Check if a feature is supported
@@ -120,6 +122,13 @@ interface DriverInterface extends ConfigInterface, ConnectionInterface,
      * @return StatementInterface|bool
      */
     public function execute(string $query);
+
+    /**
+     * @param Closure $callback
+     *
+     * @return void
+     */
+    public function addQueryCallback(Closure $callback): void;
 
     /**
      * Apply command to all array items

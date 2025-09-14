@@ -6,6 +6,7 @@ use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Driver;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Closure;
 
 trait ConnectionTrait
 {
@@ -18,6 +19,11 @@ trait ConnectionTrait
      * @var ConnectionInterface
      */
     protected $mainConnection;
+
+    /**
+     * @var array
+     */
+    protected array $callbacks = [];
 
     /**
      * Set driver config
@@ -129,6 +135,28 @@ trait ConnectionTrait
     }
 
     /**
+     * @param Closure $callback
+     *
+     * @return void
+     */
+    public function addQueryCallback(Closure $callback): void
+    {
+        $this->callbacks[] = $callback;
+    }
+
+    /**
+     * @param string $query
+     *
+     * @return void
+     */
+    private function callCallback(string $query): void
+    {
+        foreach ($this->callbacks as $callback) {
+            $callback($query);
+        }
+    }
+
+    /**
      * Execute a query on the current database and store the result
      *
      * @param string $query
@@ -137,7 +165,32 @@ trait ConnectionTrait
      */
     public function multiQuery(string $query)
     {
-        return $this->connection->multiQuery($query);
+        $result = $this->connection->multiQuery($query);
+        // Call the query callbacks.
+        $this->callCallback($query);
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function result(string $query, int $field = -1)
+    {
+        $result = $this->connection->result($query, $field);
+        // Call the query callbacks.
+        $this->callCallback($query);
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execute(string $query)
+    {
+        $result = $this->connection->query($query);
+        // Call the query callbacks.
+        $this->callCallback($query);
+        return $result;
     }
 
     /**
@@ -179,14 +232,6 @@ trait ConnectionTrait
     public function defaultField(): int
     {
         return $this->connection->defaultField();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function result(string $query, int $field = -1)
-    {
-        return $this->connection->result($query, $field);
     }
 
     /**

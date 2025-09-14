@@ -2,23 +2,24 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Utils\Utils;
+use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
-use Lagdo\DbAdmin\Driver\Exception\AuthException;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Exception\AuthException;
+use Lagdo\DbAdmin\Driver\Utils\Utils;
 
+use function array_flip;
+use function implode;
 use function in_array;
 use function is_object;
 use function preg_match;
-use function version_compare;
-use function array_flip;
+use function preg_match_all;
 use function preg_quote;
+use function preg_replace;
 use function str_replace;
 use function strtr;
-use function implode;
-use function preg_replace;
-use function preg_match_all;
 use function trim;
+use function version_compare;
 
 abstract class Driver implements DriverInterface
 {
@@ -31,19 +32,13 @@ abstract class Driver implements DriverInterface
     use Driver\GrammarTrait;
 
     /**
-     * @var Utils
-     */
-    protected $utils;
-
-    /**
      * The constructor
      *
      * @param Utils $utils
      * @param array $options
      */
-    public function __construct(Utils $utils, array $options)
+    public function __construct(protected Utils $utils, array $options)
     {
-        $this->utils = $utils;
         $this->config = new ConfigEntity($utils->trans, $options);
         $this->beforeConnection();
         // Create and set the main connection.
@@ -54,7 +49,7 @@ abstract class Driver implements DriverInterface
      * @inheritDoc
      * @throws AuthException
      */
-    public function open(string $database, string $schema = '')
+    public function open(string $database, string $schema = ''): ConnectionInterface
     {
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->error());
@@ -70,7 +65,7 @@ abstract class Driver implements DriverInterface
      * @inheritDoc
      * @throws AuthException
      */
-    public function connect(string $database, string $schema = '')
+    public function newConnection(string $database, string $schema = ''): ConnectionInterface
     {
         $this->createConnection($this->config->options());
         return $this->open($database, $schema);
@@ -86,7 +81,7 @@ abstract class Driver implements DriverInterface
             $info = $match[1];
             $version = $mariaDb;
         }
-        return (version_compare($info, $version) >= 0);
+        return version_compare($info, $version) >= 0;
     }
 
     /**
@@ -103,7 +98,7 @@ abstract class Driver implements DriverInterface
     public function charset()
     {
         // SHOW CHARSET would require an extra query
-        return ($this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8');
+        return $this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8';
     }
 
     /**
@@ -123,20 +118,10 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function execute(string $query)
-    {
-        return $this->connection->query($query);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function applyQueries(string $query, array $tables, $escape = null)
     {
         if (!$escape) {
-            $escape = function ($table) {
-                return $this->escapeTableName($table);
-            };
+            $escape = fn ($table) => $this->escapeTableName($table);
         }
         foreach ($tables as $table) {
             if (!$this->execute("$query " . $escape($table))) {
