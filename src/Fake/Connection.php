@@ -57,8 +57,9 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function open(string $database, string $schema = '')
+    public function open(string $database, string $schema = ''): bool
     {
+        return true;
         // TODO: Implement open() method.
     }
 

@@ -30,7 +30,7 @@ trait DriverTrait
     /**
      * @inheritDoc
      */
-    public function rows(string $query)
+    public function rows(string $query): array
     {
         return $this->testConnection->rows($query);
     }

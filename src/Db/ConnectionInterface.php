@@ -2,52 +2,100 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface as DriverConnectionInterface;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
-interface ConnectionInterface extends DriverConnectionInterface
+interface ConnectionInterface
 {
     /**
-     * Connect to a database and a schema
-     *
-     * @param string $database  The database name
-     * @param string $schema    The database schema
-     *
-     * @return bool
-     */
-    public function open(string $database, string $schema = '');
-
-    /**
-     * Close the connection to the server
-     *
-     * @return void
-     */
-    public function close();
-
-    /**
-     * Execute a query on the current database
-     *
-     * @param string $query
-     * @param bool $unbuffered
-     *
-     * @return StatementInterface|bool
-     */
-    public function query(string $query, bool $unbuffered = false);
-
-    /**
-     * Get warnings about the last command
+     * Get the driver extension
      *
      * @return string
      */
-    public function warnings();
+    public function extension();
 
     /**
-     * Set the error message
+     * Get the server description
      *
-     * @param string $error
-     *
-     * @return void
+     * @return string
      */
-    public function setError(string $error = '');
+    public function serverInfo();
+
+    /**
+     * Return a quoted string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function quote(string $string);
+
+    /**
+     * Return a quoted string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function quoteBinary(string $string);
+
+    /**
+     * Get the number of rows affected by the last query
+     *
+     * @return integer
+     */
+    public function affectedRows();
+
+    /**
+     * Execute a query on the current database and fetch the specified field
+     *
+     * @param string $query
+     * @param int $field
+     *
+     * @return mixed
+     */
+    public function result(string $query, int $field = -1);
+
+    /**
+     * Execute a query on the current database and store the result
+     *
+     * @param string $query
+     *
+     * @return bool
+     */
+    public function multiQuery(string $query);
+
+    /**
+     * Get the result saved by the multiQuery() method
+     *
+     * @return StatementInterface|bool
+     */
+    public function storedResult();
+
+    /**
+     * Get the next row set of the last query
+     *
+     * @return bool
+     */
+    public function nextResult();
+
+    /**
+     * Convert value returned by database to actual value
+     *
+     * @param string|resource|null $value
+     * @param TableFieldEntity $field
+     *
+     * @return string
+     */
+    public function value($value, TableFieldEntity $field);
+
+    /**
+     * Explain select
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
+     */
+    public function explain(string $query);
 
     /**
      * Get the raw error message
@@ -55,27 +103,4 @@ interface ConnectionInterface extends DriverConnectionInterface
      * @return string
      */
     public function error(): string;
-
-    /**
-     * Check if the last query returned an error message
-     *
-     * @return bool
-     */
-    public function hasError();
-
-    /**
-     * Set the error number
-     *
-     * @param int $errno
-     *
-     * @return void
-     */
-    public function setErrno(int $errno);
-
-    /**
-     * Get the full error message
-     *
-     * @return string
-     */
-    public function errorMessage();
 }

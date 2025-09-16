@@ -2,12 +2,12 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\GrammarInterface as DbGrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
-interface GrammarInterface
+interface GrammarInterface extends DbGrammarInterface
 {
     /**
      * Get escaped table name
@@ -19,43 +19,6 @@ interface GrammarInterface
     public function escapeTableName(string $idf);
 
     /**
-     * Escape database identifier
-     *
-     * @param string $idf
-     *
-     * @return string
-     */
-    public function escapeId(string $idf);
-
-    /**
-     * Unescape database identifier
-     *
-     * @param string $idf
-     *
-     * @return string
-     */
-    public function unescapeId(string $idf);
-
-    /**
-     * Convert field in select and edit
-     *
-     * @param TableFieldEntity $field one element from $this->fields()
-     *
-     * @return string
-     */
-    public function convertField(TableFieldEntity $field);
-
-    /**
-     * Convert value in edit after applying functions back
-     *
-     * @param TableFieldEntity $field One element from $this->fields()
-     * @param string $value
-     *
-     * @return string
-     */
-    public function unconvertField(TableFieldEntity $field, string $value);
-
-    /**
      * Get select clause for convertible fields
      *
      * @param array $columns
@@ -65,15 +28,6 @@ interface GrammarInterface
      * @return string
      */
     public function convertFields(array $columns, array $fields, array $select = []);
-
-    /**
-     * Select data from table
-     *
-     * @param TableSelectEntity $select
-     *
-     * @return string
-     */
-    public function buildSelectQuery(TableSelectEntity $select);
 
     /**
      * Parse a string containing SQL queries
@@ -127,80 +81,49 @@ interface GrammarInterface
     public function formatForeignKey(ForeignKeyEntity $foreignKey);
 
     /**
-     * Generate modifier for auto increment column
+     * Escape or unescape string to use inside form []
+     *
+     * @param string $idf
+     * @param bool $back
      *
      * @return string
      */
-    public function getAutoIncrementModifier();
+    public function bracketEscape(string $idf, bool $back = false): string;
 
     /**
-     * Get SQL command to create table
+     * Escape column key used in where()
      *
-     * @param string $table
-     * @param bool $autoIncrement
-     * @param string $style
+     * @param string
      *
      * @return string
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style);
+    public function escapeKey(string $key): string;
 
     /**
-     * Command to create an index
+     * Filter length value including enums
      *
-     * @param string $table
-     * @param string $type
-     * @param string $name
-     * @param string $columns
+     * @param string $length
      *
      * @return string
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns);
+    public function processLength(string $length): string;
 
     /**
-     * Get SQL command to create foreign keys
+     * Create SQL string from field
      *
-     * getCreateTableQuery() produces CREATE TABLE without FK CONSTRAINTs
-     * getForeignKeysQuery() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
-     * so that all FKs can be added after all tables have been created, avoiding any need
-     * to reorder CREATE TABLE statements in order of their FK dependencies
+     * @param TableFieldEntity $field Basic field information
+     * @param TableFieldEntity $typeField Information about field type
      *
-     * @param string $table
-     *
-     * @return string
+     * @return array
      */
-    public function getForeignKeysQuery(string $table);
+    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array;
 
     /**
-     * Get SQL command to truncate table
+     * Get SET NAMES if utf8mb4 might be needed
      *
-     * @param string $table
-     *
-     * @return string
-     */
-    public function getTruncateTableQuery(string $table);
-
-    /**
-     * Get SQL command to change database
-     *
-     * @param string $database
+     * @param string $create
      *
      * @return string
      */
-    public function getUseDatabaseQuery(string $database);
-
-    /**
-     * Get SQL commands to create triggers
-     *
-     * @param string $table
-     *
-     * @return string
-     */
-    public function getCreateTriggerQuery(string $table);
-
-    /**
-     * Return query to get connection ID
-     *
-     * @return string
-     */
-    // public function connectionId();
+    public function setUtf8mb4(string $create);
 }

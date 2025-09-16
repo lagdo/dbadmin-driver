@@ -109,7 +109,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function close()
+    public function close(): void
     {
         $this->client = null;
     }

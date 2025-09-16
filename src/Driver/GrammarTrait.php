@@ -2,271 +2,322 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\GrammarInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
 
+use function array_flip;
+use function array_map;
+use function implode;
+use function intval;
+use function in_array;
+use function is_string;
+use function preg_match;
+use function preg_match_all;
+use function preg_quote;
+use function preg_replace;
+use function rtrim;
+use function strlen;
+use function strtr;
+use function str_replace;
+use function substr;
+use function trim;
+
 trait GrammarTrait
 {
-    /**
-     * @var GrammarInterface
-     */
-    protected $grammar;
+    use Db\GrammarTrait;
 
     /**
-     * Get escaped table name
-     *
-     * @param string $idf
-     *
-     * @return string
+     * @inheritDoc
      */
     public function escapeTableName(string $idf)
-    {
-        return $this->grammar->escapeTableName($idf);
-    }
-
-    /**
-     * Escape database identifier
-     *
-     * @param string $idf
-     *
-     * @return string
-     */
-    public function escapeId(string $idf)
     {
         return $this->grammar->escapeId($idf);
     }
 
     /**
-     * Unescape database identifier
-     *
-     * @param string $idf
-     *
-     * @return string
-     */
-    public function unescapeId(string $idf)
-    {
-        return $this->grammar->unescapeId($idf);
-    }
-
-    /**
-     * Convert field in select and edit
-     *
-     * @param TableFieldEntity $field one element from $this->fields()
-     *
-     * @return string
-     */
-    public function convertField(TableFieldEntity $field)
-    {
-        return $this->grammar->convertField($field);
-    }
-
-    /**
-     * Convert value in edit after applying functions back
-     *
-     * @param TableFieldEntity $field One element from $this->fields()
-     * @param string $value
-     *
-     * @return string
-     */
-    public function unconvertField(TableFieldEntity $field, string $value)
-    {
-        return $this->grammar->unconvertField($field, $value);
-    }
-
-    /**
-     * Get select clause for convertible fields
-     *
-     * @param array $columns
-     * @param array $fields
-     * @param array $select
-     *
-     * @return string
+     * @inheritDoc
      */
     public function convertFields(array $columns, array $fields, array $select = [])
     {
-        return $this->grammar->convertFields($columns, $fields, $select);
+        $clause = '';
+        foreach ($columns as $key => $val) {
+            if (!empty($select) && !in_array($this->escapeId($key), $select)) {
+                continue;
+            }
+            $as = $this->convertField($fields[$key]);
+            if ($as) {
+                $clause .= ", $as AS " . $this->escapeId($key);
+            }
+        }
+        return $clause;
     }
 
     /**
-     * Select data from table
-     *
-     * @param TableSelectEntity $select
-     *
-     * @return string
-     */
-    public function buildSelectQuery(TableSelectEntity $select)
-    {
-        return $this->grammar->buildSelectQuery($select);
-    }
-
-    /**
-     * Parse a string containing SQL queries
-     *
      * @param QueryEntity $queryEntity
      *
      * @return bool
      */
-    public function parseQueries(QueryEntity $queryEntity)
+    private function setDelimiter(QueryEntity $queryEntity)
     {
-        return $this->grammar->parseQueries($queryEntity);
+        $space = "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
+        if ($queryEntity->offset !== 0 ||
+            !preg_match("~^$space*+DELIMITER\\s+(\\S+)~i", $queryEntity->queries, $match)) {
+            return false;
+        }
+        $queryEntity->delimiter = $match[1];
+        $queryEntity->queries = substr($queryEntity->queries, strlen($match[0]));
+        return true;
     }
 
     /**
-     * Get query to compute number of found rows
+     * @param QueryEntity $queryEntity
+     * @param string $found
+     * @param array $match
      *
-     * @param string $table
-     * @param array $where
-     * @param bool $isGroup
-     * @param array $groups
+     * @return bool
+     */
+    private function notQuery(QueryEntity $queryEntity, string $found, array &$match)
+    {
+        return preg_match('(' . ($found == '/*' ? '\*/' : ($found == '[' ? ']' :
+            (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\."))) . '|$)s',
+            $queryEntity->queries, $match, PREG_OFFSET_CAPTURE, $queryEntity->offset) > 0;
+    }
+
+    /**
+     * @param QueryEntity $queryEntity
+     * @param string $found
      *
-     * @return string
+     * @return void
+     */
+    private function skipComments(QueryEntity $queryEntity, string $found)
+    {
+        // Find matching quote or comment end
+        $match = [];
+        while ($this->notQuery($queryEntity, $found, $match)) {
+            //! Respect sql_mode NO_BACKSLASH_ESCAPES
+            $s = $match[0][0];
+            $queryEntity->offset = $match[0][1] + strlen($s);
+            if ($s[0] != "\\") {
+                break;
+            }
+        }
+    }
+
+    /**
+     * @param QueryEntity $queryEntity
+     *
+     * @return int
+     */
+    private function nextQueryPos(QueryEntity $queryEntity)
+    {
+        // TODO: Move this to driver implementations
+        $parse = $this->grammar->queryRegex();
+        $delimiter = preg_quote($queryEntity->delimiter);
+        // Should always match
+        preg_match("($delimiter$parse)", $queryEntity->queries, $match,
+            PREG_OFFSET_CAPTURE, $queryEntity->offset);
+        [$found, $pos] = $match[0];
+        if (!is_string($found) && $queryEntity->queries == '') {
+            return -1;
+        }
+        $queryEntity->offset = $pos + strlen($found);
+        if (empty($found) || rtrim($found) == $queryEntity->delimiter) {
+            return intval($pos);
+        }
+        // Find matching quote or comment end
+        $this->skipComments($queryEntity, $found);
+        return 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseQueries(QueryEntity $queryEntity)
+    {
+        $queryEntity->queries = trim($queryEntity->queries);
+        while ($queryEntity->queries !== '') {
+            if ($this->setDelimiter($queryEntity)) {
+                continue;
+            }
+            $pos = $this->nextQueryPos($queryEntity);
+            if ($pos < 0) {
+                return false;
+            }
+            if ($pos === 0) {
+                continue;
+            }
+            // End of a query
+            $queryEntity->query = substr($queryEntity->queries, 0, $pos);
+            $queryEntity->queries = substr($queryEntity->queries, $queryEntity->offset);
+            $queryEntity->offset = 0;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
     {
-        return $this->grammar->getRowCountQuery($table, $where, $isGroup, $groups);
+        $query = ' FROM ' . $this->escapeTableName($table);
+        if (!empty($where)) {
+            $query .= ' WHERE ' . implode(' AND ', $where);
+        }
+        return ($isGroup && ($this->driver->jush() == 'sql' || count($groups) == 1) ?
+            'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query" :
+            'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " .
+            implode(', ', $groups) . ') x' : $query)
+        );
     }
 
     /**
-     * Get default value clause
-     *
-     * @param TableFieldEntity $field
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getDefaultValueClause(TableFieldEntity $field)
+    public function getDefaultValueClause($field)
     {
-        return $this->grammar->getDefaultValueClause($field);
+        $default = $field->default;
+        return $default === null ? '' : ' DEFAULT ' .
+            (preg_match('~char|binary|text|enum|set~', $field->type) ||
+            preg_match('~^(?![a-z])~i', $default) ? $this->driver->quote($default) : $default);
     }
 
     /**
-     * Formulate SQL query with limit
-     *
-     * @param string $query Everything after SELECT
-     * @param string $where Including WHERE
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
     {
-        return $this->grammar->getLimitClause($query, $where, $limit, $offset);
+        $sql = " $query$where";
+        if ($limit > 0) {
+            $sql .= " LIMIT $limit";
+            if ($offset > 0) {
+                $sql .= " OFFSET $offset";
+            }
+        }
+        return $sql;
     }
 
     /**
-     * Format foreign key to use in SQL query
+     * @param ForeignKeyEntity $foreignKey
      *
+     * @return array
+     */
+    private function fkFields(ForeignKeyEntity $foreignKey)
+    {
+        $escape = function ($idf) { return $this->escapeId($idf); };
+        return [
+            implode(', ', array_map($escape, $foreignKey->source)),
+            implode(', ', array_map($escape, $foreignKey->target)),
+        ];
+    }
+
+    /**
      * @param ForeignKeyEntity $foreignKey
      *
      * @return string
      */
+    private function fkTablePrefix(ForeignKeyEntity $foreignKey)
+    {
+        $prefix = '';
+        if ($foreignKey->database !== '' && $foreignKey->database !== $this->driver->database()) {
+            $prefix .= $this->escapeId($foreignKey->database) . '.';
+        }
+        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->driver->schema()) {
+            $prefix .= $this->escapeId($foreignKey->schema) . '.';
+        }
+        return $prefix;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function formatForeignKey(ForeignKeyEntity $foreignKey)
     {
-        return $this->grammar->formatForeignKey($foreignKey);
+        [$sources, $targets] = $this->fkFields($foreignKey);
+        $onActions = $this->driver->actions();
+        $query = " FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
+            $this->escapeTableName($foreignKey->table) . " ($targets)";
+        if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
+            $query .= " ON DELETE {$foreignKey->onDelete}";
+        }
+        if (preg_match("~^($onActions)\$~", $foreignKey->onUpdate)) {
+            $query .= " ON UPDATE {$foreignKey->onUpdate}";
+        }
+
+        return $query;
     }
 
     /**
-     * Generate modifier for auto increment column
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getAutoIncrementModifier()
+    public function bracketEscape(string $idf, bool $back = false): string
     {
-        return $this->grammar->getAutoIncrementModifier();
+        // escape brackets inside name='x[]'
+        static $trans = [':' => ':1', ']' => ':2', '[' => ':3', '"' => ':4'];
+        return strtr($idf, $back ? array_flip($trans) : $trans);
     }
 
     /**
-     * Get SQL command to create table
-     *
-     * @param string $table
-     * @param bool $autoIncrement
-     * @param string $style
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
+    public function escapeKey(string $key): string
     {
-        return $this->grammar->getCreateTableQuery($table, $autoIncrement, $style);
+        if (preg_match('(^([\w(]+)(' . str_replace('_', '.*',
+                preg_quote($this->escapeId('_'))) . ')([ \w)]+)$)', $key, $match)) {
+            //! columns looking like functions
+            return $match[1] . $this->escapeId($this->unescapeId($match[2])) . $match[3]; //! SQL injection
+        }
+        return $this->escapeId($key);
     }
 
     /**
-     * Command to create an index
-     *
-     * @param string $table
-     * @param string $type
-     * @param string $name
-     * @param string $columns
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
+    public function processLength(string $length): string
     {
-        return $this->grammar->getCreateIndexQuery($table, $type, $name, $columns);
+        if (!$length) {
+            return '';
+        }
+        $enumLength = $this->enumLength();
+        $pattern = "~^\\s*\\(?\\s*$enumLength(?:\\s*,\\s*$enumLength)*+\\s*\\)?\\s*\$~";
+        if (preg_match($pattern, $length) &&
+            preg_match_all("~$enumLength~", $length, $matches)) {
+            return '(' . implode(',', $matches[0]) . ')';
+        }
+        return preg_replace('~^[0-9].*~', '(\0)', preg_replace('~[^-0-9,+()[\]]~', '', $length));
     }
 
     /**
-     * Get SQL command to create foreign keys
-     *
-     * getCreateTableQuery() produces CREATE TABLE without FK CONSTRAINTs
-     * getForeignKeysQuery() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
-     * so that all FKs can be added after all tables have been created, avoiding any need
-     * to reorder CREATE TABLE statements in order of their FK dependencies
-     *
-     * @param string $table
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getForeignKeysQuery(string $table)
+    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array
     {
-        return $this->grammar->getForeignKeysQuery($table);
+        $onUpdate = '';
+        if (preg_match('~timestamp|datetime~', $field->type) && $field->onUpdate) {
+            $onUpdate = ' ON UPDATE ' . $field->onUpdate;
+        }
+        $comment = '';
+        if ($this->support('comment') && $field->comment !== '') {
+            $comment = ' COMMENT ' . $this->quote($field->comment);
+        }
+        $null = $field->null ? ' NULL' : ' NOT NULL'; // NULL for timestamp
+        $autoIncrement = $field->autoIncrement ? $this->getAutoIncrementModifier() : null;
+        return [$this->escapeId(trim($field->name)), $this->processType($typeField),
+            $null, $this->getDefaultValueClause($field), $onUpdate, $comment, $autoIncrement];
     }
 
     /**
-     * Get SQL command to truncate table
-     *
-     * @param string $table
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getTruncateTableQuery(string $table)
+    public function setUtf8mb4(string $create)
     {
-        return $this->grammar->getTruncateTableQuery($table);
+        static $set = false;
+        // possible false positive
+        if (!$set && preg_match('~\butf8mb4~i', $create)) {
+            $set = true;
+            return 'SET NAMES ' . $this->charset() . ";\n\n";
+        }
+        return '';
     }
-
-    /**
-     * Get SQL command to change database
-     *
-     * @param string $database
-     *
-     * @return string
-     */
-    public function getUseDatabaseQuery(string $database)
-    {
-        return $this->grammar->getUseDatabaseQuery($database);
-    }
-
-    /**
-     * Get SQL commands to create triggers
-     *
-     * @param string $table
-     *
-     * @return string
-     */
-    public function getCreateTriggerQuery(string $table)
-    {
-        return $this->grammar->getCreateTriggerQuery($table);
-    }
-
-    /**
-     * Return query to get connection ID
-     *
-     * @return string
-     */
-    // public function connectionId()
-    // {
-    //     return $this->grammar->connectionId();
-    // }
 }

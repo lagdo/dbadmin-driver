@@ -3,183 +3,97 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
-use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Driver;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Closure;
+use Lagdo\DbAdmin\Driver\Exception\AuthException;
+
+use function is_object;
+use function preg_match;
+use function version_compare;
 
 trait ConnectionTrait
 {
-    /**
-     * @var ConnectionInterface
-     */
-    protected $connection;
+    use Db\ConnectionTrait;
 
     /**
      * @var ConnectionInterface
      */
-    protected $mainConnection;
+    protected $mainConnection = null;
 
     /**
-     * @var array
-     */
-    protected array $callbacks = [];
-
-    /**
-     * Set driver config
-     *
      * @return void
      */
-    abstract protected function beforeConnection();
+    protected function beforeConnection()
+    {
+    }
 
     /**
-     * Set driver config
-     *
      * @return void
      */
-    abstract protected function afterConnection();
+    protected function configConnection()
+    {
+    }
 
     /**
-     * Create a connection to a server
-     *
-     * @param array $options
-     *
-     * @return ConnectionInterface|null
+     * @return void
      */
-    abstract public function createConnection(array $options);
+    protected function openedConnection()
+    {
+    }
 
     /**
      * @param ConnectionInterface $connection
      *
-     * @return Driver
+     * @return void
      */
-    public function useConnection(ConnectionInterface $connection)
+    public function useConnection(ConnectionInterface $connection): void
     {
         $this->connection = $connection;
-        return $this;
     }
 
     /**
-     * @return Driver
+     * @return void
      */
-    public function useMainConnection()
+    public function useMainConnection(): void
     {
         $this->connection = $this->mainConnection;
-        return $this;
     }
 
     /**
-     * Get the server description
-     *
-     * @return string
+     * @inheritDoc
+     * @throws AuthException
      */
-    public function serverInfo()
+    public function open(string $database, string $schema = ''): ConnectionInterface
     {
-        return $this->connection->serverInfo();
-    }
-
-    /**
-     * Get the driver extension
-     *
-     * @return string
-     */
-    public function extension()
-    {
-        return $this->connection->extension();
-    }
-
-    /**
-     * Sets the client character set
-     *
-     * @param string $charset
-     *
-     * @return void
-     */
-    public function setCharset(string $charset)
-    {
-        $this->connection->setCharset($charset);
-    }
-
-    /**
-     * Return a quoted string
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public function quote(string $string)
-    {
-        return $this->connection->quote($string);
-    }
-
-    /**
-     * Return a quoted string
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public function quoteBinary(string $string)
-    {
-        return $this->connection->quoteBinary($string);
-    }
-
-    /**
-     * Get the number of rows affected by the last query
-     *
-     * @return integer
-     */
-    public function affectedRows()
-    {
-        return $this->connection->affectedRows();
-    }
-
-    /**
-     * @param Closure $callback
-     *
-     * @return void
-     */
-    public function addQueryCallback(Closure $callback): void
-    {
-        $this->callbacks[] = $callback;
-    }
-
-    /**
-     * @param string $query
-     *
-     * @return void
-     */
-    private function callCallback(string $query): void
-    {
-        foreach ($this->callbacks as $callback) {
-            $callback($query);
+        if (!$this->connection->open($database, $schema)) {
+            throw new AuthException($this->error());
         }
-    }
 
-    /**
-     * Execute a query on the current database and store the result
-     *
-     * @param string $query
-     *
-     * @return bool
-     */
-    public function multiQuery(string $query)
-    {
-        $result = $this->connection->multiQuery($query);
-        // Call the query callbacks.
-        $this->callCallback($query);
-        return $result;
+        $this->config->database = $database;
+        $this->config->schema = $schema;
+        if ($this->mainConnection === null) {
+            $this->configConnection();
+            $this->mainConnection = $this->connection;
+        }
+        $this->openedConnection();
+        return $this->connection;
     }
 
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $field = -1)
+    public function close(): void
     {
-        $result = $this->connection->result($query, $field);
-        // Call the query callbacks.
-        $this->callCallback($query);
-        return $result;
+        $this->connection->close();
+        $this->connection = null;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws AuthException
+     */
+    public function newConnection(string $database, string $schema = ''): ConnectionInterface
+    {
+        $this->createConnection($this->config->options());
+        return $this->open($database, $schema);
     }
 
     /**
@@ -187,63 +101,98 @@ trait ConnectionTrait
      */
     public function execute(string $query)
     {
-        $result = $this->connection->query($query);
-        // Call the query callbacks.
-        $this->callCallback($query);
-        return $result;
+        return $this->connection->query($query);
     }
 
     /**
-     * Get the result saved by the multiQuery() method
-     *
-     * @return StatementInterface|bool
+     * @inheritDoc
      */
-    public function storedResult()
+    public function applyQueries(string $query, array $tables, $escape = null)
     {
-        return $this->connection->storedResult();
+        if (!$escape) {
+            $escape = fn ($table) => $this->escapeTableName($table);
+        }
+        foreach ($tables as $table) {
+            if (!$this->execute("$query " . $escape($table))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Get the next row set of the last query
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function nextResult()
+    public function values(string $query, int $column = 0)
     {
-        return $this->connection->nextResult();
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            $values[] = $row[$column];
+        }
+        return $values;
     }
 
     /**
-     * Convert value returned by database to actual value
-     *
-     * @param string|resource|null $value
-     * @param TableFieldEntity $field
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function value($value, TableFieldEntity $field)
+    public function colValues(string $query, string $column)
     {
-        return $this->connection->value($value, $field);
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchAssoc()) {
+            $values[] = $row[$column];
+        }
+        return $values;
     }
 
     /**
-     * @return int
+     * @inheritDoc
      */
-    public function defaultField(): int
+    public function rows(string $query): array
     {
-        return $this->connection->defaultField();
+        $statement = $this->execute($query);
+        if (!is_object($statement)) { // can return true
+            return [];
+        }
+        $rows = [];
+        while ($row = $statement->fetchAssoc()) {
+            $rows[] = $row;
+        }
+        return $rows;
     }
 
     /**
-     * Explain select
-     *
-     * @param string $query
-     *
-     * @return StatementInterface|bool
+     * @inheritDoc
      */
-    public function explain(string $query)
+    public function keyValues(string $query, int $keyColumn = 0, int $valueColumn = 1)
     {
-        return $this->connection->explain($query);
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            $values[$row[$keyColumn]] = $row[$valueColumn];
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execUseQuery(string $query)
+    {
+        $space = $this->utils->str->spaceRegex();
+        if (preg_match("~^$space*+USE\\b~i", $query)) {
+            $this->execute($query);
+        }
     }
 
     /**
@@ -276,8 +225,22 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function error(): string
+    public function minVersion(string $version, string $mariaDb = ''): bool
     {
-        return $this->connection->error();
+        $info = $this->connection->serverInfo();
+        if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
+            $info = $match[1];
+            $version = $mariaDb;
+        }
+        return version_compare($info, $version) >= 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function charset(): string
+    {
+        // SHOW CHARSET would require an extra query
+        return $this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8';
     }
 }

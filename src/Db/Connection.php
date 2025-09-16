@@ -50,6 +50,36 @@ abstract class Connection implements ConnectionInterface
     {}
 
     /**
+     * Connect to a database and a schema
+     *
+     * @param string $database  The database name
+     * @param string $schema    The database schema
+     *
+     * @return bool
+     */
+    abstract public function open(string $database, string $schema = ''): bool;
+
+    /**
+     * Execute a query on the current database
+     *
+     * @param string $query
+     * @param bool $unbuffered
+     *
+     * @return StatementInterface|bool
+     */
+    abstract public function query(string $query, bool $unbuffered = false);
+
+    /**
+     * Get warnings about the last command
+     *
+     * @return string
+     */
+    protected function warnings(): string
+    {
+        return '';
+    }
+
+    /**
      * Get the driver options
      *
      * @param string $name The option name
@@ -119,11 +149,14 @@ abstract class Connection implements ConnectionInterface
     }
 
     /**
-     * @inheritDoc
+     * Sets the client character set
+     *
+     * @param string $charset
+     *
+     * @return void
      */
-    public function setCharset(string $charset)
-    {
-    }
+    protected function setCharset(string $charset)
+    {}
 
     /**
      * @inheritDoc
@@ -138,13 +171,13 @@ abstract class Connection implements ConnectionInterface
      */
     public function value($value, TableFieldEntity $field)
     {
-        return (is_resource($value) ? stream_get_contents($value) : $value);
+        return is_resource($value) ? stream_get_contents($value) : $value;
     }
 
     /**
      * @inheritDoc
      */
-    public function defaultField(): int
+    protected function defaultField(): int
     {
         return 0;
     }
@@ -166,19 +199,10 @@ abstract class Connection implements ConnectionInterface
         return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function warnings()
-    {
-        return '';
-    }
 
     /**
      * @inheritDoc
      */
-    public function close()
-    {
-        return;
-    }
+    public function close(): void
+    {}
 }
