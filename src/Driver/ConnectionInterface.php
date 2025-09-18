@@ -35,9 +35,14 @@ interface ConnectionInterface extends DbConnectionInterface
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return DbConnectionInterface
+     * @return DbConnectionInterface|null
      */
-    public function newConnection(string $database, string $schema = ''): DbConnectionInterface;
+    public function connectToDatabase(string $database, string $schema = ''): DbConnectionInterface|null;
+
+    /**
+     * @return DbConnectionInterface|null
+     */
+    public function connection(): DbConnectionInterface|null;
 
     /**
      * Close the connection to the server
@@ -105,15 +110,6 @@ interface ConnectionInterface extends DbConnectionInterface
      * @return array
      */
     public function rows(string $query): array;
-
-    /**
-     * Execute a query if it is of type "USE".
-     *
-     * @param string $query
-     *
-     * @return void
-     */
-    public function execUseQuery(string $query);
 
     /**
      * Begin transaction

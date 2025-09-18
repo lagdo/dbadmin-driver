@@ -28,7 +28,7 @@ abstract class Driver implements DriverInterface
         $this->config = new ConfigEntity($utils->trans, $options);
         $this->beforeConnection();
         // Create and set the main connection.
-        $this->createConnection($options);
+        $this->connection = $this->createConnection($options);
     }
 
     /**

@@ -40,21 +40,11 @@ trait ConnectionTrait
     }
 
     /**
-     * @param ConnectionInterface $connection
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function useConnection(ConnectionInterface $connection): void
+    public function connection(): ConnectionInterface|null
     {
-        $this->connection = $connection;
-    }
-
-    /**
-     * @return void
-     */
-    public function useMainConnection(): void
-    {
-        $this->connection = $this->mainConnection;
+        return $this->connection;
     }
 
     /**
@@ -88,12 +78,12 @@ trait ConnectionTrait
 
     /**
      * @inheritDoc
-     * @throws AuthException
      */
-    public function newConnection(string $database, string $schema = ''): ConnectionInterface
+    public function connectToDatabase(string $database, string $schema = ''): ConnectionInterface|null
     {
-        $this->createConnection($this->config->options());
-        return $this->open($database, $schema);
+        $connection = $this->createConnection($this->config->options());
+        return !$connection || !$connection->open($database, $schema) ?
+            null : $connection;
     }
 
     /**
@@ -182,17 +172,6 @@ trait ConnectionTrait
             $values[$row[$keyColumn]] = $row[$valueColumn];
         }
         return $values;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function execUseQuery(string $query)
-    {
-        $space = $this->utils->str->spaceRegex();
-        if (preg_match("~^$space*+USE\\b~i", $query)) {
-            $this->execute($query);
-        }
     }
 
     /**
