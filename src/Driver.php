@@ -4,8 +4,10 @@ namespace Lagdo\DbAdmin\Driver;
 
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
+use Closure;
 
 use function in_array;
+use function Jaxon\jaxon;
 
 abstract class Driver implements DriverInterface
 {
@@ -16,6 +18,11 @@ abstract class Driver implements DriverInterface
     use Driver\DatabaseTrait;
     use Driver\QueryTrait;
     use Driver\GrammarTrait;
+
+    /**
+     * @var array
+     */
+    private static array $drivers = [];
 
     /**
      * The constructor
@@ -37,5 +44,28 @@ abstract class Driver implements DriverInterface
     public function support(string $feature)
     {
         return in_array($feature, $this->config->features);
+    }
+
+    /**
+     * @param string $driver
+     * @param Closure $closure
+     *
+     * @return void
+     */
+    public static function registerDriver(string $driver, Closure $closure): void
+    {
+        self::$drivers[$driver] = $closure;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return DriverInterface|null
+     */
+    public static function createDriver(array $options): ?DriverInterface
+    {
+        $driver = $options['driver'];
+        $closure = self::$drivers[$driver] ?? null;
+        return !$closure ? null : $closure(jaxon()->di(), $options);
     }
 }
