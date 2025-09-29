@@ -16,26 +16,6 @@ trait QueryTrait
     protected $query;
 
     /**
-     * Get logged user
-     *
-     * @return string
-     */
-    public function user()
-    {
-        return $this->query->user();
-    }
-
-    /**
-     * Get current schema from the database
-     *
-     * @return string
-     */
-    // public function schema()
-    // {
-    //     return $this->query->schema();
-    // }
-
-    /**
      * Select data from table
      *
      * @param string $table
@@ -131,18 +111,6 @@ trait QueryTrait
     public function slowQuery(string $query, int $timeout)
     {
         return $this->query->slowQuery($query, $timeout);
-    }
-
-    /**
-     * Remove current user definer from SQL command
-     *
-     * @param string $query
-     *
-     * @return string
-     */
-    public function removeDefiner(string $query): string
-    {
-        return $this->query->removeDefiner($query);
     }
 
     /**

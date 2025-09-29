@@ -42,14 +42,6 @@ abstract class Query implements QueryInterface
     }
 
     /**
-     * @inheritDoc
-     */
-    public function schema()
-    {
-        return '';
-    }
-
-    /**
      * Formulate SQL modification query with limit 1
      *
      * @param string $table
@@ -149,20 +141,6 @@ abstract class Query implements QueryInterface
     public function view(string $name)
     {
         return [];
-    }
-
-    /**
-     * Remove current user definer from SQL command
-     *
-     * @param string $query
-     *
-     * @return string
-     */
-    public function removeDefiner(string $query): string
-    {
-        return preg_replace('~^([A-Z =]+) DEFINER=`' .
-            preg_replace('~@(.*)~', '`@`(%|\1)', $this->user()) .
-            '`~', '\1', $query); //! proper escaping of user
     }
 
     /**

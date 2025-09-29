@@ -51,6 +51,15 @@ interface GrammarInterface extends DbGrammarInterface
     public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups);
 
     /**
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    public function removeDefiner(string $query): string;
+
+    /**
      * Get default value clause
      *
      * @param TableFieldEntity $field

@@ -36,6 +36,20 @@ trait GrammarTrait
     }
 
     /**
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    public function removeDefiner(string $query): string
+    {
+        return preg_replace('~^([A-Z =]+) DEFINER=`' .
+            preg_replace('~@(.*)~', '`@`(%|\1)', $this->user()) .
+            '`~', '\1', $query); //! proper escaping of user
+    }
+
+    /**
      * @inheritDoc
      */
     public function convertFields(array $columns, array $fields, array $select = [])

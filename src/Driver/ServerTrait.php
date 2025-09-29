@@ -13,6 +13,26 @@ trait ServerTrait
     protected $server;
 
     /**
+     * Get logged user
+     *
+     * @return string
+     */
+    public function user()
+    {
+        return $this->server->user();
+    }
+
+    /**
+     * Get current schema from the database
+     *
+     * @return string
+     */
+    // public function schema()
+    // {
+    //     return $this->server->schema();
+    // }
+
+    /**
      * Get the users and hosts
      *
      * @param string $database  The database name

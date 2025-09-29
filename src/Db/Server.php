@@ -43,7 +43,8 @@ abstract class Server implements ServerInterface
     public function getUsers(string $database): array
     {
         // From privileges.inc.php
-        $clause = ($database == '' ? 'user' : 'db WHERE ' . $this->connection->quote($database) . ' LIKE Db');
+        $clause = ($database == '' ? 'user' : 'db WHERE ' .
+            $this->connection->quote($database) . ' LIKE Db');
         $query = "SELECT User, Host FROM mysql.$clause ORDER BY Host, User";
         $statement = $this->connection->query($query);
         // $grant = $statement;
@@ -95,7 +96,8 @@ abstract class Server implements ServerInterface
 
         // From user.inc.php
         //! use information_schema for MySQL 5 - column names in column privileges are not escaped
-        $query = 'SHOW GRANTS FOR ' . $this->connection->quote($user) . '@' . $this->connection->quote($host);
+        $query = 'SHOW GRANTS FOR ' . $this->connection->quote($user) .
+            '@' . $this->connection->quote($host);
         if (!($statement = $this->connection->query($query))) {
             return $entity;
         }

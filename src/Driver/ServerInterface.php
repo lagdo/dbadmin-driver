@@ -7,6 +7,13 @@ use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 interface ServerInterface
 {
     /**
+     * Get logged user
+     *
+     * @return string
+     */
+    public function user();
+
+    /**
      * Get the users and hosts
      *
      * @param string $database  The database name

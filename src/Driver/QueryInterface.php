@@ -10,20 +10,6 @@ use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 interface QueryInterface
 {
     /**
-     * Get logged user
-     *
-     * @return string
-     */
-    public function user();
-
-    /**
-     * Get current schema from the database
-     *
-     * @return string
-     */
-    public function schema();
-
-    /**
      * Select data from table
      *
      * @param string $table
@@ -99,15 +85,6 @@ interface QueryInterface
      * @return string|null
      */
     public function slowQuery(string $query, int $timeout);
-
-    /**
-     * Remove current user definer from SQL command
-     *
-     * @param string $query
-     *
-     * @return string
-     */
-    public function removeDefiner(string $query): string;
 
     /**
      * Execute query
