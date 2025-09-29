@@ -65,6 +65,26 @@ interface ConnectionInterface
     public function multiQuery(string $query);
 
     /**
+     * Create a prepared statement
+     *
+     * @param string $query
+     *
+     * @return void
+     */
+    public function prepareStatement(string $query): PreparedStatement;
+
+    /**
+     * Execute a prepared statement
+     *
+     * @param PreparedStatement $statement
+     * @param array $values
+     *
+     * @return StatementInterface|bool
+     */
+    public function executeStatement(PreparedStatement $statement,
+        array $values): ?StatementInterface;
+
+    /**
      * Get the result saved by the multiQuery() method
      *
      * @return StatementInterface|bool

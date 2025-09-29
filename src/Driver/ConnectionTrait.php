@@ -3,6 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 
 use function is_object;
@@ -221,5 +223,31 @@ trait ConnectionTrait
     {
         // SHOW CHARSET would require an extra query
         return $this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8';
+    }
+
+    /**
+     * Create a prepared statement
+     *
+     * @param string $query
+     *
+     * @return void
+     */
+    public function prepareStatement(string $query): PreparedStatement
+    {
+        return $this->connection->prepareStatement($query);
+    }
+
+    /**
+     * Execute a prepared statement
+     *
+     * @param PreparedStatement $statement
+     * @param array $values
+     *
+     * @return StatementInterface|bool
+     */
+    public function executeStatement(PreparedStatement $statement,
+        array $values): ?StatementInterface
+    {
+        return $this->connection->executeStatement($statement, $values);
     }
 }

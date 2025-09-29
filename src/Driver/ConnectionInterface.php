@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\ConnectionInterface as DbConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 /**
@@ -148,4 +149,24 @@ interface ConnectionInterface extends DbConnectionInterface
      * @return string
      */
     public function charset(): string;
+
+    /**
+     * Create a prepared statement
+     *
+     * @param string $query
+     *
+     * @return void
+     */
+    public function prepareStatement(string $query): PreparedStatement;
+
+    /**
+     * Execute a prepared statement
+     *
+     * @param PreparedStatement $statement
+     * @param array $values
+     *
+     * @return StatementInterface|bool
+     */
+    public function executeStatement(PreparedStatement $statement,
+        array $values): ?StatementInterface;
 }

@@ -2,13 +2,13 @@
 
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
-use Exception;
 use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
 use Lagdo\DbAdmin\Driver\Db\Pdo\Statement;
+use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
+use Exception;
 use PDO;
-
-use function count;
 
 abstract class Connection extends AbstractConnection
 {
@@ -31,7 +31,7 @@ abstract class Connection extends AbstractConnection
             throw new AuthException($this->utils->str->html($ex->getMessage()));
         }
         $this->client->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-        $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(Statement::class));
+        $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
     }
 
     /**
@@ -104,6 +104,31 @@ abstract class Connection extends AbstractConnection
         }
         $this->statement->offset = 0;
         return $this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepareStatement(string $query): PreparedStatement
+    {
+        [$params] = $this->getPreparedParams($query, false);
+        $statement = $this->client->prepare($query);
+        return new PreparedStatement($query, $statement, $params);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeStatement(PreparedStatement $statement,
+        array $values): ?StatementInterface
+    {
+        if (!$statement->prepared()) {
+            return null;
+        }
+
+        $values = $statement->paramValues($values, true);
+        return !$statement->statement()->execute($values) ?
+            null : $statement->statement();
     }
 
     /**

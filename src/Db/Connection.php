@@ -2,16 +2,20 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Db\ErrorTrait;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
+use function array_map;
 use function array_key_exists;
 use function count;
+use function implode;
 use function is_array;
 use function is_resource;
+use function preg_match_all;
 use function stream_get_contents;
+use function strlen;
+use function substr;
 use function trim;
 
 abstract class Connection implements ConnectionInterface
@@ -194,11 +198,58 @@ abstract class Connection implements ConnectionInterface
         if (!$result || !$result->rowCount()) {
             return null;
         }
+
         // return pg_fetch_result($result->result, 0, $field);
         $row = $result->fetchRow();
         return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
 
+    /**
+     * Replace the params in a prepared statement.
+     *
+     * @param string $query
+     * @param string|bool $replace
+     *
+     * @return array
+     */
+    protected function getPreparedParams(string $query, string|bool $replace): array
+    {
+        $flags = !$replace ? 0 : PREG_OFFSET_CAPTURE;
+        if (!preg_match_all('/:[a-zA-Z0-9_]+/', $query, $matches, $flags))
+        {
+            return [[], $query];
+        }
+        $params = $matches[0];
+        if (!$replace) {
+            return [$params, $query];
+        }
+
+        if ($replace === true) {
+            $replace = null; // Replace with positions
+        }
+        // Each params is replaced separately,
+        // so params will similar names are not confused.
+        $count = count($params);
+        // Add a sentinel, so the $pos+1 index will always exist.
+        $params[] = ['', strlen($query), '', ''];
+        for ($pos = 0; $pos < $count; $pos++) {
+            $offset = $params[$pos][1] + strlen($params[$pos][0]);
+            $length = $params[$pos + 1][1] - $offset;
+            // The replacement value is either the provided value, or the position.
+            $params[$pos][] = $replace ?? ('$' . ($pos + 1));
+            // The suffix after the replacement value.
+            $params[$pos][] = substr($query, $offset, $length);
+        }
+
+        return [
+            // The final value of the params.
+            array_map(fn(array $param) => $param[0], $matches[0]),
+            // The final value of the query.
+            substr($query, 0, $params[0][1]) .
+                implode('', array_map(fn(array $param) =>
+                    "{$param[2]}{$param[3]}", $params)),
+        ];
+    }
 
     /**
      * @inheritDoc

@@ -2,10 +2,10 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Exception;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Exception;
 
 interface QueryInterface
 {
