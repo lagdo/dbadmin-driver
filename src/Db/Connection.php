@@ -227,7 +227,7 @@ abstract class Connection implements ConnectionInterface
         if ($replace === true) {
             $replace = null; // Replace with positions
         }
-        // Each params is replaced separately,
+        // Each param is replaced separately,
         // so params will similar names are not confused.
         $count = count($params);
         // Add a sentinel, so the $pos+1 index will always exist.
