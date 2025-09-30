@@ -5,6 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Closure;
 
 use function array_map;
 use function array_key_exists;
@@ -208,15 +209,14 @@ abstract class Connection implements ConnectionInterface
      * Replace the params in a prepared statement.
      *
      * @param string $query
-     * @param string|bool $replace
+     * @param Closure|null $replace
      *
      * @return array
      */
-    protected function getPreparedParams(string $query, string|bool $replace): array
+    protected function getPreparedParams(string $query, ?Closure $replace = null): array
     {
-        $flags = !$replace ? 0 : PREG_OFFSET_CAPTURE;
-        if (!preg_match_all('/:[a-zA-Z0-9_]+/', $query, $matches, $flags))
-        {
+        if (!preg_match_all('/:[a-zA-Z0-9_]+/', $query, $matches,
+            !$replace ? 0 : PREG_OFFSET_CAPTURE)) {
             return [[], $query];
         }
         $params = $matches[0];
@@ -224,26 +224,24 @@ abstract class Connection implements ConnectionInterface
             return [$params, $query];
         }
 
-        if ($replace === true) {
-            $replace = null; // Replace with positions
-        }
         // Each param is replaced separately,
-        // so params will similar names are not confused.
+        // so params with similar names are not confused.
+        $queryLength = strlen($query);
         $count = count($params);
-        // Add a sentinel, so the $pos+1 index will always exist.
-        $params[] = ['', strlen($query), '', ''];
         for ($pos = 0; $pos < $count; $pos++) {
-            $offset = $params[$pos][1] + strlen($params[$pos][0]);
-            $length = $params[$pos + 1][1] - $offset;
+            $param = &$params[$pos];
+            $npos = $pos + 1;
+            $offset = $param[1] + strlen($param[0]);
+            $length = ($params[$npos][1] ?? $queryLength) - $offset;
             // The replacement value is either the provided value, or the position.
-            $params[$pos][] = $replace ?? ('$' . ($pos + 1));
+            $param[] = $replace($param[0], $npos);
             // The suffix after the replacement value.
-            $params[$pos][] = substr($query, $offset, $length);
+            $param[] = substr($query, $offset, $length);
         }
 
         return [
             // The final value of the params.
-            array_map(fn(array $param) => $param[0], $matches[0]),
+            array_map(fn(array $param) => $param[0], $params),
             // The final value of the query.
             substr($query, 0, $params[0][1]) .
                 implode('', array_map(fn(array $param) =>
