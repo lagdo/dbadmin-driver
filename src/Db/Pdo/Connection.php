@@ -39,7 +39,7 @@ abstract class Connection extends AbstractConnection
      */
     public function serverInfo()
     {
-        return @$this->client->getAttribute(PDO::ATTR_SERVER_VERSION);
+        return @$this->client?->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '';
     }
 
     /**
