@@ -192,6 +192,7 @@ trait GrammarTrait
     public function getDefaultValueClause($field)
     {
         $default = $field->default;
+        // Todo: use match
         return $default === null ? '' : ' DEFAULT ' .
             (preg_match('~char|binary|text|enum|set~', $field->type) ||
             preg_match('~^(?![a-z])~i', $default) ? $this->driver->quote($default) : $default);
