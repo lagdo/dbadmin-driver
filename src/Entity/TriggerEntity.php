@@ -5,31 +5,6 @@ namespace Lagdo\DbAdmin\Driver\Entity;
 class TriggerEntity
 {
     /**
-     * @var string
-     */
-    public $name = '';
-
-    /**
-     * @var string
-     */
-    public $timing = '';
-
-    /**
-     * @var string
-     */
-    public $event = '';
-
-    /**
-     * @var string
-     */
-    public $statement = '';
-
-    /**
-     * @var string
-     */
-    public $of = '';
-
-    /**
      * The constructor
      *
      * @param string $timing
@@ -37,14 +12,11 @@ class TriggerEntity
      * @param string $of
      * @param string $statement
      * @param string $name
+     * @param string $type
+     * @param string $events
      */
-    public function __construct(string $timing = '', string $event = '',
-        string $statement = '', string $of = '', string $name = '')
-    {
-        $this->timing = $timing;
-        $this->event = $event;
-        $this->statement = $statement;
-        $this->of = $of;
-        $this->name = $name;
-    }
+    public function __construct(public string $timing = '', public string $event = '',
+        public string $statement = '', public string $of = '', public string $name = '',
+        public string $type = '', public string $events = '')
+    {}
 }

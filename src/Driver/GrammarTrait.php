@@ -175,7 +175,7 @@ trait GrammarTrait
      */
     public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
     {
-        $query = ' FROM ' . $this->escapeTableName($table);
+        $query = ' FROM ' . $this->driver->escapeTableName($table);
         if (!empty($where)) {
             $query .= ' WHERE ' . implode(' AND ', $where);
         }
@@ -195,7 +195,7 @@ trait GrammarTrait
         // Todo: use match
         return $default === null ? '' : ' DEFAULT ' .
             (preg_match('~char|binary|text|enum|set~', $field->type) ||
-            preg_match('~^(?![a-z])~i', $default) ? $this->driver->quote($default) : $default);
+            preg_match('~^(?![a-z])~i', $default) ? $this->quote($default) : $default);
     }
 
     /**
@@ -235,10 +235,10 @@ trait GrammarTrait
     private function fkTablePrefix(ForeignKeyEntity $foreignKey)
     {
         $prefix = '';
-        if ($foreignKey->database !== '' && $foreignKey->database !== $this->driver->database()) {
+        if ($foreignKey->database !== '' && $foreignKey->database !== $this->database()) {
             $prefix .= $this->escapeId($foreignKey->database) . '.';
         }
-        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->driver->schema()) {
+        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->schema()) {
             $prefix .= $this->escapeId($foreignKey->schema) . '.';
         }
         return $prefix;
@@ -252,7 +252,7 @@ trait GrammarTrait
         [$sources, $targets] = $this->fkFields($foreignKey);
         $onActions = $this->driver->actions();
         $query = " FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
-            $this->escapeTableName($foreignKey->table) . " ($targets)";
+            $this->driver->escapeTableName($foreignKey->table) . " ($targets)";
         if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
             $query .= " ON DELETE {$foreignKey->onDelete}";
         }
