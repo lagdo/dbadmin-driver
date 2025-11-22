@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\Query;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
@@ -10,7 +11,7 @@ use Exception;
 trait QueryTrait
 {
     /**
-     * @var QueryInterface
+     * @var Query
      */
     protected $query;
 

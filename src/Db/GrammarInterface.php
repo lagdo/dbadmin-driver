@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 
@@ -87,15 +88,15 @@ interface GrammarInterface
      * Get SQL command to create foreign keys
      *
      * getCreateTableQuery() produces CREATE TABLE without FK CONSTRAINTs
-     * getForeignKeysQuery() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
+     * getForeignKeysQueries() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
      * so that all FKs can be added after all tables have been created, avoiding any need
      * to reorder CREATE TABLE statements in order of their FK dependencies
      *
-     * @param string $table
+     * @param TableEntity $table
      *
-     * @return string
+     * @return array
      */
-    public function getForeignKeysQuery(string $table);
+    public function getForeignKeysQueries(TableEntity $table): array;
 
     /**
      * Get SQL command to truncate table
@@ -110,10 +111,11 @@ interface GrammarInterface
      * Get SQL command to change database
      *
      * @param string $database
+     * @param string $style
      *
      * @return string
      */
-    public function getUseDatabaseQuery(string $database);
+    public function getUseDatabaseQuery(string $database, string $style = '');
 
     /**
      * Get SQL commands to create triggers

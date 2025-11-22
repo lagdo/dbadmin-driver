@@ -2,63 +2,14 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
-class TableFieldEntity
+class TableFieldEntity extends FieldType
 {
-    /**
-     * The field name
-     *
-     * @var string
-     */
-    public $name = '';
-
-    /**
-     * The field type
-     *
-     * @var string
-     */
-    public $type = '';
-
-    /**
-     * The field full type
-     *
-     * @var string
-     */
-    public $fullType = '';
-
-    /**
-     * The field sign
-     *
-     * @var string
-     */
-    public $unsigned = '';
-
-    /**
-     * The field length
-     *
-     * @var integer
-     */
-    public $length = 0;
-
-    /**
-     * If the field has a default value
-     *
-     * @var boolean
-     */
-    public $hasDefault = false;
-
     /**
      * The field default value
      *
      * @var mixed
      */
     public $default = null;
-
-    /**
-     * If the field is null
-     *
-     * @var boolean
-     */
-    public $null = false;
 
     /**
      * If the field is auto increment
@@ -80,13 +31,6 @@ class TableFieldEntity
      * @var string
      */
     public $onDelete = '';
-
-    /**
-     * The field collation
-     *
-     * @var string
-     */
-    public $collation = '';
 
     /**
      * The field privileges
@@ -178,9 +122,9 @@ class TableFieldEntity
      * @var array
      */
     private static $attrs = ['name', 'type', 'fullType', 'primary', 'null', 'length',
-        'unsigned', 'hasDefault', 'default', 'autoIncrement', 'collation', 'comment',
+        'unsigned', 'default', 'autoIncrement', 'generated', 'collation', 'comment',
         'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden',
-        'generated', 'lengthRequired', 'onUpdate', 'onDelete', 'editStatus', 'editPosition'];
+        'lengthRequired', 'onUpdate', 'onDelete', 'editStatus', 'editPosition'];
 
     /**
      * The entity attributes
@@ -192,6 +136,14 @@ class TableFieldEntity
         'onDelete', 'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
 
     /**
+     * @return boolean
+     */
+    public function hasDefault(): bool
+    {
+        return $this->default !== null;
+    }
+
+    /**
      * Create an entity from database data
      *
      * @param array $field
@@ -201,18 +153,13 @@ class TableFieldEntity
     public static function make(array $field): self
     {
         $entity = new static();
-        $entity->null = isset($field['null']);
-        if (!empty($field['default'])) {
-            $entity->hasDefault = true;
-        }
         foreach (self::$attrs as $attr) {
-            if ($attr !== 'null' && $attr !== 'hasDefault') {
-                // Attributes are set only when present.
-                if (isset($field[$attr])) {
-                    $entity->$attr = $field[$attr];
-                }
+            // Attributes are set only when present.
+            if (isset($field[$attr])) {
+                $entity->$attr = $field[$attr];
             }
         }
+        $entity->null = isset($field['null']);
         return $entity;
     }
 

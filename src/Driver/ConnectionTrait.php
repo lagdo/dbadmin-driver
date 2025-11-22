@@ -24,22 +24,19 @@ trait ConnectionTrait
      * @return void
      */
     protected function beforeConnection()
-    {
-    }
+    {}
 
     /**
      * @return void
      */
     protected function configConnection()
-    {
-    }
+    {}
 
     /**
      * @return void
      */
     protected function openedConnection()
-    {
-    }
+    {}
 
     /**
      * @inheritDoc
@@ -62,8 +59,8 @@ trait ConnectionTrait
         $this->config->database = $database;
         $this->config->schema = $schema;
         if ($this->mainConnection === null) {
-            $this->configConnection();
             $this->mainConnection = $this->connection;
+            $this->configConnection();
         }
         $this->openedConnection();
         return $this->connection;
@@ -84,8 +81,7 @@ trait ConnectionTrait
     public function connectToDatabase(string $database, string $schema = ''): ConnectionInterface|null
     {
         $connection = $this->createConnection($this->config->options());
-        return !$connection || !$connection->open($database, $schema) ?
-            null : $connection;
+        return !$connection || !$connection->open($database, $schema) ? null : $connection;
     }
 
     /**
@@ -163,7 +159,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function keyValues(string $query, int $keyColumn = 0, int $valueColumn = 1)
+    public function keyValues(string $query, bool $setKeys = true)
     {
         $statement = $this->execute($query);
         if (!is_object($statement)) {
@@ -171,7 +167,11 @@ trait ConnectionTrait
         }
         $values = [];
         while ($row = $statement->fetchRow()) {
-            $values[$row[$keyColumn]] = $row[$valueColumn];
+            if ($setKeys) {
+                $values[$row[0]] = $row[1];
+            } else {
+                $values[] = $row[0];
+            }
         }
         return $values;
     }
@@ -213,7 +213,7 @@ trait ConnectionTrait
             $info = $match[1];
             $version = $mariaDb;
         }
-        return version_compare($info, $version) >= 0;
+        return $version && version_compare($info, $version) >= 0;
     }
 
     /**
@@ -222,7 +222,7 @@ trait ConnectionTrait
     public function charset(): string
     {
         // SHOW CHARSET would require an extra query
-        return $this->minVersion('5.5.3', 0) ? 'utf8mb4' : 'utf8';
+        return $this->minVersion('5.5.3') ? 'utf8mb4' : 'utf8';
     }
 
     /**

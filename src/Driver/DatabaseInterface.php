@@ -5,6 +5,8 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 use Exception;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
+use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
+use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
 
 interface DatabaseInterface
 {
@@ -144,9 +146,11 @@ interface DatabaseInterface
     /**
      * Get user defined types
      *
-     * @return array
+     * @param bool $withEnums
+     *
+     * @return array<UserTypeEntity>
      */
-    public function userTypes() ;
+    public function userTypes(bool $withEnums): array;
 
     /**
      * Get existing schemas
@@ -168,16 +172,16 @@ interface DatabaseInterface
      * @param string $name
      * @param string $type "FUNCTION" or "PROCEDURE"
      *
-     * @return RoutineEntity|null
+     * @return RoutineInfoEntity|null
      */
-    public function routine(string $name, string $type);
+    public function routine(string $name, string $type): RoutineInfoEntity|null;
 
     /**
      * Get list of routines
      *
-     * @return array
+     * @return array<RoutineEntity>
      */
-    public function routines();
+    public function routines(): array;
 
     /**
      * Get routine signature
@@ -187,5 +191,5 @@ interface DatabaseInterface
      *
      * @return string
      */
-    public function routineId(string $name, array $row);
+    public function routineId(string $name, array $row): string;
 }

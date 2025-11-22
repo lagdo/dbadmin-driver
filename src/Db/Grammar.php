@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
@@ -118,7 +119,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getUseDatabaseQuery(string $database)
+    public function getUseDatabaseQuery(string $database, string $style = '')
     {
         return '';
     }
@@ -126,9 +127,9 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getForeignKeysQuery(string $table)
+    public function getForeignKeysQueries(TableEntity $table): array
     {
-        return '';
+        return [];
     }
 
     /**

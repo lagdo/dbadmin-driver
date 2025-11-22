@@ -7,7 +7,6 @@ use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Closure;
 
 use function in_array;
-use function Jaxon\jaxon;
 
 abstract class Driver implements DriverInterface
 {
@@ -58,14 +57,10 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return DriverInterface|null
+     * @return array<Closure>
      */
-    public static function createDriver(array $options): ?DriverInterface
+    public static function drivers(): array
     {
-        $driver = $options['driver'];
-        $closure = self::$drivers[$driver] ?? null;
-        return !$closure ? null : $closure(jaxon()->di(), $options);
+        return self::$drivers;
     }
 }

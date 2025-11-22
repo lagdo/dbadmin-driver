@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\GrammarInterface as DbGrammarInterface;
+use Lagdo\DbAdmin\Driver\Entity\FieldType;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
@@ -118,6 +119,15 @@ interface GrammarInterface extends DbGrammarInterface
     public function processLength(string $length): string;
 
     /**
+     * Create SQL string from field type
+     *
+     * @param FieldType $field
+     *
+     * @return string
+     */
+    public function processType(FieldType $field, string $collate = "COLLATE"): string;
+
+    /**
      * Create SQL string from field
      *
      * @param TableFieldEntity $field Basic field information
@@ -128,11 +138,18 @@ interface GrammarInterface extends DbGrammarInterface
     public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array;
 
     /**
-     * Get SET NAMES if utf8mb4 might be needed
+     * Check if utf8mb4 might be needed
      *
      * @param string $create
      *
+     * @return void
+     */
+    public function setUtf8mb4(string $create): void;
+
+    /**
+     * Get SET NAMES query, if utf8mb4 might be needed
+     *
      * @return string
      */
-    public function setUtf8mb4(string $create);
+    public function getCharsetQuery(): string;
 }

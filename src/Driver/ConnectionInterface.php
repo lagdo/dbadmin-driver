@@ -96,12 +96,11 @@ interface ConnectionInterface extends DbConnectionInterface
      * Get keys from first column and values from second
      *
      * @param string $query
-     * @param int $keyColumn
-     * @param int $valueColumn
+     * @param bool $setKeys
      *
      * @return array
      */
-    public function keyValues(string $query, int $keyColumn = 0, int $valueColumn = 1);
+    public function keyValues(string $query, bool $setKeys = true);
 
     /**
      * Get all rows of result

@@ -18,7 +18,7 @@ class ConfigEntity
     /**
      * @var string
      */
-    public $version = '4.8.1-dev';
+    public $version = '0.20.0';
 
     /**
      * @var array

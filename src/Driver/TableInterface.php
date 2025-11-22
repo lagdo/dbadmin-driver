@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 
@@ -87,6 +88,24 @@ interface TableInterface
      * @return array
      */
     public function foreignKeys(string $table);
+
+    /**
+     * Get defined check constraints
+     *
+     * @param TableEntity $status
+     *
+     * @return array
+     */
+    public function checkConstraints(TableEntity $status): array;
+
+    /**
+     * Get partitions info
+     *
+     * @param string $table
+     *
+     * @return PartitionEntity|null
+     */
+    public function partitionsInfo(string $table): PartitionEntity|null;
 
     /**
      * Get information about a trigger

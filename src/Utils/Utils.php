@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Utils;
 
+use function array_key_exists;
+
 class Utils
 {
     /**
@@ -21,5 +23,20 @@ class Utils
     public function html(string $string): string
     {
         return $this->str->html($string);
+    }
+
+    /**
+     * Get a possibly missing item from a possibly missing array.
+     * This is better than $row[$key] ?? null because PHP will report error for undefined $row.
+     *
+     * @param array<mixed>|null $array
+     * @param array-key $key
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function idx(array|null $array, int|string $key, mixed $default = null): mixed
+    {
+        return $array !== null && array_key_exists($key, $array) ? $array[$key] : $default;
     }
 }

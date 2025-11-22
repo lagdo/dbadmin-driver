@@ -20,6 +20,16 @@ class IndexEntity
     public $action = '';
 
     /**
+     * @var string
+     */
+    public $algorithm = '';
+
+    /**
+     * @var string
+     */
+    public $partial = '';
+
+    /**
      * @var array
      */
     public $columns = [];

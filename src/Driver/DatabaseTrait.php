@@ -3,14 +3,16 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
-use Lagdo\DbAdmin\Driver\Db\DatabaseInterface;
+use Lagdo\DbAdmin\Driver\Db\Database;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
+use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
+use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
 
 trait DatabaseTrait
 {
     /**
-     * @var DatabaseInterface
+     * @var Database
      */
     protected $database;
 
@@ -192,11 +194,13 @@ trait DatabaseTrait
     /**
      * Get user defined types
      *
-     * @return array
+     * @param bool $withEnums
+     *
+     * @return array<UserTypeEntity>
      */
-    public function userTypes()
+    public function userTypes(bool $withEnums): array
     {
-        return $this->database->userTypes();
+        return $this->database->userTypes($withEnums);
     }
 
     /**
@@ -225,9 +229,9 @@ trait DatabaseTrait
      * @param string $name
      * @param string $type "FUNCTION" or "PROCEDURE"
      *
-     * @return RoutineEntity
+     * @return RoutineInfoEntity|null
      */
-    public function routine(string $name, string $type)
+    public function routine(string $name, string $type): RoutineInfoEntity|null
     {
         return $this->database->routine($name, $type);
     }
@@ -235,9 +239,9 @@ trait DatabaseTrait
     /**
      * Get list of routines
      *
-     * @return array
+     * @return array<RoutineEntity>
      */
-    public function routines()
+    public function routines(): array
     {
         return $this->database->routines();
     }
@@ -250,7 +254,7 @@ trait DatabaseTrait
      *
      * @return string
      */
-    public function routineId(string $name, array $row)
+    public function routineId(string $name, array $row): string
     {
         return $this->database->routineId($name, $row);
     }

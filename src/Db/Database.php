@@ -5,6 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Exception;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
+use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function trim;
@@ -176,7 +177,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function userTypes()
+    public function userTypes(bool $withEnums): array
     {
         return [];
     }
@@ -200,7 +201,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function routine(string $name, string $type)
+    public function routine(string $name, string $type): RoutineInfoEntity|null
     {
         return null;
     }
@@ -208,7 +209,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function routines()
+    public function routines(): array
     {
         return [];
     }
@@ -216,7 +217,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function routineId(string $name, array $row)
+    public function routineId(string $name, array $row): string
     {
         return '';
     }

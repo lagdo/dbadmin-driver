@@ -58,7 +58,8 @@ abstract class Query implements QueryInterface
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        $entity = new TableSelectEntity($table, $select, $where, $group, $order, $limit, $page);
+        $entity = new TableSelectEntity($table, $select,
+            $where, $group, $order, $limit, $page);
         $query = $this->driver->buildSelectQuery($entity);
         // $this->start = intval(microtime(true));
         return $this->driver->execute($query);
@@ -75,7 +76,8 @@ abstract class Query implements QueryInterface
             return $result !== false;
         }
         $result = $this->driver->execute("INSERT INTO $table (" .
-            implode(', ', array_keys($values)) . ') VALUES (' . implode(', ', $values) . ')');
+            implode(', ', array_keys($values)) .
+            ') VALUES (' . implode(', ', $values) . ')');
         return $result !== false;
     }
 

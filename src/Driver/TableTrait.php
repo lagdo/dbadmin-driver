@@ -2,14 +2,15 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\TableInterface;
+use Lagdo\DbAdmin\Driver\Db\Table;
+use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 
 trait TableTrait
 {
     /**
-     * @var TableInterface
+     * @var Table
      */
     protected $table;
 
@@ -119,6 +120,30 @@ trait TableTrait
     public function foreignKeys(string $table)
     {
         return $this->table->foreignKeys($table);
+    }
+
+    /**
+     * Get defined check constraints
+     *
+     * @param TableEntity $status
+     *
+     * @return array
+     */
+    public function checkConstraints(TableEntity $status): array
+    {
+        return $this->table->checkConstraints($status);
+    }
+
+    /**
+     * Get partitions info
+     *
+     * @param string $table
+     *
+     * @return PartitionEntity|null
+     */
+    public function partitionsInfo(string $table): PartitionEntity|null
+    {
+        return $this->table->partitionsInfo($table);
     }
 
     /**

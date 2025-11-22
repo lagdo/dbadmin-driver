@@ -2,9 +2,13 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Db\Grammar;
+use Lagdo\DbAdmin\Driver\Entity\FieldType;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 
 use function array_flip;
 use function array_map;
@@ -25,7 +29,111 @@ use function trim;
 
 trait GrammarTrait
 {
-    use Db\GrammarTrait;
+    /**
+     * @var Grammar
+     */
+    protected $grammar = null;
+
+    /**
+     * @var bool
+     */
+    protected $setCharset = false;
+
+    /**
+     * @inheritDoc
+     */
+    public function escapeId(string $idf): string
+    {
+        return $this->grammar->escapeId($idf);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unescapeId(string $idf)
+    {
+        return $this->grammar->unescapeId($idf);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function convertField(TableFieldEntity $field)
+    {
+        return $this->grammar->convertField($field);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unconvertField(TableFieldEntity $field, string $value)
+    {
+        return $this->grammar->unconvertField($field, $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buildSelectQuery(TableSelectEntity $select)
+    {
+        return $this->grammar->buildSelectQuery($select);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAutoIncrementModifier()
+    {
+        return $this->grammar->getAutoIncrementModifier();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
+    {
+        return $this->grammar->getCreateTableQuery($table, $autoIncrement, $style);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
+    {
+        return $this->grammar->getCreateIndexQuery($table, $type, $name, $columns);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForeignKeysQueries(TableEntity $table): array
+    {
+        return $this->grammar->getForeignKeysQueries($table);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTruncateTableQuery(string $table)
+    {
+        return $this->grammar->getTruncateTableQuery($table);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUseDatabaseQuery(string $database, string $style = '')
+    {
+        return $this->grammar->getUseDatabaseQuery($database, $style);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCreateTriggerQuery(string $table)
+    {
+        return $this->grammar->getCreateTriggerQuery($table);
+    }
 
     /**
      * @inheritDoc
@@ -279,7 +387,7 @@ trait GrammarTrait
     public function escapeKey(string $key): string
     {
         if (preg_match('(^([\w(]+)(' . str_replace('_', '.*',
-                preg_quote($this->escapeId('_'))) . ')([ \w)]+)$)', $key, $match)) {
+            preg_quote($this->escapeId('_'))) . ')([ \w)]+)$)', $key, $match)) {
             //! columns looking like functions
             return $match[1] . $this->escapeId($this->unescapeId($match[2])) . $match[3]; //! SQL injection
         }
@@ -294,6 +402,7 @@ trait GrammarTrait
         if (!$length) {
             return '';
         }
+
         $enumLength = $this->enumLength();
         $pattern = "~^\\s*\\(?\\s*$enumLength(?:\\s*,\\s*$enumLength)*+\\s*\\)?\\s*\$~";
         if (preg_match($pattern, $length) &&
@@ -301,6 +410,23 @@ trait GrammarTrait
             return '(' . implode(',', $matches[0]) . ')';
         }
         return preg_replace('~^[0-9].*~', '(\0)', preg_replace('~[^-0-9,+()[\]]~', '', $length));
+    }
+
+    /**
+     * Create SQL string from field type
+     *
+     * @param FieldType $field
+     */
+    public function processType(FieldType $field, string $collate = "COLLATE"): string
+    {
+        $length = $this->processLength($field->length);
+        $type = preg_match($this->driver->numberRegex(), $field->type) &&
+            in_array($field->unsigned, $this->driver->unsigned()) ?
+            " {$field->unsigned}" : "";
+        $collation = preg_match('~char|text|enum|set~', $field->type) &&
+            $field->collation ? " $collate " . ($this->driver->jush() === 'mssql' ?
+                $field->collation : $this->driver->quote($field->collation)) : "";
+        return " {$field->type}{$length}{$type}{$collation}";
     }
 
     /**
@@ -325,14 +451,19 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function setUtf8mb4(string $create)
+    public function setUtf8mb4(string $create): void
     {
-        static $set = false;
         // possible false positive
-        if (!$set && preg_match('~\butf8mb4~i', $create)) {
-            $set = true;
-            return 'SET NAMES ' . $this->charset() . ";\n\n";
+        if (!$this->setCharset && preg_match('~\butf8mb4~i', $create)) {
+            $this->setCharset = true;
         }
-        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCharsetQuery(): string
+    {
+        return !$this->setCharset ? '' : 'SET NAMES ' . $this->charset() . ";\n\n";
     }
 }

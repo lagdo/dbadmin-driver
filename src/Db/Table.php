@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\TableInterface;
+use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
@@ -56,6 +57,14 @@ abstract class Table implements TableInterface
     public function supportForeignKeys(TableEntity $tableStatus)
     {
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function partitionsInfo(string $table): PartitionEntity|null
+    {
+        return null;
     }
 
     /**
