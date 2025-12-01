@@ -66,6 +66,14 @@ trait ConfigTrait
     /**
      * @return array
      */
+    public function insertFunctions()
+    {
+        return $this->config->insertFunctions;
+    }
+
+    /**
+     * @return array
+     */
     public function editFunctions()
     {
         return $this->config->editFunctions;

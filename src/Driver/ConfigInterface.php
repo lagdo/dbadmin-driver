@@ -41,6 +41,11 @@ interface ConfigInterface
     /**
      * @return array
      */
+    public function insertFunctions();
+
+    /**
+     * @return array
+     */
     public function editFunctions();
 
     /**

@@ -63,6 +63,11 @@ class ConfigEntity
     /**
      * @var array
      */
+    public $insertFunctions = [];
+
+    /**
+     * @var array
+     */
     public $editFunctions = [];
 
     /**
@@ -89,6 +94,16 @@ class ConfigEntity
      * @var string
      */
     public $enumLength = "'(?:''|[^'\\\\]|\\\\.)*'";
+
+    /**
+     * @var array
+     */
+    public $partitionBy = [];
+
+    /**
+     * @var array
+     */
+    public $generated = [];
 
     /**
      * The current database name
