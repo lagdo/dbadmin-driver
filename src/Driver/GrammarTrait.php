@@ -220,7 +220,7 @@ trait GrammarTrait
             //! Respect sql_mode NO_BACKSLASH_ESCAPES
             $s = $match[0][0];
             $queryEntity->offset = $match[0][1] + strlen($s);
-            if ($s[0] != "\\") {
+            if (($s[0] ?? '') != "\\") {
                 break;
             }
         }
