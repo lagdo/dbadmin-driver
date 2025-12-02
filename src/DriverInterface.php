@@ -19,13 +19,4 @@ interface DriverInterface extends ConfigInterface, ConnectionInterface,
      * @return string
      */
     public function name();
-
-    /**
-     * Check if a feature is supported
-     *
-     * @param string $feature
-     *
-     * @return bool
-     */
-    public function support(string $feature);
 }

@@ -2,7 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Query;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
@@ -11,9 +10,9 @@ use Exception;
 trait QueryTrait
 {
     /**
-     * @var Query
+     * @var QueryInterface
      */
-    protected $query;
+    abstract protected function _query(): QueryInterface;
 
     /**
      * Select data from table
@@ -31,7 +30,7 @@ trait QueryTrait
     public function select(string $table, array $select, array $where,
         array $group, array $order = [], int $limit = 1, int $page = 0)
     {
-        return $this->query->select($table, $select, $where, $group, $order, $limit, $page);
+        return $this->_query()->select($table, $select, $where, $group, $order, $limit, $page);
     }
 
     /**
@@ -44,7 +43,7 @@ trait QueryTrait
      */
     public function insert(string $table, array $values)
     {
-        return $this->query->insert($table, $values);
+        return $this->_query()->insert($table, $values);
     }
 
     /**
@@ -59,7 +58,7 @@ trait QueryTrait
      */
     public function update(string $table, array $values, string $queryWhere, int $limit = 0)
     {
-        return $this->query->update($table, $values, $queryWhere, $limit);
+        return $this->_query()->update($table, $values, $queryWhere, $limit);
     }
 
     /**
@@ -73,7 +72,7 @@ trait QueryTrait
      */
     public function delete(string $table, string $queryWhere, int $limit = 0)
     {
-        return $this->query->delete($table, $queryWhere, $limit);
+        return $this->_query()->delete($table, $queryWhere, $limit);
     }
 
     /**
@@ -87,7 +86,7 @@ trait QueryTrait
      */
     public function insertOrUpdate(string $table, array $rows, array $primary)
     {
-        return $this->query->insertOrUpdate($table, $rows, $primary);
+        return $this->_query()->insertOrUpdate($table, $rows, $primary);
     }
 
     /**
@@ -97,7 +96,7 @@ trait QueryTrait
      */
     public function lastAutoIncrementId()
     {
-        return $this->query->lastAutoIncrementId();
+        return $this->_query()->lastAutoIncrementId();
     }
 
     /**
@@ -110,7 +109,7 @@ trait QueryTrait
      */
     public function slowQuery(string $query, int $timeout)
     {
-        return $this->query->slowQuery($query, $timeout);
+        return $this->_query()->slowQuery($query, $timeout);
     }
 
     /**
@@ -126,7 +125,7 @@ trait QueryTrait
     public function executeQuery(string $query, bool $execute = true,
         bool $failed = false/*, string $time = ''*/): bool
     {
-        return $this->query->executeQuery($query, $execute, $failed/*, $time*/);
+        return $this->_query()->executeQuery($query, $execute, $failed/*, $time*/);
     }
 
     /**
@@ -139,7 +138,7 @@ trait QueryTrait
      */
     public function where(array $where, array $fields = []): string
     {
-        return $this->query->where($where, $fields);
+        return $this->_query()->where($where, $fields);
     }
 
     /**
@@ -152,7 +151,7 @@ trait QueryTrait
      */
     public function countRows(TableEntity $tableStatus, array $where)
     {
-        return $this->query->countRows($tableStatus, $where);
+        return $this->_query()->countRows($tableStatus, $where);
     }
 
     /**
@@ -166,7 +165,7 @@ trait QueryTrait
      */
     public function convertSearch(string $idf, array $value, TableFieldEntity $field)
     {
-        return $this->query->convertSearch($idf, $value, $field);
+        return $this->_query()->convertSearch($idf, $value, $field);
     }
 
     /**
@@ -178,6 +177,6 @@ trait QueryTrait
      */
     public function view(string $name)
     {
-        return $this->query->view($name);
+        return $this->_query()->view($name);
     }
 }

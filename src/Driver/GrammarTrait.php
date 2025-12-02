@@ -2,7 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Grammar;
 use Lagdo\DbAdmin\Driver\Entity\FieldType;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
@@ -30,21 +29,21 @@ use function trim;
 trait GrammarTrait
 {
     /**
-     * @var Grammar
-     */
-    protected $grammar = null;
-
-    /**
      * @var bool
      */
     protected $setCharset = false;
+
+    /**
+     * @var GrammarInterface
+     */
+    abstract protected function _grammar(): GrammarInterface;
 
     /**
      * @inheritDoc
      */
     public function escapeId(string $idf): string
     {
-        return $this->grammar->escapeId($idf);
+        return $this->_grammar()->escapeId($idf);
     }
 
     /**
@@ -52,7 +51,7 @@ trait GrammarTrait
      */
     public function unescapeId(string $idf)
     {
-        return $this->grammar->unescapeId($idf);
+        return $this->_grammar()->unescapeId($idf);
     }
 
     /**
@@ -60,7 +59,7 @@ trait GrammarTrait
      */
     public function convertField(TableFieldEntity $field)
     {
-        return $this->grammar->convertField($field);
+        return $this->_grammar()->convertField($field);
     }
 
     /**
@@ -68,7 +67,7 @@ trait GrammarTrait
      */
     public function unconvertField(TableFieldEntity $field, string $value)
     {
-        return $this->grammar->unconvertField($field, $value);
+        return $this->_grammar()->unconvertField($field, $value);
     }
 
     /**
@@ -76,7 +75,7 @@ trait GrammarTrait
      */
     public function buildSelectQuery(TableSelectEntity $select)
     {
-        return $this->grammar->buildSelectQuery($select);
+        return $this->_grammar()->buildSelectQuery($select);
     }
 
     /**
@@ -84,7 +83,7 @@ trait GrammarTrait
      */
     public function getAutoIncrementModifier()
     {
-        return $this->grammar->getAutoIncrementModifier();
+        return $this->_grammar()->getAutoIncrementModifier();
     }
 
     /**
@@ -92,7 +91,7 @@ trait GrammarTrait
      */
     public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
     {
-        return $this->grammar->getCreateTableQuery($table, $autoIncrement, $style);
+        return $this->_grammar()->getCreateTableQuery($table, $autoIncrement, $style);
     }
 
     /**
@@ -100,7 +99,7 @@ trait GrammarTrait
      */
     public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
     {
-        return $this->grammar->getCreateIndexQuery($table, $type, $name, $columns);
+        return $this->_grammar()->getCreateIndexQuery($table, $type, $name, $columns);
     }
 
     /**
@@ -108,7 +107,7 @@ trait GrammarTrait
      */
     public function getForeignKeysQueries(TableEntity $table): array
     {
-        return $this->grammar->getForeignKeysQueries($table);
+        return $this->_grammar()->getForeignKeysQueries($table);
     }
 
     /**
@@ -116,7 +115,7 @@ trait GrammarTrait
      */
     public function getTruncateTableQuery(string $table)
     {
-        return $this->grammar->getTruncateTableQuery($table);
+        return $this->_grammar()->getTruncateTableQuery($table);
     }
 
     /**
@@ -124,7 +123,7 @@ trait GrammarTrait
      */
     public function getUseDatabaseQuery(string $database, string $style = '')
     {
-        return $this->grammar->getUseDatabaseQuery($database, $style);
+        return $this->_grammar()->getUseDatabaseQuery($database, $style);
     }
 
     /**
@@ -132,7 +131,7 @@ trait GrammarTrait
      */
     public function getCreateTriggerQuery(string $table)
     {
-        return $this->grammar->getCreateTriggerQuery($table);
+        return $this->_grammar()->getCreateTriggerQuery($table);
     }
 
     /**
@@ -140,7 +139,7 @@ trait GrammarTrait
      */
     public function escapeTableName(string $idf)
     {
-        return $this->grammar->escapeId($idf);
+        return $this->_grammar()->escapeId($idf);
     }
 
     /**
@@ -234,7 +233,7 @@ trait GrammarTrait
     private function nextQueryPos(QueryEntity $queryEntity)
     {
         // TODO: Move this to driver implementations
-        $parse = $this->grammar->queryRegex();
+        $parse = $this->_grammar()->queryRegex();
         $delimiter = preg_quote($queryEntity->delimiter);
         // Should always match
         preg_match("($delimiter$parse)", $queryEntity->queries, $match,

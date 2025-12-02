@@ -2,19 +2,18 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Exception;
-use Lagdo\DbAdmin\Driver\Db\Database;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
 use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
+use Exception;
 
 trait DatabaseTrait
 {
     /**
-     * @var Database
+     * @var DatabaseInterface
      */
-    protected $database;
+    abstract protected function _database(): DatabaseInterface;
 
     /**
      * Create table
@@ -25,7 +24,7 @@ trait DatabaseTrait
      */
     public function createTable(TableEntity $tableAttrs)
     {
-        return $this->database->createTable($tableAttrs);
+        return $this->_database()->createTable($tableAttrs);
     }
 
     /**
@@ -38,7 +37,7 @@ trait DatabaseTrait
      */
     public function alterTable(string $table, TableEntity $tableAttrs)
     {
-        return $this->database->alterTable($table, $tableAttrs);
+        return $this->_database()->alterTable($table, $tableAttrs);
     }
 
     /**
@@ -52,7 +51,7 @@ trait DatabaseTrait
      */
     public function alterIndexes(string $table, array $alter, array $drop)
     {
-        return $this->database->alterIndexes($table, $alter, $drop);
+        return $this->_database()->alterIndexes($table, $alter, $drop);
     }
 
     /**
@@ -62,7 +61,7 @@ trait DatabaseTrait
      */
     public function tables()
     {
-        return $this->database->tables();
+        return $this->_database()->tables();
     }
 
     /**
@@ -72,7 +71,7 @@ trait DatabaseTrait
      */
     public function sequences()
     {
-        return $this->database->sequences();
+        return $this->_database()->sequences();
     }
 
     /**
@@ -84,7 +83,7 @@ trait DatabaseTrait
      */
     public function countTables(array $databases)
     {
-        return $this->database->countTables($databases);
+        return $this->_database()->countTables($databases);
     }
 
     /**
@@ -96,7 +95,7 @@ trait DatabaseTrait
      */
     public function dropViews(array $views)
     {
-        return $this->database->dropViews($views);
+        return $this->_database()->dropViews($views);
     }
 
     /**
@@ -108,7 +107,7 @@ trait DatabaseTrait
      */
     public function truncateTables(array $tables)
     {
-        return $this->database->truncateTables($tables);
+        return $this->_database()->truncateTables($tables);
     }
 
     /**
@@ -120,7 +119,7 @@ trait DatabaseTrait
      */
     public function dropTables(array $tables)
     {
-        return $this->database->dropTables($tables);
+        return $this->_database()->dropTables($tables);
     }
 
     /**
@@ -134,7 +133,7 @@ trait DatabaseTrait
      */
     public function moveTables(array $tables, array $views, string $target)
     {
-        return $this->database->moveTables($tables, $views, $target);
+        return $this->_database()->moveTables($tables, $views, $target);
     }
 
     /**
@@ -148,7 +147,7 @@ trait DatabaseTrait
      */
     public function copyTables(array $tables, array $views, string $target)
     {
-        return $this->database->copyTables($tables, $views, $target);
+        return $this->_database()->copyTables($tables, $views, $target);
     }
 
     /**
@@ -161,7 +160,7 @@ trait DatabaseTrait
      */
     public function createView(array $values)
     {
-        return $this->database->createView($values);
+        return $this->_database()->createView($values);
     }
 
     /**
@@ -175,7 +174,7 @@ trait DatabaseTrait
      */
     public function updateView(string $view, array $values): string
     {
-        return $this->database->updateView($view, $values);
+        return $this->_database()->updateView($view, $values);
     }
 
     /**
@@ -188,7 +187,7 @@ trait DatabaseTrait
      */
     public function dropView(string $view): bool
     {
-        return $this->database->dropView($view);
+        return $this->_database()->dropView($view);
     }
 
     /**
@@ -200,7 +199,7 @@ trait DatabaseTrait
      */
     public function userTypes(bool $withEnums): array
     {
-        return $this->database->userTypes($withEnums);
+        return $this->_database()->userTypes($withEnums);
     }
 
     /**
@@ -210,7 +209,7 @@ trait DatabaseTrait
      */
     public function schemas()
     {
-        return $this->database->schemas();
+        return $this->_database()->schemas();
     }
 
     /**
@@ -220,7 +219,7 @@ trait DatabaseTrait
      */
     public function events()
     {
-        return $this->database->events();
+        return $this->_database()->events();
     }
 
     /**
@@ -233,7 +232,7 @@ trait DatabaseTrait
      */
     public function routine(string $name, string $type): RoutineInfoEntity|null
     {
-        return $this->database->routine($name, $type);
+        return $this->_database()->routine($name, $type);
     }
 
     /**
@@ -243,7 +242,7 @@ trait DatabaseTrait
      */
     public function routines(): array
     {
-        return $this->database->routines();
+        return $this->_database()->routines();
     }
 
     /**
@@ -256,6 +255,6 @@ trait DatabaseTrait
      */
     public function routineId(string $name, array $row): string
     {
-        return $this->database->routineId($name, $row);
+        return $this->_database()->routineId($name, $row);
     }
 }

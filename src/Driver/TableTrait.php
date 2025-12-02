@@ -2,7 +2,6 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Table;
 use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
@@ -10,9 +9,9 @@ use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 trait TableTrait
 {
     /**
-     * @var Table
+     * @var TableInterface
      */
-    protected $table;
+    abstract protected function _table(): TableInterface;
 
     /**
      * Get table status
@@ -24,7 +23,7 @@ trait TableTrait
      */
     public function tableStatus(string $table, bool $fast = false)
     {
-        return $this->table->tableStatus($table, $fast);
+        return $this->_table()->tableStatus($table, $fast);
     }
 
     /**
@@ -36,7 +35,7 @@ trait TableTrait
      */
     public function tableStatuses(bool $fast = false)
     {
-        return $this->table->tableStatuses($fast);
+        return $this->_table()->tableStatuses($fast);
     }
 
     /**
@@ -46,7 +45,7 @@ trait TableTrait
      */
     public function tableNames()
     {
-        return $this->table->tableNames();
+        return $this->_table()->tableNames();
     }
 
     /**
@@ -59,7 +58,7 @@ trait TableTrait
      */
     public function tableStatusOrName(string $table, bool $fast = false)
     {
-        return $this->table->tableStatusOrName($table, $fast);
+        return $this->_table()->tableStatusOrName($table, $fast);
     }
 
     /**
@@ -71,7 +70,7 @@ trait TableTrait
      */
     public function isView(TableEntity $tableStatus)
     {
-        return $this->table->isView($tableStatus);
+        return $this->_table()->isView($tableStatus);
     }
 
     /**
@@ -83,7 +82,7 @@ trait TableTrait
      */
     public function supportForeignKeys(TableEntity $tableStatus)
     {
-        return $this->table->supportForeignKeys($tableStatus);
+        return $this->_table()->supportForeignKeys($tableStatus);
     }
 
     /**
@@ -95,7 +94,7 @@ trait TableTrait
      */
     public function fields(string $table)
     {
-        return $this->table->fields($table);
+        return $this->_table()->fields($table);
     }
 
     /**
@@ -107,7 +106,7 @@ trait TableTrait
      */
     public function indexes(string $table)
     {
-        return $this->table->indexes($table);
+        return $this->_table()->indexes($table);
     }
 
     /**
@@ -119,7 +118,7 @@ trait TableTrait
      */
     public function foreignKeys(string $table)
     {
-        return $this->table->foreignKeys($table);
+        return $this->_table()->foreignKeys($table);
     }
 
     /**
@@ -131,7 +130,7 @@ trait TableTrait
      */
     public function checkConstraints(TableEntity $status): array
     {
-        return $this->table->checkConstraints($status);
+        return $this->_table()->checkConstraints($status);
     }
 
     /**
@@ -143,7 +142,7 @@ trait TableTrait
      */
     public function partitionsInfo(string $table): PartitionEntity|null
     {
-        return $this->table->partitionsInfo($table);
+        return $this->_table()->partitionsInfo($table);
     }
 
     /**
@@ -156,7 +155,7 @@ trait TableTrait
      */
     public function trigger(string $name, string $table = '')
     {
-        return $this->table->trigger($name, $table);
+        return $this->_table()->trigger($name, $table);
     }
 
     /**
@@ -168,7 +167,7 @@ trait TableTrait
      */
     public function triggers(string $table)
     {
-        return $this->table->triggers($table);
+        return $this->_table()->triggers($table);
     }
 
     /**
@@ -178,7 +177,7 @@ trait TableTrait
      */
     public function triggerOptions()
     {
-        return $this->table->triggerOptions();
+        return $this->_table()->triggerOptions();
     }
 
     /**
@@ -190,7 +189,7 @@ trait TableTrait
      */
     public function referencableTables(string $table)
     {
-        return $this->table->referencableTables($table);
+        return $this->_table()->referencableTables($table);
     }
 
     /**
@@ -202,6 +201,6 @@ trait TableTrait
      */
     public function tableHelp(string $name)
     {
-        return $this->table->tableHelp($name);
+        return $this->_table()->tableHelp($name);
     }
 }

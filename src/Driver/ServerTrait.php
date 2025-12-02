@@ -2,15 +2,14 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Server;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
 
 trait ServerTrait
 {
     /**
-     * @var Server
+     * @var ServerInterface
      */
-    protected $server;
+    abstract protected function _server(): ServerInterface;
 
     /**
      * Get logged user
@@ -19,7 +18,7 @@ trait ServerTrait
      */
     public function user()
     {
-        return $this->server->user();
+        return $this->_server()->user();
     }
 
     /**
@@ -29,7 +28,7 @@ trait ServerTrait
      */
     // public function schema()
     // {
-    //     return $this->server->schema();
+    //     return $this->_server()->schema();
     // }
 
     /**
@@ -41,7 +40,7 @@ trait ServerTrait
      */
     public function getUsers(string $database): array
     {
-        return $this->server->getUsers($database);
+        return $this->_server()->getUsers($database);
     }
 
     /**
@@ -54,7 +53,7 @@ trait ServerTrait
      */
     public function getUserGrants(string $user, string $host): UserEntity
     {
-        return $this->server->getUserGrants($user, $host);
+        return $this->_server()->getUserGrants($user, $host);
     }
 
     /**
@@ -66,7 +65,7 @@ trait ServerTrait
      */
     public function getUserPrivileges(UserEntity $user)
     {
-        $this->server->getUserPrivileges($user);
+        $this->_server()->getUserPrivileges($user);
     }
 
     /**
@@ -78,7 +77,7 @@ trait ServerTrait
      */
     public function databases(bool $flush)
     {
-        return $this->server->databases($flush);
+        return $this->_server()->databases($flush);
     }
 
     /**
@@ -90,7 +89,7 @@ trait ServerTrait
      */
     public function databaseSize(string $database)
     {
-        return $this->server->databaseSize($database);
+        return $this->_server()->databaseSize($database);
     }
 
     /**
@@ -103,7 +102,7 @@ trait ServerTrait
      */
     public function databaseCollation(string $database, array $collations)
     {
-        return $this->server->databaseCollation($database, $collations);
+        return $this->_server()->databaseCollation($database, $collations);
     }
 
     /**
@@ -113,7 +112,7 @@ trait ServerTrait
      */
     public function engines()
     {
-        return $this->server->engines();
+        return $this->_server()->engines();
     }
 
     /**
@@ -123,7 +122,7 @@ trait ServerTrait
      */
     public function collations()
     {
-        return $this->server->collations();
+        return $this->_server()->collations();
     }
 
     /**
@@ -135,7 +134,7 @@ trait ServerTrait
      */
     public function isInformationSchema(string $database)
     {
-        return $this->server->isInformationSchema($database);
+        return $this->_server()->isInformationSchema($database);
     }
 
     /**
@@ -147,7 +146,7 @@ trait ServerTrait
      */
     public function isSystemSchema(string $database)
     {
-        return $this->server->isSystemSchema($database);
+        return $this->_server()->isSystemSchema($database);
     }
 
     /**
@@ -160,7 +159,7 @@ trait ServerTrait
      */
     public function createDatabase(string $database, string $collation)
     {
-        return $this->server->createDatabase($database, $collation);
+        return $this->_server()->createDatabase($database, $collation);
     }
 
     /**
@@ -172,7 +171,7 @@ trait ServerTrait
      */
     public function dropDatabase(string $database)
     {
-        return $this->server->dropDatabase($database);
+        return $this->_server()->dropDatabase($database);
     }
 
     /**
@@ -185,7 +184,7 @@ trait ServerTrait
      */
     public function renameDatabase(string $name, string $collation)
     {
-        return $this->server->renameDatabase($name, $collation);
+        return $this->_server()->renameDatabase($name, $collation);
     }
 
     /**
@@ -195,7 +194,7 @@ trait ServerTrait
      */
     public function routineLanguages()
     {
-        return $this->server->routineLanguages();
+        return $this->_server()->routineLanguages();
     }
 
     /**
@@ -205,7 +204,7 @@ trait ServerTrait
      */
     public function variables()
     {
-        return $this->server->variables();
+        return $this->_server()->variables();
     }
 
     /**
@@ -215,7 +214,7 @@ trait ServerTrait
      */
     public function statusVariables()
     {
-        return $this->server->statusVariables();
+        return $this->_server()->statusVariables();
     }
 
     /**
@@ -225,7 +224,7 @@ trait ServerTrait
      */
     public function processes()
     {
-        return $this->server->processes();
+        return $this->_server()->processes();
     }
 
     /**
@@ -239,7 +238,7 @@ trait ServerTrait
      */
     public function processAttr(array $process, string $key, string $val): string
     {
-        return $this->server->processAttr($process, $key, $val);
+        return $this->_server()->processAttr($process, $key, $val);
     }
 
     /**
@@ -251,7 +250,7 @@ trait ServerTrait
      */
     // public function killProcess($val)
     // {
-    //     return $this->server->killProcess($val);
+    //     return $this->_server()->killProcess($val);
     // }
 
     /**
@@ -261,6 +260,6 @@ trait ServerTrait
      */
     // public function maxConnections()
     // {
-    //     return $this->server->maxConnections();
+    //     return $this->_server()->maxConnections();
     // }
 }

@@ -6,8 +6,6 @@ use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Closure;
 
-use function in_array;
-
 abstract class Driver implements DriverInterface
 {
     use Driver\ConfigTrait;
@@ -35,14 +33,6 @@ abstract class Driver implements DriverInterface
         $this->beforeConnection();
         // Create and set the main connection.
         $this->connection = $this->createConnection($options);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function support(string $feature)
-    {
-        return in_array($feature, $this->config->features);
     }
 
     /**
