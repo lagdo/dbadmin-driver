@@ -9,56 +9,65 @@ interface ConfigInterface
      *
      * @return string
      */
-    public function jush();
+    public function jush(): string;
 
     /**
      * Get the Adminer version
      *
      * @return string
      */
-    public function version();
+    public function version(): string;
+
+    /**
+     * Check if a feature is supported
+     *
+     * @param string $feature
+     *
+     * @return bool
+     */
+    public function support(string $feature): bool;
 
     /**
      * @return array
      */
-    public function unsigned();
+    public function unsigned(): array;
 
     /**
      * @return array
      */
-    public function functions();
+    public function functions(): array;
 
     /**
      * @return array
      */
-    public function grouping();
+    public function grouping(): array;
 
     /**
      * @return array
      */
-    public function operators();
+    public function operators(): array;
 
     /**
      * @return array
      */
-    public function insertFunctions();
+    public function insertFunctions(): array;
 
     /**
      * @return array
      */
-    public function editFunctions();
+    public function editFunctions(): array;
 
     /**
      * @return array
      */
-    public function types();
+    public function types(): array;
 
     /**
      * @param string $type
      *
      * @return bool
      */
-    public function typeExists(string $type);
+    public function typeExists(string $type): bool;
 
     /**
      * @param string $type

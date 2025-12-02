@@ -39,6 +39,14 @@ interface ConnectionInterface
     public function quoteBinary(string $string);
 
     /**
+     * @param string $query
+     * @param bool $unbuffered
+     *
+     * @return mixed
+     */
+    public function query(string $query, bool $unbuffered = false);
+
+    /**
      * Get the number of rows affected by the last query
      *
      * @return integer
@@ -123,4 +131,14 @@ interface ConnectionInterface
      * @return string
      */
     public function error(): string;
+
+    /**
+     * @return bool
+     */
+    public function hasError(): bool;
+
+    /**
+     * @return string
+     */
+    public function errorMessage(): string;
 }

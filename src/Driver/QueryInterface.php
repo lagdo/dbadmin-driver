@@ -131,6 +131,86 @@ interface QueryInterface
     public function convertSearch(string $idf, array $val, TableFieldEntity $field);
 
     /**
+     * Apply command to all array items
+     *
+     * @param string $query
+     * @param array $tables
+     * @param callback|null $escape
+     *
+     * @return bool
+     */
+    public function applyQueries(string $query, array $tables, $escape = null);
+
+    /**
+     * Get list of values from database
+     *
+     * @param string $query
+     * @param int $column
+     *
+     * @return array
+     */
+    public function values(string $query, int $column = 0);
+
+    /**
+     * Get list of values from database
+     *
+     * @param string $query
+     * @param string $column
+     *
+     * @return array
+     */
+    public function colValues(string $query, string $column);
+
+    /**
+     * Get keys from first column and values from second
+     *
+     * @param string $query
+     * @param bool $setKeys
+     *
+     * @return array
+     */
+    public function keyValues(string $query, bool $setKeys = true);
+
+    /**
+     * Get all rows of result
+     *
+     * @param string $query
+     *
+     * @return array
+     */
+    public function rows(string $query): array;
+
+    /**
+     * Execute and remember query
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
+     */
+    public function execute(string $query);
+
+    /**
+     * Begin transaction
+     *
+     * @return bool
+     */
+    public function begin();
+
+    /**
+     * Commit transaction
+     *
+     * @return bool
+     */
+    public function commit();
+
+    /**
+     * Rollback transaction
+     *
+     * @return bool
+     */
+    public function rollback();
+
+    /**
      * Get view SELECT
      *
      * @param string $name

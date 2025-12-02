@@ -2,15 +2,16 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Exception;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
+use Exception;
 
 use function implode;
+use function is_object;
 use function array_keys;
 use function preg_match;
 use function preg_replace;
@@ -62,7 +63,7 @@ abstract class Query implements QueryInterface
             $where, $group, $order, $limit, $page);
         $query = $this->driver->buildSelectQuery($entity);
         // $this->start = intval(microtime(true));
-        return $this->driver->execute($query);
+        return $this->execute($query);
     }
 
     /**
@@ -72,10 +73,10 @@ abstract class Query implements QueryInterface
     {
         $table = $this->driver->escapeTableName($table);
         if (empty($values)) {
-            $result = $this->driver->execute("INSERT INTO $table DEFAULT VALUES");
+            $result = $this->execute("INSERT INTO $table DEFAULT VALUES");
             return $result !== false;
         }
-        $result = $this->driver->execute("INSERT INTO $table (" .
+        $result = $this->execute("INSERT INTO $table (" .
             implode(', ', array_keys($values)) .
             ') VALUES (' . implode(', ', $values) . ')');
         return $result !== false;
@@ -92,10 +93,10 @@ abstract class Query implements QueryInterface
         }
         $query = $this->driver->escapeTableName($table) . ' SET ' . implode(', ', $assignments);
         if (!$limit) {
-            $result = $this->driver->execute('UPDATE ' . $query . $queryWhere);
+            $result = $this->execute('UPDATE ' . $query . $queryWhere);
             return $result !== false;
         }
-        $result = $this->driver->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere));
+        $result = $this->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere));
         return $result !== false;
     }
 
@@ -106,10 +107,10 @@ abstract class Query implements QueryInterface
     {
         $query = 'FROM ' . $this->driver->escapeTableName($table);
         if (!$limit) {
-            $result = $this->driver->execute("DELETE $query $queryWhere");
+            $result = $this->execute("DELETE $query $queryWhere");
             return $result !== false;
         }
-        $result = $this->driver->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
+        $result = $this->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
         return $result !== false;
     }
 
@@ -146,6 +147,38 @@ abstract class Query implements QueryInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function execute(string $query)
+    {
+        return $this->driver->connection()->query($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function begin()
+    {
+        return $this->execute("BEGIN") !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function commit()
+    {
+        return $this->execute("COMMIT") !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rollback()
+    {
+        return $this->execute("ROLLBACK") !== false;
+    }
+
+    /**
      * Query printed after execution in the message
      *
      * @param string $query Executed query
@@ -176,7 +209,7 @@ abstract class Query implements QueryInterface
     {
         if ($execute) {
             // $start = microtime(true);
-            $failed = !$this->driver->execute($query);
+            $failed = !$this->execute($query);
             // $time = $this->trans->formatTime($start);
         }
         if ($failed) {
@@ -250,5 +283,89 @@ abstract class Query implements QueryInterface
             $clauses[] = $this->driver->escapeKey($key) . " IS NULL";
         }
         return implode(" AND ", $clauses);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function applyQueries(string $query, array $tables, $escape = null)
+    {
+        if (!$escape) {
+            $escape = fn ($table) => $this->driver->escapeTableName($table);
+        }
+        foreach ($tables as $table) {
+            if (!$this->execute("$query " . $escape($table))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function values(string $query, int $column = 0)
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            $values[] = $row[$column];
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function colValues(string $query, string $column)
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchAssoc()) {
+            $values[] = $row[$column];
+        }
+        return $values;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rows(string $query): array
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) { // can return true
+            return [];
+        }
+        $rows = [];
+        while ($row = $statement->fetchAssoc()) {
+            $rows[] = $row;
+        }
+        return $rows;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function keyValues(string $query, bool $setKeys = true)
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            if ($setKeys) {
+                $values[$row[0]] = $row[1];
+            } else {
+                $values[] = $row[0];
+            }
+        }
+        return $values;
     }
 }

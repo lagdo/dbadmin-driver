@@ -29,22 +29,6 @@ trait ErrorTrait
     /**
      * @inheritDoc
      */
-    public function error(): string
-    {
-        return $this->error;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasError()
-    {
-        return $this->error !== '';
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function setErrno(int $errno)
     {
         $this->errno = $errno;
@@ -53,7 +37,23 @@ trait ErrorTrait
     /**
      * @inheritDoc
      */
-    public function errorMessage()
+    public function error(): string
+    {
+        return $this->error;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasError(): bool
+    {
+        return $this->error !== '';
+    }
+
+    /**
+     * @return string
+     */
+    public function errorMessage(): string
     {
         return $this->errno !== 0 ? "({$this->errno}) {$this->error}" : $this->error;
     }

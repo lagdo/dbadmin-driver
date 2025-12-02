@@ -4,6 +4,8 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 
+use function in_array;
+
 trait ConfigTrait
 {
     /**
@@ -16,7 +18,7 @@ trait ConfigTrait
      *
      * @return string
      */
-    public function jush()
+    public function jush(): string
     {
         return $this->config->jush;
     }
@@ -26,15 +28,23 @@ trait ConfigTrait
      *
      * @return string
      */
-    public function version()
+    public function version(): string
     {
         return $this->config->version;
     }
 
     /**
+     * @inheritDoc
+     */
+    public function support(string $feature): bool
+    {
+        return in_array($feature, $this->config->features);
+    }
+
+    /**
      * @return array
      */
-    public function unsigned()
+    public function unsigned(): array
     {
         return $this->config->unsigned;
     }
@@ -42,7 +52,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function functions()
+    public function functions(): array
     {
         return $this->config->functions;
     }
@@ -50,7 +60,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function grouping()
+    public function grouping(): array
     {
         return $this->config->grouping;
     }
@@ -58,7 +68,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function operators()
+    public function operators(): array
     {
         return $this->config->operators;
     }
@@ -66,7 +76,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function insertFunctions()
+    public function insertFunctions(): array
     {
         return $this->config->insertFunctions;
     }
@@ -74,7 +84,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function editFunctions()
+    public function editFunctions(): array
     {
         return $this->config->editFunctions;
     }
@@ -82,7 +92,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function types()
+    public function types(): array
     {
         return $this->config->types;
     }
@@ -92,7 +102,7 @@ trait ConfigTrait
      *
      * @return bool
      */
-    public function typeExists(string $type)
+    public function typeExists(string $type): bool
     {
         return isset($this->config->types[$type]);
     }

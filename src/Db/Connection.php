@@ -65,16 +65,6 @@ abstract class Connection implements ConnectionInterface
     abstract public function open(string $database, string $schema = ''): bool;
 
     /**
-     * Execute a query on the current database
-     *
-     * @param string $query
-     * @param bool $unbuffered
-     *
-     * @return StatementInterface|bool
-     */
-    abstract public function query(string $query, bool $unbuffered = false);
-
-    /**
      * Get warnings about the last command
      *
      * @return string

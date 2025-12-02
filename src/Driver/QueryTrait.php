@@ -155,6 +155,46 @@ trait QueryTrait
     }
 
     /**
+     * @inheritDoc
+     */
+    public function applyQueries(string $query, array $tables, $escape = null)
+    {
+        return $this->_query()->applyQueries($query, $tables, $escape);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function values(string $query, int $column = 0)
+    {
+        return $this->_query()->values($query, $column);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function colValues(string $query, string $column)
+    {
+        return $this->_query()->colValues($query, $column);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rows(string $query): array
+    {
+        return $this->_query()->rows($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function keyValues(string $query, bool $setKeys = true)
+    {
+        return $this->_query()->keyValues($query, $setKeys);
+    }
+
+    /**
      * Convert column to be searchable
      *
      * @param string $idf Escaped column name
@@ -178,5 +218,37 @@ trait QueryTrait
     public function view(string $name)
     {
         return $this->_query()->view($name);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execute(string $query)
+    {
+        return $this->_query()->execute($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function begin()
+    {
+        return $this->_query()->begin();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function commit()
+    {
+        return $this->_query()->commit();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rollback()
+    {
+        return $this->_query()->rollback();
     }
 }
