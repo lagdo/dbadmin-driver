@@ -22,7 +22,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function createTable(TableEntity $tableAttrs)
+    public function createTable(TableEntity $tableAttrs): bool
     {
         return $this->_database()->createTable($tableAttrs);
     }
@@ -35,7 +35,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function alterTable(string $table, TableEntity $tableAttrs)
+    public function alterTable(string $table, TableEntity $tableAttrs): bool
     {
         return $this->_database()->alterTable($table, $tableAttrs);
     }
@@ -49,7 +49,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function alterIndexes(string $table, array $alter, array $drop)
+    public function alterIndexes(string $table, array $alter, array $drop): bool
     {
         return $this->_database()->alterIndexes($table, $alter, $drop);
     }
@@ -59,7 +59,7 @@ trait DatabaseTrait
      *
      * @return array
      */
-    public function tables()
+    public function tables(): array
     {
         return $this->_database()->tables();
     }
@@ -69,7 +69,7 @@ trait DatabaseTrait
      *
      * @return array
      */
-    public function sequences()
+    public function sequences(): array
     {
         return $this->_database()->sequences();
     }
@@ -81,7 +81,7 @@ trait DatabaseTrait
      *
      * @return array
      */
-    public function countTables(array $databases)
+    public function countTables(array $databases): array
     {
         return $this->_database()->countTables($databases);
     }
@@ -93,7 +93,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function dropViews(array $views)
+    public function dropViews(array $views): bool
     {
         return $this->_database()->dropViews($views);
     }
@@ -105,7 +105,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function truncateTables(array $tables)
+    public function truncateTables(array $tables): bool
     {
         return $this->_database()->truncateTables($tables);
     }
@@ -117,7 +117,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function dropTables(array $tables)
+    public function dropTables(array $tables): bool
     {
         return $this->_database()->dropTables($tables);
     }
@@ -131,7 +131,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function moveTables(array $tables, array $views, string $target)
+    public function moveTables(array $tables, array $views, string $target): bool
     {
         return $this->_database()->moveTables($tables, $views, $target);
     }
@@ -145,7 +145,7 @@ trait DatabaseTrait
      *
      * @return bool
      */
-    public function copyTables(array $tables, array $views, string $target)
+    public function copyTables(array $tables, array $views, string $target): bool
     {
         return $this->_database()->copyTables($tables, $views, $target);
     }
@@ -158,7 +158,7 @@ trait DatabaseTrait
      * @return bool
      * @throws Exception
      */
-    public function createView(array $values)
+    public function createView(array $values): bool
     {
         return $this->_database()->createView($values);
     }
@@ -207,7 +207,7 @@ trait DatabaseTrait
      *
      * @return array
      */
-    public function schemas()
+    public function schemas(): array
     {
         return $this->_database()->schemas();
     }
@@ -217,7 +217,7 @@ trait DatabaseTrait
      *
      * @return array
      */
-    public function events()
+    public function events(): array
     {
         return $this->_database()->events();
     }

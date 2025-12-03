@@ -17,7 +17,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function createTable(TableEntity $tableAttrs);
+    public function createTable(TableEntity $tableAttrs): bool;
 
     /**
      * Alter table
@@ -27,7 +27,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function alterTable(string $table, TableEntity $tableAttrs);
+    public function alterTable(string $table, TableEntity $tableAttrs): bool;
 
     /**
      * Alter indexes
@@ -38,21 +38,21 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function alterIndexes(string $table, array $alter, array $drop);
+    public function alterIndexes(string $table, array $alter, array $drop): bool;
 
     /**
      * Get tables list
      *
      * @return array
      */
-    public function tables();
+    public function tables(): array;
 
     /**
      * Get sequences list
      *
      * @return array
      */
-    public function sequences();
+    public function sequences(): array;
 
     /**
      * Count tables in all databases
@@ -61,7 +61,7 @@ interface DatabaseInterface
      *
      * @return array
      */
-    public function countTables(array $databases);
+    public function countTables(array $databases): array;
 
     /**
      * Drop views
@@ -70,7 +70,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function dropViews(array $views);
+    public function dropViews(array $views): bool;
 
     /**
      * Truncate tables
@@ -79,7 +79,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function truncateTables(array $tables);
+    public function truncateTables(array $tables): bool;
 
     /**
      * Drop tables
@@ -88,7 +88,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function dropTables(array $tables);
+    public function dropTables(array $tables): bool;
 
     /**
      * Move tables to other schema
@@ -99,7 +99,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function moveTables(array $tables, array $views, string $target);
+    public function moveTables(array $tables, array $views, string $target): bool;
 
     /**
      * Copy tables to other schema
@@ -110,7 +110,7 @@ interface DatabaseInterface
      *
      * @return bool
      */
-    public function copyTables(array $tables, array $views, string $target);
+    public function copyTables(array $tables, array $views, string $target): bool;
 
     /**
      * Create a view
@@ -120,7 +120,7 @@ interface DatabaseInterface
      * @return bool
      * @throws Exception
      */
-    public function createView(array $values);
+    public function createView(array $values): bool;
 
     /**
      * Update a view
@@ -157,14 +157,14 @@ interface DatabaseInterface
      *
      * @return array
      */
-    public function schemas();
+    public function schemas(): array;
 
     /**
      * Get events
      *
      * @return array
      */
-    public function events();
+    public function events(): array;
 
     /**
      * Get information about stored routine

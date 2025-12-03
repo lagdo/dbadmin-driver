@@ -3,8 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Fake;
 
 use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
-
-use function count;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 /**
  * Fake Connection class for testing
@@ -49,7 +48,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function serverInfo()
+    public function serverInfo(): string
     {
         return $this->serverInfo;
     }
@@ -66,7 +65,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function query(string $query, bool $unbuffered = false)
+    public function query(string $query, bool $unbuffered = false): StatementInterface|bool
     {
         return $this->statement;
     }
@@ -87,7 +86,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function multiQuery(string $query)
+    public function multiQuery(string $query): bool
     {
         // TODO: Implement multiQuery() method.
     }
@@ -95,7 +94,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function storedResult()
+    public function storedResult(): StatementInterface|bool
     {
         // TODO: Implement storedResult() method.
     }
@@ -103,7 +102,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function nextResult()
+    public function nextResult(): mixed
     {
         // TODO: Implement nextResult() method.
     }

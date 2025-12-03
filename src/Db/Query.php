@@ -56,8 +56,8 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function select(string $table, array $select, array $where,
-        array $group, array $order = [], int $limit = 1, int $page = 0)
+    public function select(string $table, array $select, array $where, array $group,
+        array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
         $entity = new TableSelectEntity($table, $select,
             $where, $group, $order, $limit, $page);
@@ -69,7 +69,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function insert(string $table, array $values)
+    public function insert(string $table, array $values): bool
     {
         $table = $this->driver->escapeTableName($table);
         if (empty($values)) {
@@ -85,7 +85,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function update(string $table, array $values, string $queryWhere, int $limit = 0)
+    public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool
     {
         $assignments = [];
         foreach ($values as $name => $value) {
@@ -103,7 +103,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function delete(string $table, string $queryWhere, int $limit = 0)
+    public function delete(string $table, string $queryWhere, int $limit = 0): bool
     {
         $query = 'FROM ' . $this->driver->escapeTableName($table);
         if (!$limit) {
@@ -117,7 +117,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function slowQuery(string $query, int $timeout)
+    public function slowQuery(string $query, int $timeout): string|null
     {
         return null;
     }
@@ -125,7 +125,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function countRows(TableEntity $tableStatus, array $where)
+    public function countRows(TableEntity $tableStatus, array $where): int|null
     {
         return null;
     }
@@ -133,7 +133,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function convertSearch(string $idf, array $val, TableFieldEntity $field)
+    public function convertSearch(string $idf, array $value, TableFieldEntity $field): string
     {
         return $idf;
     }
@@ -141,7 +141,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function view(string $name)
+    public function view(string $name): array
     {
         return [];
     }
@@ -149,7 +149,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function execute(string $query)
+    public function execute(string $query): StatementInterface|bool
     {
         return $this->driver->connection()->query($query);
     }
@@ -157,7 +157,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function begin()
+    public function begin(): bool
     {
         return $this->execute("BEGIN") !== false;
     }
@@ -165,7 +165,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function commit()
+    public function commit(): bool
     {
         return $this->execute("COMMIT") !== false;
     }
@@ -173,7 +173,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function rollback()
+    public function rollback(): bool
     {
         return $this->execute("ROLLBACK") !== false;
     }
@@ -288,7 +288,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function applyQueries(string $query, array $tables, $escape = null)
+    public function applyQueries(string $query, array $tables, $escape = null): bool
     {
         if (!$escape) {
             $escape = fn ($table) => $this->driver->escapeTableName($table);
@@ -304,7 +304,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function values(string $query, int $column = 0)
+    public function values(string $query, int $column = 0): array
     {
         $statement = $this->execute($query);
         if (!is_object($statement)) {
@@ -320,7 +320,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function colValues(string $query, string $column)
+    public function colValues(string $query, string $column): array
     {
         $statement = $this->execute($query);
         if (!is_object($statement)) {
@@ -352,7 +352,7 @@ abstract class Query implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function keyValues(string $query, bool $setKeys = true)
+    public function keyValues(string $query, bool $setKeys = true): array
     {
         $statement = $this->execute($query);
         if (!is_object($statement)) {

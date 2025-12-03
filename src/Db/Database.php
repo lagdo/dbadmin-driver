@@ -39,7 +39,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function dropViews(array $views)
+    public function dropViews(array $views): bool
     {
         return false;
     }
@@ -47,7 +47,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function moveTables(array $tables, array $views, string $target)
+    public function moveTables(array $tables, array $views, string $target): bool
     {
         return false;
     }
@@ -55,7 +55,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function copyTables(array $tables, array $views, string $target)
+    public function copyTables(array $tables, array $views, string $target): bool
     {
         return false;
     }
@@ -63,7 +63,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function truncateTables(array $tables)
+    public function truncateTables(array $tables): bool
     {
         return false;
     }
@@ -71,7 +71,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function createView(array $values)
+    public function createView(array $values): bool
     {
         // From view.inc.php
         $name = trim($values['name']);
@@ -169,7 +169,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function sequences()
+    public function sequences(): array
     {
         return [];
     }
@@ -185,7 +185,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function schemas()
+    public function schemas(): array
     {
         return [];
     }
@@ -193,7 +193,7 @@ abstract class Database implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function events()
+    public function events(): array
     {
         return [];
     }

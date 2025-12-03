@@ -61,7 +61,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function buildSelectQuery(TableSelectEntity $select)
+    public function buildSelectQuery(TableSelectEntity $select): string
     {
         $query = implode(', ', $select->fields) .
             ' FROM ' . $this->driver->escapeTableName($select->table);
@@ -75,7 +75,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string
     {
         $sql = " $query$where";
         if ($limit > 0) {
@@ -109,10 +109,10 @@ abstract class Grammar implements GrammarInterface
     private function fkTablePrefix(ForeignKeyEntity $foreignKey)
     {
         $prefix = '';
-        if ($foreignKey->database !== '' && $foreignKey->database !== $this->database()) {
+        if ($foreignKey->database !== '' && $foreignKey->database !== $this->driver->database()) {
             $prefix .= $this->escapeId($foreignKey->database) . '.';
         }
-        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->schema()) {
+        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->driver->schema()) {
             $prefix .= $this->escapeId($foreignKey->schema) . '.';
         }
         return $prefix;
@@ -121,7 +121,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey)
+    public function formatForeignKey(ForeignKeyEntity $foreignKey): string
     {
         [$sources, $targets] = $this->fkFields($foreignKey);
         $onActions = $this->driver->actions();
@@ -169,7 +169,7 @@ abstract class Grammar implements GrammarInterface
             return '';
         }
 
-        $enumLength = $this->enumLength();
+        $enumLength = $this->driver->enumLength();
         $pattern = "~^\\s*\\(?\\s*$enumLength(?:\\s*,\\s*$enumLength)*+\\s*\\)?\\s*\$~";
         if (preg_match($pattern, $length) &&
             preg_match_all("~$enumLength~", $length, $matches)) {
@@ -205,8 +205,8 @@ abstract class Grammar implements GrammarInterface
             $onUpdate = ' ON UPDATE ' . $field->onUpdate;
         }
         $comment = '';
-        if ($this->support('comment') && $field->comment !== '') {
-            $comment = ' COMMENT ' . $this->quote($field->comment);
+        if ($this->driver->support('comment') && $field->comment !== '') {
+            $comment = ' COMMENT ' . $this->driver->quote($field->comment);
         }
         $null = $field->null ? ' NULL' : ' NOT NULL'; // NULL for timestamp
         $autoIncrement = $field->autoIncrement ? $this->getAutoIncrementModifier() : null;
@@ -230,7 +230,7 @@ abstract class Grammar implements GrammarInterface
      */
     public function getCharsetQuery(): string
     {
-        return !$this->setCharset ? '' : 'SET NAMES ' . $this->charset() . ";\n\n";
+        return !$this->setCharset ? '' : 'SET NAMES ' . $this->driver->charset() . ";\n\n";
     }
 
     /**
@@ -238,7 +238,7 @@ abstract class Grammar implements GrammarInterface
      *
      * @return string
      */
-    abstract public function queryRegex();
+    abstract public function queryRegex(): string;
     // Original code from Adminer
     // {
     //     $parse = '[\'"' .
@@ -261,7 +261,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function unescapeId(string $idf)
+    public function unescapeId(string $idf): string
     {
         $last = substr($idf, -1);
         return str_replace($last . $last, $last, substr($idf, 1, -1));
@@ -270,7 +270,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function escapeTableName(string $idf)
+    public function escapeTableName(string $idf): string
     {
         return $this->escapeId($idf);
     }
@@ -278,7 +278,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups): string
     {
         $query = ' FROM ' . $this->escapeTableName($table);
         if (!empty($where)) {
@@ -294,7 +294,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function convertField(TableFieldEntity $field)
+    public function convertField(TableFieldEntity $field): string
     {
         return '';
     }
@@ -302,7 +302,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function unconvertField(TableFieldEntity $field, string $value)
+    public function unconvertField(TableFieldEntity $field, string $value): string
     {
         return $value;
     }
@@ -310,7 +310,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style): string
     {
         return '';
     }
@@ -318,7 +318,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string
     {
         return '';
     }
@@ -326,7 +326,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getUseDatabaseQuery(string $database, string $style = '')
+    public function getUseDatabaseQuery(string $database, string $style = ''): string
     {
         return '';
     }
@@ -342,7 +342,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getTruncateTableQuery(string $table)
+    public function getTruncateTableQuery(string $table): string
     {
         return '';
     }
@@ -350,7 +350,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getCreateTriggerQuery(string $table)
+    public function getCreateTriggerQuery(string $table): string
     {
         return '';
     }
@@ -358,7 +358,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getAutoIncrementModifier()
+    public function getAutoIncrementModifier(): string
     {
         return '';
     }
@@ -443,7 +443,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function parseQueries(QueryEntity $queryEntity)
+    public function parseQueries(QueryEntity $queryEntity): bool
     {
         $queryEntity->queries = trim($queryEntity->queries);
         while ($queryEntity->queries !== '') {
@@ -469,7 +469,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getDefaultValueClause(TableFieldEntity $field)
+    public function getDefaultValueClause(TableFieldEntity $field): string
     {
         $default = $field->default;
         // Todo: use match
@@ -492,7 +492,7 @@ abstract class Grammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function convertFields(array $columns, array $fields, array $select = [])
+    public function convertFields(array $columns, array $fields, array $select = []): string
     {
         $clause = '';
         foreach ($columns as $key => $val) {

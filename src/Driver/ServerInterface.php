@@ -11,7 +11,7 @@ interface ServerInterface
      *
      * @return string
      */
-    public function user();
+    public function user(): string;
 
     /**
      * Get the users and hosts
@@ -39,7 +39,7 @@ interface ServerInterface
      *
      * @return void
      */
-    public function getUserPrivileges(UserEntity $user);
+    public function getUserPrivileges(UserEntity $user): void;
 
     /**
      * Get cached list of databases
@@ -48,7 +48,7 @@ interface ServerInterface
      *
      * @return array
      */
-    public function databases(bool $flush);
+    public function databases(bool $flush): array;
 
     /**
      * Compute size of database
@@ -57,7 +57,7 @@ interface ServerInterface
      *
      * @return int
      */
-    public function databaseSize(string $database);
+    public function databaseSize(string $database): int;
 
     /**
      * Get database collation
@@ -67,21 +67,21 @@ interface ServerInterface
      *
      * @return string
      */
-    public function databaseCollation(string $database, array $collations);
+    public function databaseCollation(string $database, array $collations): string;
 
     /**
      * Get supported engines
      *
      * @return array
      */
-    public function engines();
+    public function engines(): array;
 
     /**
      * Get sorted grouped list of collations
      *
      * @return array
      */
-    public function collations();
+    public function collations(): array;
 
     /**
      * Find out if database is information_schema
@@ -90,7 +90,7 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function isInformationSchema(string $database);
+    public function isInformationSchema(string $database): bool;
 
     /**
      * Find out if database is a system database
@@ -99,7 +99,7 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function isSystemSchema(string $database);
+    public function isSystemSchema(string $database): bool;
 
     /**
      * Create a database
@@ -109,7 +109,7 @@ interface ServerInterface
      *
      * @return boolean
      */
-    public function createDatabase(string $database, string $collation) ;
+    public function createDatabase(string $database, string $collation): bool;
 
     /**
      * Drop a database
@@ -118,7 +118,7 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function dropDatabase(string $database);
+    public function dropDatabase(string $database): bool;
 
     /**
      * Rename database from DB
@@ -128,35 +128,35 @@ interface ServerInterface
      *
      * @return bool
      */
-    public function renameDatabase(string $name, string $collation);
+    public function renameDatabase(string $name, string $collation): bool;
 
     /**
      * Get list of available routine languages
      *
      * @return array
      */
-    public function routineLanguages() ;
+    public function routineLanguages(): array;
 
     /**
      * Get server variables
      *
      * @return array
      */
-    public function variables();
+    public function variables(): array;
 
     /**
      * Get status variables
      *
      * @return array
      */
-    public function statusVariables();
+    public function statusVariables(): array;
 
     /**
      * Get process list
      *
      * @return array
      */
-    public function processes();
+    public function processes(): array;
 
     /**
      * Get a process attribute
@@ -176,12 +176,12 @@ interface ServerInterface
      *
      * @return bool
      */
-    // public function killProcess($val);
+    // public function killProcess($val): bool;
 
     /**
      * Get maximum number of connections
      *
      * @return int
      */
-    // public function maxConnections();
+    // public function maxConnections(): int;
 }

@@ -11,14 +11,14 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function extension();
+    public function extension(): string;
 
     /**
      * Get the server description
      *
      * @return string
      */
-    public function serverInfo();
+    public function serverInfo(): string;
 
     /**
      * Return a quoted string
@@ -27,7 +27,7 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function quote(string $string);
+    public function quote(string $string): string;
 
     /**
      * Return a quoted string
@@ -36,22 +36,22 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function quoteBinary(string $string);
+    public function quoteBinary(string $string): string;
 
     /**
      * @param string $query
      * @param bool $unbuffered
      *
-     * @return mixed
+     * @return StatementInterface|bool
      */
-    public function query(string $query, bool $unbuffered = false);
+    public function query(string $query, bool $unbuffered = false): StatementInterface|bool;
 
     /**
      * Get the number of rows affected by the last query
      *
      * @return integer
      */
-    public function affectedRows();
+    public function affectedRows(): int;
 
     /**
      * Execute a query on the current database and fetch the specified field
@@ -61,7 +61,7 @@ interface ConnectionInterface
      *
      * @return mixed
      */
-    public function result(string $query, int $field = -1);
+    public function result(string $query, int $field = -1): mixed;
 
     /**
      * Execute a query on the current database and store the result
@@ -70,14 +70,14 @@ interface ConnectionInterface
      *
      * @return bool
      */
-    public function multiQuery(string $query);
+    public function multiQuery(string $query): bool;
 
     /**
      * Create a prepared statement
      *
      * @param string $query
      *
-     * @return void
+     * @return PreparedStatement
      */
     public function prepareStatement(string $query): PreparedStatement;
 
@@ -97,14 +97,14 @@ interface ConnectionInterface
      *
      * @return StatementInterface|bool
      */
-    public function storedResult();
+    public function storedResult(): StatementInterface|bool;
 
     /**
      * Get the next row set of the last query
      *
-     * @return bool
+     * @return mixed
      */
-    public function nextResult();
+    public function nextResult(): mixed;
 
     /**
      * Convert value returned by database to actual value
@@ -112,9 +112,9 @@ interface ConnectionInterface
      * @param string|resource|null $value
      * @param TableFieldEntity $field
      *
-     * @return string
+     * @return mixed
      */
-    public function value($value, TableFieldEntity $field);
+    public function value($value, TableFieldEntity $field): mixed;
 
     /**
      * Explain select
@@ -123,7 +123,7 @@ interface ConnectionInterface
      *
      * @return StatementInterface|bool
      */
-    public function explain(string $query);
+    public function explain(string $query): StatementInterface|bool;
 
     /**
      * Get the raw error message

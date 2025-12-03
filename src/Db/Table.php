@@ -6,6 +6,7 @@ use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\TableInterface;
 use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 abstract class Table implements TableInterface
@@ -35,7 +36,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function tableStatusOrName(string $table, bool $fast = false)
+    public function tableStatusOrName(string $table, bool $fast = false): TableEntity
     {
         if (($status = $this->tableStatus($table, $fast))) {
             return $status;
@@ -46,7 +47,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function foreignKeys(string $table)
+    public function foreignKeys(string $table): array
     {
         return [];
     }
@@ -54,7 +55,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function supportForeignKeys(TableEntity $tableStatus)
+    public function supportForeignKeys(TableEntity $tableStatus): bool
     {
         return false;
     }
@@ -70,7 +71,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function isView(TableEntity $tableStatus)
+    public function isView(TableEntity $tableStatus): bool
     {
         return false;
     }
@@ -78,7 +79,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function trigger(string $name, string $table = '')
+    public function trigger(string $name, string $table = ''): TriggerEntity|null
     {
         return null;
     }
@@ -86,7 +87,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function triggers(string $table)
+    public function triggers(string $table): array
     {
         return [];
     }
@@ -94,7 +95,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function triggerOptions()
+    public function triggerOptions(): array
     {
         return [];
     }
@@ -102,7 +103,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function referencableTables(string $table)
+    public function referencableTables(string $table): array
     {
         return [];
     }
@@ -110,7 +111,7 @@ abstract class Table implements TableInterface
     /**
      * @inheritDoc
      */
-    public function tableHelp(string $name)
+    public function tableHelp(string $name): string
     {
         return '';
     }

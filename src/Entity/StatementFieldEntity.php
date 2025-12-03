@@ -67,37 +67,37 @@ class StatementFieldEntity
         $this->orgTable = $orgTable;
     }
 
-    public function type()
+    public function type(): string
     {
         return $this->type;
     }
 
-    public function isBinary()
+    public function isBinary(): bool
     {
         return $this->isBinary;
     }
 
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function orgName()
+    public function orgName(): string
     {
         return $this->orgName;
     }
 
-    public function table()
+    public function table(): string
     {
         return $this->table;
     }
 
-    public function orgTable()
+    public function orgTable(): string
     {
         return $this->orgTable;
     }
 
-    public function tableName()
+    public function tableName(): string
     {
         return $this->table ?? $this->orgTable;
     }

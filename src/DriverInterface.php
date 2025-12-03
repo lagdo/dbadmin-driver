@@ -28,7 +28,7 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      *
      * @return ConnectionInterface|null
      */
-    public function createConnection(array $options);
+    public function createConnection(array $options): ConnectionInterface|null;
 
     /**
      * Connect to a database and a schema

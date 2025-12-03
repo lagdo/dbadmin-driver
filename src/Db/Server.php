@@ -111,7 +111,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function getUserPrivileges(UserEntity $user)
+    public function getUserPrivileges(UserEntity $user): void
     {
         $user->privileges = $this->driver->rows('SHOW PRIVILEGES');
     }
@@ -119,7 +119,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function engines()
+    public function engines(): array
     {
         return [];
     }
@@ -127,7 +127,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function collations()
+    public function collations(): array
     {
         return [];
     }
@@ -135,7 +135,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function databaseCollation(string $database, array $collations)
+    public function databaseCollation(string $database, array $collations): string
     {
         return '';
     }
@@ -143,7 +143,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function isInformationSchema(string $database)
+    public function isInformationSchema(string $database): bool
     {
         return false;
     }
@@ -151,7 +151,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function isSystemSchema(string $database)
+    public function isSystemSchema(string $database): bool
     {
         return false;
     }
@@ -159,7 +159,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function variables()
+    public function variables(): array
     {
         return [];
     }
@@ -167,7 +167,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function statusVariables()
+    public function statusVariables(): array
     {
         return [];
     }
@@ -175,7 +175,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function routineLanguages()
+    public function routineLanguages(): array
     {
         return [];
     }
@@ -183,7 +183,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function renameDatabase(string $name, string $collation)
+    public function renameDatabase(string $name, string $collation): bool
     {
         return false;
     }
@@ -191,7 +191,7 @@ abstract class Server implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function processes()
+    public function processes(): array
     {
         return [];
     }

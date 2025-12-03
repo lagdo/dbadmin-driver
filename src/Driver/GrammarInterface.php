@@ -27,7 +27,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function unescapeId(string $idf);
+    public function unescapeId(string $idf): string;
 
     /**
      * Convert field in select and edit
@@ -36,7 +36,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function convertField(TableFieldEntity $field);
+    public function convertField(TableFieldEntity $field): string;
 
     /**
      * Convert value in edit after applying functions back
@@ -46,7 +46,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function unconvertField(TableFieldEntity $field, string $value);
+    public function unconvertField(TableFieldEntity $field, string $value): string;
 
     /**
      * Select data from table
@@ -55,14 +55,14 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function buildSelectQuery(TableSelectEntity $select);
+    public function buildSelectQuery(TableSelectEntity $select): string;
 
     /**
      * Generate modifier for auto increment column
      *
      * @return string
      */
-    public function getAutoIncrementModifier();
+    public function getAutoIncrementModifier(): string;
 
     /**
      * Get SQL command to create table
@@ -73,7 +73,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style);
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style): string;
 
     /**
      * Command to create an index
@@ -85,7 +85,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns);
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string;
 
     /**
      * Get SQL command to create foreign keys
@@ -108,7 +108,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getTruncateTableQuery(string $table);
+    public function getTruncateTableQuery(string $table): string;
 
     /**
      * Get SQL command to change database
@@ -118,7 +118,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getUseDatabaseQuery(string $database, string $style = '');
+    public function getUseDatabaseQuery(string $database, string $style = ''): string;
 
     /**
      * Get SQL commands to create triggers
@@ -127,7 +127,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateTriggerQuery(string $table);
+    public function getCreateTriggerQuery(string $table): string;
 
     /**
      * Get escaped table name
@@ -136,7 +136,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function escapeTableName(string $idf);
+    public function escapeTableName(string $idf): string;
 
     /**
      * Get select clause for convertible fields
@@ -147,7 +147,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function convertFields(array $columns, array $fields, array $select = []);
+    public function convertFields(array $columns, array $fields, array $select = []): string;
 
     /**
      * Parse a string containing SQL queries
@@ -156,7 +156,7 @@ interface GrammarInterface
      *
      * @return bool
      */
-    public function parseQueries(QueryEntity $queryEntity);
+    public function parseQueries(QueryEntity $queryEntity): bool;
 
     /**
      * Get query to compute number of found rows
@@ -168,7 +168,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups);
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups): string;
 
     /**
      * Remove current user definer from SQL command
@@ -186,7 +186,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getDefaultValueClause(TableFieldEntity $field);
+    public function getDefaultValueClause(TableFieldEntity $field): string;
 
     /**
      * Formulate SQL query with limit
@@ -198,7 +198,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0);
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string;
 
     /**
      * Format foreign key to use in SQL query
@@ -207,7 +207,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey);
+    public function formatForeignKey(ForeignKeyEntity $foreignKey): string;
 
     /**
      * Escape or unescape string to use inside form []

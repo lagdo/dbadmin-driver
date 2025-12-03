@@ -11,26 +11,26 @@ interface StatementInterface
      *
      * @return int
      */
-    public function rowCount();
+    public function rowCount(): int;
 
     /**
      * Fetch the next row as an array with field position as keys
      *
-     * @return array
+     * @return array|null
      */
-    public function fetchRow();
+    public function fetchRow(): array|null;
 
     /**
      * Fetch the next row as an array with field name as keys
      *
-     * @return array
+     * @return array|null
      */
-    public function fetchAssoc();
+    public function fetchAssoc(): array|null;
 
     /**
      * Fetch the next field
      *
-     * @return StatementFieldEntity
+     * @return StatementFieldEntity|null
      */
-    public function fetchField();
+    public function fetchField(): StatementFieldEntity|null;
 }

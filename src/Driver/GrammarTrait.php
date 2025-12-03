@@ -27,7 +27,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function unescapeId(string $idf)
+    public function unescapeId(string $idf): string
     {
         return $this->_grammar()->unescapeId($idf);
     }
@@ -35,7 +35,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function convertField(TableFieldEntity $field)
+    public function convertField(TableFieldEntity $field): string
     {
         return $this->_grammar()->convertField($field);
     }
@@ -43,7 +43,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function unconvertField(TableFieldEntity $field, string $value)
+    public function unconvertField(TableFieldEntity $field, string $value): string
     {
         return $this->_grammar()->unconvertField($field, $value);
     }
@@ -51,7 +51,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function buildSelectQuery(TableSelectEntity $select)
+    public function buildSelectQuery(TableSelectEntity $select): string
     {
         return $this->_grammar()->buildSelectQuery($select);
     }
@@ -59,7 +59,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getAutoIncrementModifier()
+    public function getAutoIncrementModifier(): string
     {
         return $this->_grammar()->getAutoIncrementModifier();
     }
@@ -67,7 +67,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style)
+    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style): string
     {
         return $this->_grammar()->getCreateTableQuery($table, $autoIncrement, $style);
     }
@@ -75,7 +75,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns)
+    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string
     {
         return $this->_grammar()->getCreateIndexQuery($table, $type, $name, $columns);
     }
@@ -91,7 +91,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getTruncateTableQuery(string $table)
+    public function getTruncateTableQuery(string $table): string
     {
         return $this->_grammar()->getTruncateTableQuery($table);
     }
@@ -99,7 +99,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getUseDatabaseQuery(string $database, string $style = '')
+    public function getUseDatabaseQuery(string $database, string $style = ''): string
     {
         return $this->_grammar()->getUseDatabaseQuery($database, $style);
     }
@@ -107,7 +107,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getCreateTriggerQuery(string $table)
+    public function getCreateTriggerQuery(string $table): string
     {
         return $this->_grammar()->getCreateTriggerQuery($table);
     }
@@ -115,7 +115,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function escapeTableName(string $idf)
+    public function escapeTableName(string $idf): string
     {
         return $this->_grammar()->escapeTableName($idf);
     }
@@ -131,7 +131,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function convertFields(array $columns, array $fields, array $select = [])
+    public function convertFields(array $columns, array $fields, array $select = []): string
     {
         return $this->_grammar()->convertFields($columns, $fields, $select);
     }
@@ -139,7 +139,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function parseQueries(QueryEntity $queryEntity)
+    public function parseQueries(QueryEntity $queryEntity): bool
     {
         return $this->_grammar()->parseQueries($queryEntity);
     }
@@ -147,7 +147,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups)
+    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups): string
     {
         return $this->_grammar()->getRowCountQuery($table, $where, $isGroup, $groups);
     }
@@ -155,7 +155,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getDefaultValueClause(TableFieldEntity $field)
+    public function getDefaultValueClause(TableFieldEntity $field): string
     {
         return $this->_grammar()->getDefaultValueClause($field);
     }
@@ -163,7 +163,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0)
+    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string
     {
         return $this->_grammar()->getLimitClause($query, $where, $limit, $offset);
     }
@@ -171,7 +171,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey)
+    public function formatForeignKey(ForeignKeyEntity $foreignKey): string
     {
         return $this->_grammar()->formatForeignKey($foreignKey);
     }

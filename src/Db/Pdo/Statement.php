@@ -22,23 +22,23 @@ class Statement extends PDOStatement implements StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchAssoc()
+    public function fetchAssoc(): array|null
     {
-        return $this->fetch(PDO::FETCH_ASSOC);
+        return $this->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
     /**
      * @inheritDoc
      */
-    public function fetchRow()
+    public function fetchRow(): array|null
     {
-        return $this->fetch(PDO::FETCH_NUM);
+        return $this->fetch(PDO::FETCH_NUM) ?: null;
     }
 
     /**
      * @inheritDoc
      */
-    public function fetchField()
+    public function fetchField(): StatementFieldEntity
     {
         $row = $this->getColumnMeta($this->offset++);
         $flags = $row['flags'] ?? [];

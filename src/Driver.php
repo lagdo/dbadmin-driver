@@ -73,19 +73,19 @@ abstract class Driver implements DriverInterface
     /**
      * @return void
      */
-    protected function beforeConnection()
+    protected function beforeConnection(): void
     {}
 
     /**
      * @return void
      */
-    protected function configConnection()
+    protected function configConnection(): void
     {}
 
     /**
      * @return void
      */
-    protected function connectionOpened()
+    protected function connectionOpened(): void
     {}
 
     /**

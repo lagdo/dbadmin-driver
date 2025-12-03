@@ -22,8 +22,8 @@ interface QueryInterface
      *
      * @return StatementInterface|bool
      */
-    public function select(string $table, array $select, array $where,
-        array $group, array $order = [], int $limit = 1, int $page = 0);
+    public function select(string $table, array $select, array $where, array $group,
+        array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool;
 
     /**
      * Insert data into table
@@ -33,7 +33,7 @@ interface QueryInterface
      *
      * @return bool
      */
-    public function insert(string $table, array $values);
+    public function insert(string $table, array $values): bool;
 
     /**
      * Update data in table
@@ -45,7 +45,7 @@ interface QueryInterface
      *
      * @return bool
      */
-    public function update(string $table, array $values, string $queryWhere, int $limit = 0);
+    public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool;
 
     /**
      * Delete data from table
@@ -56,7 +56,7 @@ interface QueryInterface
      *
      * @return bool
      */
-    public function delete(string $table, string $queryWhere, int $limit = 0);
+    public function delete(string $table, string $queryWhere, int $limit = 0): bool;
 
     /**
      * Insert or update data in table
@@ -67,14 +67,14 @@ interface QueryInterface
      *
      * @return bool
      */
-    public function insertOrUpdate(string $table, array $rows, array $primary);
+    public function insertOrUpdate(string $table, array $rows, array $primary): bool;
 
     /**
      * Get last auto increment ID
      *
      * @return string
      */
-    public function lastAutoIncrementId();
+    public function lastAutoIncrementId(): string;
 
     /**
      * Return query with a timeout
@@ -84,7 +84,7 @@ interface QueryInterface
      *
      * @return string|null
      */
-    public function slowQuery(string $query, int $timeout);
+    public function slowQuery(string $query, int $timeout): string|null;
 
     /**
      * Execute query
@@ -117,18 +117,18 @@ interface QueryInterface
      *
      * @return int|null
      */
-    public function countRows(TableEntity $tableStatus, array $where);
+    public function countRows(TableEntity $tableStatus, array $where): int|null;
 
     /**
      * Convert column to be searchable
      *
      * @param string $idf escaped column name
-     * @param array $val array("op" => , "val" => )
+     * @param array $value array("op" => , "val" => )
      * @param TableFieldEntity $field
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $val, TableFieldEntity $field);
+    public function convertSearch(string $idf, array $value, TableFieldEntity $field): string;
 
     /**
      * Apply command to all array items
@@ -139,7 +139,7 @@ interface QueryInterface
      *
      * @return bool
      */
-    public function applyQueries(string $query, array $tables, $escape = null);
+    public function applyQueries(string $query, array $tables, $escape = null): bool;
 
     /**
      * Get list of values from database
@@ -149,7 +149,7 @@ interface QueryInterface
      *
      * @return array
      */
-    public function values(string $query, int $column = 0);
+    public function values(string $query, int $column = 0): array;
 
     /**
      * Get list of values from database
@@ -159,7 +159,7 @@ interface QueryInterface
      *
      * @return array
      */
-    public function colValues(string $query, string $column);
+    public function colValues(string $query, string $column): array;
 
     /**
      * Get keys from first column and values from second
@@ -169,7 +169,7 @@ interface QueryInterface
      *
      * @return array
      */
-    public function keyValues(string $query, bool $setKeys = true);
+    public function keyValues(string $query, bool $setKeys = true): array;
 
     /**
      * Get all rows of result
@@ -187,28 +187,28 @@ interface QueryInterface
      *
      * @return StatementInterface|bool
      */
-    public function execute(string $query);
+    public function execute(string $query): StatementInterface|bool;
 
     /**
      * Begin transaction
      *
      * @return bool
      */
-    public function begin();
+    public function begin(): bool;
 
     /**
      * Commit transaction
      *
      * @return bool
      */
-    public function commit();
+    public function commit(): bool;
 
     /**
      * Rollback transaction
      *
      * @return bool
      */
-    public function rollback();
+    public function rollback(): bool;
 
     /**
      * Get view SELECT
@@ -217,5 +217,5 @@ interface QueryInterface
      *
      * @return array array("select" => )
      */
-    public function view(string $name);
+    public function view(string $name): array;
 }

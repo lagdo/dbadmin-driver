@@ -16,7 +16,7 @@ trait ServerTrait
      *
      * @return string
      */
-    public function user()
+    public function user(): string
     {
         return $this->_server()->user();
     }
@@ -63,7 +63,7 @@ trait ServerTrait
      *
      * @return void
      */
-    public function getUserPrivileges(UserEntity $user)
+    public function getUserPrivileges(UserEntity $user): void
     {
         $this->_server()->getUserPrivileges($user);
     }
@@ -75,7 +75,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function databases(bool $flush)
+    public function databases(bool $flush): array
     {
         return $this->_server()->databases($flush);
     }
@@ -87,7 +87,7 @@ trait ServerTrait
      *
      * @return int
      */
-    public function databaseSize(string $database)
+    public function databaseSize(string $database): int
     {
         return $this->_server()->databaseSize($database);
     }
@@ -100,7 +100,7 @@ trait ServerTrait
      *
      * @return string
      */
-    public function databaseCollation(string $database, array $collations)
+    public function databaseCollation(string $database, array $collations): string
     {
         return $this->_server()->databaseCollation($database, $collations);
     }
@@ -110,7 +110,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function engines()
+    public function engines(): array
     {
         return $this->_server()->engines();
     }
@@ -120,7 +120,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function collations()
+    public function collations(): array
     {
         return $this->_server()->collations();
     }
@@ -132,7 +132,7 @@ trait ServerTrait
      *
      * @return bool
      */
-    public function isInformationSchema(string $database)
+    public function isInformationSchema(string $database): bool
     {
         return $this->_server()->isInformationSchema($database);
     }
@@ -144,7 +144,7 @@ trait ServerTrait
      *
      * @return bool
      */
-    public function isSystemSchema(string $database)
+    public function isSystemSchema(string $database): bool
     {
         return $this->_server()->isSystemSchema($database);
     }
@@ -157,7 +157,7 @@ trait ServerTrait
      *
      * @return string|boolean
      */
-    public function createDatabase(string $database, string $collation)
+    public function createDatabase(string $database, string $collation): bool
     {
         return $this->_server()->createDatabase($database, $collation);
     }
@@ -169,7 +169,7 @@ trait ServerTrait
      *
      * @return bool
      */
-    public function dropDatabase(string $database)
+    public function dropDatabase(string $database): bool
     {
         return $this->_server()->dropDatabase($database);
     }
@@ -182,7 +182,7 @@ trait ServerTrait
      *
      * @return bool
      */
-    public function renameDatabase(string $name, string $collation)
+    public function renameDatabase(string $name, string $collation): bool
     {
         return $this->_server()->renameDatabase($name, $collation);
     }
@@ -192,7 +192,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function routineLanguages()
+    public function routineLanguages(): array
     {
         return $this->_server()->routineLanguages();
     }
@@ -202,7 +202,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function variables()
+    public function variables(): array
     {
         return $this->_server()->variables();
     }
@@ -212,7 +212,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function statusVariables()
+    public function statusVariables(): array
     {
         return $this->_server()->statusVariables();
     }
@@ -222,7 +222,7 @@ trait ServerTrait
      *
      * @return array
      */
-    public function processes()
+    public function processes(): array
     {
         return $this->_server()->processes();
     }
@@ -248,7 +248,7 @@ trait ServerTrait
      *
      * @return bool
      */
-    // public function killProcess($val)
+    // public function killProcess($val): bool
     // {
     //     return $this->_server()->killProcess($val);
     // }
@@ -258,7 +258,7 @@ trait ServerTrait
      *
      * @return int
      */
-    // public function maxConnections()
+    // public function maxConnections(): int
     // {
     //     return $this->_server()->maxConnections();
     // }

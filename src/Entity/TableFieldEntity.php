@@ -237,7 +237,7 @@ class TableFieldEntity extends FieldType
      *
      * @return bool
      */
-    public function equals(TableFieldEntity $field)
+    public function equals(TableFieldEntity $field): bool
     {
         foreach (self::$fields as $attr) {
             if ($field->$attr != $this->$attr) {

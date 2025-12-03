@@ -2,6 +2,9 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
+use function count;
+use function implode;
+
 class TableSelectEntity
 {
     /**
@@ -82,13 +85,13 @@ class TableSelectEntity
         $this->limit = $limit;
         $this->page = $page;
         if (!empty($where)) {
-            $this->clauses = ' WHERE ' . \implode(' AND ', $where);
+            $this->clauses = ' WHERE ' . implode(' AND ', $where);
         }
         if (!empty($group) && count($group) < count($fields)) {
-            $this->clauses .= ' GROUP BY ' . \implode(', ', $group);
+            $this->clauses .= ' GROUP BY ' . implode(', ', $group);
         }
         if (!empty($order)) {
-            $this->clauses .= ' ORDER BY ' . \implode(', ', $order);
+            $this->clauses .= ' ORDER BY ' . implode(', ', $order);
         }
     }
 }

@@ -120,7 +120,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function structuredTypes()
+    public function structuredTypes(): array
     {
         return $this->config->structuredTypes;
     }
@@ -131,7 +131,7 @@ trait ConfigTrait
      *
      * @return void
      */
-    public function setStructuredType(string $key, $value)
+    public function setStructuredType(string $key, $value): void
     {
         $this->config->structuredTypes[$key] = $value;
     }
@@ -139,14 +139,11 @@ trait ConfigTrait
     /**
      * Get the driver options
      *
-     * @param string $name The option name
-     * @param mixed $default
-     *
-     * @return mixed
+     * @return array
      */
-    public function options(string $name = '', $default = '')
+    public function options(): array
     {
-        return $this->config->options($name, $default);
+        return $this->config->options();
     }
 
     /**
@@ -154,7 +151,7 @@ trait ConfigTrait
      *
      * @return string
      */
-    public function database()
+    public function database(): string
     {
         return $this->config->database;
     }
@@ -164,7 +161,7 @@ trait ConfigTrait
      *
      * @return string
      */
-    public function schema()
+    public function schema(): string
     {
         return $this->config->schema;
     }
@@ -174,7 +171,7 @@ trait ConfigTrait
      *
      * @return string
      */
-    public function numberRegex()
+    public function numberRegex(): string
     {
         return $this->config->numberRegex;
     }
@@ -182,7 +179,7 @@ trait ConfigTrait
     /**
      * @return string
      */
-    public function inout()
+    public function inout(): string
     {
         return $this->config->inout;
     }
@@ -190,7 +187,7 @@ trait ConfigTrait
     /**
      * @return string
      */
-    public function enumLength()
+    public function enumLength(): string
     {
         return $this->config->enumLength;
     }
@@ -198,7 +195,7 @@ trait ConfigTrait
     /**
      * @return string
      */
-    public function actions()
+    public function actions(): string
     {
         return $this->config->actions;
     }
@@ -206,7 +203,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function onActions()
+    public function onActions(): array
     {
         return $this->config->onActions();
     }

@@ -82,7 +82,7 @@ abstract class Connection implements ConnectionInterface
      *
      * @return mixed
      */
-    protected function options(string $name, $default = '')
+    protected function options(string $name, $default = ''): mixed
     {
         if (!($name = trim($name))) {
             return $this->options;
@@ -114,7 +114,7 @@ abstract class Connection implements ConnectionInterface
      *
      * @return void
      */
-    protected function setAffectedRows($affectedRows)
+    protected function setAffectedRows($affectedRows): void
     {
         $this->affectedRows = $affectedRows;
     }
@@ -122,7 +122,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function affectedRows()
+    public function affectedRows(): int
     {
         return $this->affectedRows;
     }
@@ -130,7 +130,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function extension()
+    public function extension(): string
     {
         return $this->extension;
     }
@@ -138,7 +138,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function quote(string $string)
+    public function quote(string $string): string
     {
         return $string;
     }
@@ -150,13 +150,13 @@ abstract class Connection implements ConnectionInterface
      *
      * @return void
      */
-    protected function setCharset(string $charset)
+    protected function setCharset(string $charset): void
     {}
 
     /**
      * @inheritDoc
      */
-    public function quoteBinary(string $string)
+    public function quoteBinary(string $string): string
     {
         return $this->quote($string);
     }
@@ -164,7 +164,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function value($value, TableFieldEntity $field)
+    public function value($value, TableFieldEntity $field): mixed
     {
         return is_resource($value) ? stream_get_contents($value) : $value;
     }
@@ -180,7 +180,7 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $field = -1)
+    public function result(string $query, int $field = -1): mixed
     {
         if ($field < 0) {
             $field = $this->defaultField();

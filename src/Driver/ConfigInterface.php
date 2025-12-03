@@ -79,7 +79,7 @@ interface ConfigInterface
     /**
      * @return array
      */
-    public function structuredTypes();
+    public function structuredTypes(): array;
 
     /**
      * @param string $key
@@ -87,53 +87,53 @@ interface ConfigInterface
      *
      * @return void
      */
-    public function setStructuredType(string $key, $value);
+    public function setStructuredType(string $key, $value): void;
 
     /**
      * Get the driver options
      *
      * @return array
      */
-    public function options();
+    public function options(): array;
 
     /**
      * Get the selected database
      *
      * @return string
      */
-    public function database();
+    public function database(): string;
 
     /**
      * Get the selected schema
      *
      * @return string
      */
-    public function schema();
+    public function schema(): string;
 
     /**
      * Get regular expression to match numeric types
      *
      * @return string
      */
-    public function numberRegex();
+    public function numberRegex(): string;
 
     /**
      * @return string
      */
-    public function inout();
+    public function inout(): string;
 
     /**
      * @return string
      */
-    public function enumLength();
+    public function enumLength(): string;
 
     /**
      * @return string
      */
-    public function actions();
+    public function actions(): string;
 
     /**
      * @return array
      */
-    public function onActions();
+    public function onActions(): array;
 }

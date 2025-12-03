@@ -17,7 +17,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function extension()
+    public function extension(): string
     {
         return $this->connection()->extension();
     }
@@ -25,7 +25,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function serverInfo()
+    public function serverInfo(): string
     {
         return $this->connection()->serverInfo();
     }
@@ -33,7 +33,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function quote(string $string)
+    public function quote(string $string): string
     {
         return $this->connection()->quote($string);
     }
@@ -41,7 +41,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function quoteBinary(string $string)
+    public function quoteBinary(string $string): string
     {
         return $this->connection()->quoteBinary($string);
     }
@@ -49,7 +49,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function query(string $query, bool $unbuffered = false)
+    public function query(string $query, bool $unbuffered = false): StatementInterface|bool
     {
         return $this->connection()->query($query, $unbuffered);
     }
@@ -57,7 +57,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function affectedRows()
+    public function affectedRows(): int
     {
         return $this->connection()->affectedRows();
     }
@@ -65,7 +65,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $field = -1)
+    public function result(string $query, int $field = -1): mixed
     {
         return $this->connection()->result($query, $field);
     }
@@ -73,7 +73,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function multiQuery(string $query)
+    public function multiQuery(string $query): bool
     {
         return $this->connection()->multiQuery($query);
     }
@@ -107,7 +107,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function storedResult()
+    public function storedResult(): StatementInterface|bool
     {
         return $this->connection()->storedResult();
     }
@@ -115,7 +115,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function nextResult()
+    public function nextResult(): mixed
     {
         return $this->connection()->nextResult();
     }
@@ -123,7 +123,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function value($value, TableFieldEntity $field)
+    public function value($value, TableFieldEntity $field): mixed
     {
         return $this->connection()->value($value, $field);
     }
@@ -131,7 +131,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function explain(string $query)
+    public function explain(string $query): StatementInterface|bool
     {
         return $this->connection()->explain($query);
     }

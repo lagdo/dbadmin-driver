@@ -22,7 +22,7 @@ abstract class Connection extends AbstractConnection
      *
      * @return void
      */
-    public function dsn(string $dsn, string $username, string $password, array $options = [])
+    public function dsn(string $dsn, string $username, string $password, array $options = []): void
     {
         try {
             $this->client = new PDO($dsn, $username, $password, $options);
@@ -37,7 +37,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function serverInfo()
+    public function serverInfo(): string
     {
         return @$this->client?->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '';
     }
@@ -45,7 +45,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function quote(string $string)
+    public function quote(string $string): string
     {
         return $this->client->quote($string);
     }
@@ -53,7 +53,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function query(string $query, bool $unbuffered = false)
+    public function query(string $query, bool $unbuffered = false): StatementInterface|bool
     {
         $statement = $this->client->query($query);
         $this->setError();
@@ -73,7 +73,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function multiQuery(string $query)
+    public function multiQuery(string $query): bool
     {
         $this->statement = $this->query($query);
         return $this->statement !== false;
@@ -82,10 +82,10 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function storedResult()
+    public function storedResult(): StatementInterface|bool
     {
         if (!$this->statement) {
-            return null;
+            return false;
         }
         // rowCount() is not guaranteed to work with all drivers
         if ($this->statement->rowCount() > 0) {
@@ -97,7 +97,7 @@ abstract class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function nextResult()
+    public function nextResult(): mixed
     {
         if (!$this->statement) {
             return false;

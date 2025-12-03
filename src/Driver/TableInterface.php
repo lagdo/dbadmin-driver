@@ -16,7 +16,7 @@ interface TableInterface
      *
      * @return TableEntity|null
      */
-    public function tableStatus(string $table, bool $fast = false);
+    public function tableStatus(string $table, bool $fast = false): TableEntity|null;
 
     /**
      * Get all tables statuses
@@ -25,14 +25,14 @@ interface TableInterface
      *
      * @return TableEntity[]
      */
-    public function tableStatuses(bool $fast = false);
+    public function tableStatuses(bool $fast = false): array;
 
     /**
      * Get all tables names
      *
      * @return array
      */
-    public function tableNames();
+    public function tableNames(): array;
 
     /**
      * Get status of a single table and fall back to name on error
@@ -42,7 +42,7 @@ interface TableInterface
      *
      * @return TableEntity
      */
-    public function tableStatusOrName(string $table, bool $fast = false);
+    public function tableStatusOrName(string $table, bool $fast = false): TableEntity;
 
     /**
      * Find out whether the identifier is view
@@ -51,7 +51,7 @@ interface TableInterface
      *
      * @return bool
      */
-    public function isView(TableEntity $tableStatus);
+    public function isView(TableEntity $tableStatus): bool;
 
     /**
      * Check if table supports foreign keys
@@ -60,7 +60,7 @@ interface TableInterface
      *
      * @return bool
      */
-    public function supportForeignKeys(TableEntity $tableStatus);
+    public function supportForeignKeys(TableEntity $tableStatus): bool;
 
     /**
      * Get information about fields
@@ -69,7 +69,7 @@ interface TableInterface
      *
      * @return array
      */
-    public function fields(string $table);
+    public function fields(string $table): array;
 
     /**
      * Get table indexes
@@ -78,7 +78,7 @@ interface TableInterface
      *
      * @return array
      */
-    public function indexes(string $table);
+    public function indexes(string $table): array;
 
     /**
      * Get foreign keys in table
@@ -87,7 +87,7 @@ interface TableInterface
      *
      * @return array
      */
-    public function foreignKeys(string $table);
+    public function foreignKeys(string $table): array;
 
     /**
      * Get defined check constraints
@@ -115,7 +115,7 @@ interface TableInterface
      *
      * @return TriggerEntity
      */
-    public function trigger(string $name, string $table = '');
+    public function trigger(string $name, string $table = ''): TriggerEntity|null;
 
     /**
      * Get defined triggers
@@ -124,14 +124,14 @@ interface TableInterface
      *
      * @return array
      */
-    public function triggers(string $table);
+    public function triggers(string $table): array;
 
     /**
      * Get trigger options
      *
      * @return array ("Timing" => [], "Event" => [], "Type" => [])
      */
-    public function triggerOptions();
+    public function triggerOptions(): array;
 
     /**
      * Get referencable tables with single column primary key except self
@@ -140,7 +140,7 @@ interface TableInterface
      *
      * @return array
      */
-    public function referencableTables(string $table);
+    public function referencableTables(string $table): array;
 
     /**
      * Get help link for table
@@ -149,5 +149,5 @@ interface TableInterface
      *
      * @return string relative URL or null
      */
-    public function tableHelp(string $name);
+    public function tableHelp(string $name): string;
 }

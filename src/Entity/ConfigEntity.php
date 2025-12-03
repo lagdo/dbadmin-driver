@@ -135,7 +135,7 @@ class ConfigEntity
      *
      * @return void
      */
-    public function setTypes(array $types)
+    public function setTypes(array $types): void
     {
         foreach ($types as $group => $typeGroup) {
             $this->structuredTypes[$this->trans->lang($group)] = array_keys($typeGroup);
@@ -156,7 +156,7 @@ class ConfigEntity
     /**
      * @return array
      */
-    public function onActions()
+    public function onActions(): array
     {
         return explode('|', $this->actions);
     }

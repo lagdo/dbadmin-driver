@@ -19,23 +19,27 @@ trait ErrorTrait
     protected $error = '';
 
     /**
-     * @inheritDoc
+     * @param string $error
+     *
+     * @return void
      */
-    public function setError(string $error = '')
+    public function setError(string $error = ''): void
     {
         $this->error = $error;
     }
 
     /**
-     * @inheritDoc
+     * @param int $errno
+     *
+     * @return void
      */
-    public function setErrno(int $errno)
+    public function setErrno(int $errno): void
     {
         $this->errno = $errno;
     }
 
     /**
-     * @inheritDoc
+     * @return string
      */
     public function error(): string
     {

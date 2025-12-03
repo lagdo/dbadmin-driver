@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Fake;
 
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
+use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
 
 use function count;
 use function array_values;
@@ -41,7 +42,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
-    public function rowCount()
+    public function rowCount(): int
     {
         return count($this->results);
     }
@@ -49,23 +50,23 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchAssoc()
+    public function fetchAssoc(): array|null
     {
-        return array_pop($this->results);
+        return array_pop($this->results) ?: null;
     }
 
     /**
      * @inheritDoc
      */
-    public function fetchRow()
+    public function fetchRow(): array|null
     {
-        return array_values(array_pop($this->results));
+        return array_values(array_pop($this->results) ?: [null]);
     }
 
     /**
      * @inheritDoc
      */
-    public function fetchField()
+    public function fetchField(): StatementFieldEntity|null
     {
         return null;
         // return new StatementFieldEntity();

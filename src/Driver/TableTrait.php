@@ -21,7 +21,7 @@ trait TableTrait
      *
      * @return TableEntity|null
      */
-    public function tableStatus(string $table, bool $fast = false)
+    public function tableStatus(string $table, bool $fast = false): TableEntity|null
     {
         return $this->_table()->tableStatus($table, $fast);
     }
@@ -33,7 +33,7 @@ trait TableTrait
      *
      * @return TableEntity[]
      */
-    public function tableStatuses(bool $fast = false)
+    public function tableStatuses(bool $fast = false): array
     {
         return $this->_table()->tableStatuses($fast);
     }
@@ -43,7 +43,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function tableNames()
+    public function tableNames(): array
     {
         return $this->_table()->tableNames();
     }
@@ -56,7 +56,7 @@ trait TableTrait
      *
      * @return TableEntity
      */
-    public function tableStatusOrName(string $table, bool $fast = false)
+    public function tableStatusOrName(string $table, bool $fast = false): TableEntity
     {
         return $this->_table()->tableStatusOrName($table, $fast);
     }
@@ -68,7 +68,7 @@ trait TableTrait
      *
      * @return bool
      */
-    public function isView(TableEntity $tableStatus)
+    public function isView(TableEntity $tableStatus): bool
     {
         return $this->_table()->isView($tableStatus);
     }
@@ -80,7 +80,7 @@ trait TableTrait
      *
      * @return bool
      */
-    public function supportForeignKeys(TableEntity $tableStatus)
+    public function supportForeignKeys(TableEntity $tableStatus): bool
     {
         return $this->_table()->supportForeignKeys($tableStatus);
     }
@@ -92,7 +92,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function fields(string $table)
+    public function fields(string $table): array
     {
         return $this->_table()->fields($table);
     }
@@ -104,7 +104,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function indexes(string $table)
+    public function indexes(string $table): array
     {
         return $this->_table()->indexes($table);
     }
@@ -116,7 +116,7 @@ trait TableTrait
      *
      * @return array array($name => array("db" => , "ns" => , "table" => , "source" => [], "target" => [], "onDelete" => , "onUpdate" => ))
      */
-    public function foreignKeys(string $table)
+    public function foreignKeys(string $table): array
     {
         return $this->_table()->foreignKeys($table);
     }
@@ -153,7 +153,7 @@ trait TableTrait
      *
      * @return TriggerEntity
      */
-    public function trigger(string $name, string $table = '')
+    public function trigger(string $name, string $table = ''): TriggerEntity|null
     {
         return $this->_table()->trigger($name, $table);
     }
@@ -165,7 +165,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function triggers(string $table)
+    public function triggers(string $table): array
     {
         return $this->_table()->triggers($table);
     }
@@ -175,7 +175,7 @@ trait TableTrait
      *
      * @return array ("Timing" => [], "Event" => [], "Type" => [])
      */
-    public function triggerOptions()
+    public function triggerOptions(): array
     {
         return $this->_table()->triggerOptions();
     }
@@ -187,7 +187,7 @@ trait TableTrait
      *
      * @return array
      */
-    public function referencableTables(string $table)
+    public function referencableTables(string $table): array
     {
         return $this->_table()->referencableTables($table);
     }
@@ -199,7 +199,7 @@ trait TableTrait
      *
      * @return string relative URL or null
      */
-    public function tableHelp(string $name)
+    public function tableHelp(string $name): string
     {
         return $this->_table()->tableHelp($name);
     }

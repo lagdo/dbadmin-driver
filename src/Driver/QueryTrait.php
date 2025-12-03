@@ -27,8 +27,8 @@ trait QueryTrait
      *
      * @return StatementInterface|bool
      */
-    public function select(string $table, array $select, array $where,
-        array $group, array $order = [], int $limit = 1, int $page = 0)
+    public function select(string $table, array $select, array $where, array $group,
+        array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
         return $this->_query()->select($table, $select, $where, $group, $order, $limit, $page);
     }
@@ -41,7 +41,7 @@ trait QueryTrait
      *
      * @return bool
      */
-    public function insert(string $table, array $values)
+    public function insert(string $table, array $values): bool
     {
         return $this->_query()->insert($table, $values);
     }
@@ -56,7 +56,7 @@ trait QueryTrait
      *
      * @return bool
      */
-    public function update(string $table, array $values, string $queryWhere, int $limit = 0)
+    public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool
     {
         return $this->_query()->update($table, $values, $queryWhere, $limit);
     }
@@ -70,7 +70,7 @@ trait QueryTrait
      *
      * @return bool
      */
-    public function delete(string $table, string $queryWhere, int $limit = 0)
+    public function delete(string $table, string $queryWhere, int $limit = 0): bool
     {
         return $this->_query()->delete($table, $queryWhere, $limit);
     }
@@ -84,7 +84,7 @@ trait QueryTrait
      *
      * @return bool
      */
-    public function insertOrUpdate(string $table, array $rows, array $primary)
+    public function insertOrUpdate(string $table, array $rows, array $primary): bool
     {
         return $this->_query()->insertOrUpdate($table, $rows, $primary);
     }
@@ -94,7 +94,7 @@ trait QueryTrait
      *
      * @return string
      */
-    public function lastAutoIncrementId()
+    public function lastAutoIncrementId(): string
     {
         return $this->_query()->lastAutoIncrementId();
     }
@@ -107,7 +107,7 @@ trait QueryTrait
      *
      * @return string or null if the driver doesn't support query timeouts
      */
-    public function slowQuery(string $query, int $timeout)
+    public function slowQuery(string $query, int $timeout): string|null
     {
         return $this->_query()->slowQuery($query, $timeout);
     }
@@ -149,7 +149,7 @@ trait QueryTrait
      *
      * @return int|null
      */
-    public function countRows(TableEntity $tableStatus, array $where)
+    public function countRows(TableEntity $tableStatus, array $where): int|null
     {
         return $this->_query()->countRows($tableStatus, $where);
     }
@@ -157,7 +157,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function applyQueries(string $query, array $tables, $escape = null)
+    public function applyQueries(string $query, array $tables, $escape = null): bool
     {
         return $this->_query()->applyQueries($query, $tables, $escape);
     }
@@ -165,7 +165,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function values(string $query, int $column = 0)
+    public function values(string $query, int $column = 0): array
     {
         return $this->_query()->values($query, $column);
     }
@@ -173,7 +173,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function colValues(string $query, string $column)
+    public function colValues(string $query, string $column): array
     {
         return $this->_query()->colValues($query, $column);
     }
@@ -189,7 +189,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function keyValues(string $query, bool $setKeys = true)
+    public function keyValues(string $query, bool $setKeys = true): array
     {
         return $this->_query()->keyValues($query, $setKeys);
     }
@@ -203,7 +203,7 @@ trait QueryTrait
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $value, TableFieldEntity $field)
+    public function convertSearch(string $idf, array $value, TableFieldEntity $field): string
     {
         return $this->_query()->convertSearch($idf, $value, $field);
     }
@@ -215,7 +215,7 @@ trait QueryTrait
      *
      * @return array array("select" => )
      */
-    public function view(string $name)
+    public function view(string $name): array
     {
         return $this->_query()->view($name);
     }
@@ -223,7 +223,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function execute(string $query)
+    public function execute(string $query): StatementInterface|bool
     {
         return $this->_query()->execute($query);
     }
@@ -231,7 +231,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function begin()
+    public function begin(): bool
     {
         return $this->_query()->begin();
     }
@@ -239,7 +239,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function commit()
+    public function commit(): bool
     {
         return $this->_query()->commit();
     }
@@ -247,7 +247,7 @@ trait QueryTrait
     /**
      * @inheritDoc
      */
-    public function rollback()
+    public function rollback(): bool
     {
         return $this->_query()->rollback();
     }

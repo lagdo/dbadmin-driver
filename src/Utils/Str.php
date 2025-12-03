@@ -77,7 +77,7 @@ class Str
      *
      * @return string
      */
-    public function spaceRegex()
+    public function spaceRegex(): string
     {
         return "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
     }
