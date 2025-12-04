@@ -51,7 +51,7 @@ abstract class Query implements QueryInterface
      *
      * @return string
      */
-    abstract protected function limitToOne(string $table, string $query, string $where);
+    abstract protected function limitToOne(string $table, string $query, string $where): string;
 
     /**
      * @inheritDoc
