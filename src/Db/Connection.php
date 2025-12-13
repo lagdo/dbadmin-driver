@@ -138,6 +138,14 @@ abstract class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
+    public function flavor(): string
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function quote(string $string): string
     {
         return $string;

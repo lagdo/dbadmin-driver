@@ -25,6 +25,14 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
+    public function flavor(): string
+    {
+        return $this->connection()->flavor();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function serverInfo(): string
     {
         return $this->connection()->serverInfo();

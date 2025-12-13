@@ -14,6 +14,13 @@ interface ConnectionInterface
     public function extension(): string;
 
     /**
+     * Get the database flavor
+     *
+     * @return string
+     */
+    public function flavor(): string;
+
+    /**
      * Get the server description
      *
      * @return string
@@ -55,6 +62,7 @@ interface ConnectionInterface
 
     /**
      * Execute a query on the current database and fetch the specified field
+     * This is the get_val() function in Adminer.
      *
      * @param string $query
      * @param int $field
