@@ -9,7 +9,7 @@ use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
-abstract class Table implements TableInterface
+abstract class AbstractTable implements TableInterface
 {
     /**
      * @var DriverInterface

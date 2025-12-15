@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Connection;
+use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Driver\ConfigInterface;
 use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
@@ -11,9 +11,8 @@ use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
 use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
 use Lagdo\DbAdmin\Driver\Driver\TableInterface;
 
-interface DriverInterface extends ConfigInterface, ServerInterface,
-    DatabaseInterface, TableInterface, QueryInterface, GrammarInterface,
-    ConnectionInterface
+interface DriverInterface extends ConfigInterface, ServerInterface, DatabaseInterface,
+    TableInterface, QueryInterface, GrammarInterface, ConnectionInterface
 {
     /**
      * Get the driver name
@@ -27,9 +26,9 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      *
      * @param array $options
      *
-     * @return Connection|null
+     * @return AbstractConnection|null
      */
-    public function createConnection(array $options): Connection|null;
+    public function createConnection(array $options): AbstractConnection|null;
 
     /**
      * Connect to a database and a schema
@@ -37,9 +36,9 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return Connection
+     * @return AbstractConnection
      */
-    public function openConnection(string $database, string $schema = ''): Connection;
+    public function openConnection(string $database, string $schema = ''): AbstractConnection;
 
     /**
      * Create a new connection to a database and a schema
@@ -47,14 +46,14 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return Connection|null
+     * @return AbstractConnection|null
      */
-    public function newConnection(string $database, string $schema = ''): Connection|null;
+    public function newConnection(string $database, string $schema = ''): AbstractConnection|null;
 
     /**
-     * @return Connection|null
+     * @return AbstractConnection|null
      */
-    public function connection(): Connection|null;
+    public function connection(): AbstractConnection|null;
 
     /**
      * Close the connection to the server

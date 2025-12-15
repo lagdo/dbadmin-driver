@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Connection;
+use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
@@ -10,9 +10,9 @@ use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 trait ConnectionTrait
 {
     /**
-     * @return Connection|null
+     * @return AbstractConnection|null
      */
-    abstract public function connection(): Connection|null;
+    abstract public function connection(): AbstractConnection|null;
 
     /**
      * @inheritDoc

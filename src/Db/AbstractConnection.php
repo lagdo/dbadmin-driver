@@ -20,9 +20,9 @@ use function strlen;
 use function substr;
 use function trim;
 
-abstract class Connection implements ConnectionInterface
+abstract class AbstractConnection implements ConnectionInterface
 {
-    use ErrorTrait;
+    use ConnectionErrorTrait;
 
     /**
      * The client object used to query the database driver

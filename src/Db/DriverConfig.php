@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\Utils\TranslatorInterface;
 
@@ -8,7 +8,7 @@ use function array_keys;
 use function array_merge;
 use function explode;
 
-class ConfigEntity
+class DriverConfig
 {
     /**
      * @var string
@@ -18,7 +18,7 @@ class ConfigEntity
     /**
      * @var string
      */
-    public $version = '0.20.0';
+    public $version = '0.23.0';
 
     /**
      * @var array

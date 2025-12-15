@@ -18,7 +18,7 @@ use function preg_replace;
 use function substr;
 use function strlen;
 
-abstract class Query implements QueryInterface
+abstract class AbstractQuery implements QueryInterface
 {
     /**
      * @var DriverInterface

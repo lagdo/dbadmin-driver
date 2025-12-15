@@ -2,14 +2,14 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
+use Lagdo\DbAdmin\Driver\Db\DriverConfig;
 
 use function in_array;
 
 trait ConfigTrait
 {
     /**
-     * @var ConfigEntity
+     * @var DriverConfig
      */
     protected $config;
 

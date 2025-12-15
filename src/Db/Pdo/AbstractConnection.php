@@ -2,15 +2,14 @@
 
 namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 
-use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
-use Lagdo\DbAdmin\Driver\Db\Pdo\Statement;
+use Lagdo\DbAdmin\Driver\Db\AbstractConnection as BaseConnection;
 use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 use Exception;
 use PDO;
 
-abstract class Connection extends AbstractConnection
+abstract class AbstractConnection extends BaseConnection
 {
     /**
      * Create a PDO connection
@@ -127,8 +126,7 @@ abstract class Connection extends AbstractConnection
         }
 
         $values = $statement->paramValues($values, true);
-        return !$statement->statement()->execute($values) ?
-            null : $statement->statement();
+        return !$statement->statement()->execute($values) ? null : $statement->statement();
     }
 
     /**

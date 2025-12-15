@@ -75,12 +75,13 @@ class Utils
         $value = ini_get($ini);
         $unit = strtolower(substr($value, -1)); // Get the last char
         $ival = intval(substr($value, 0, -1)); // Remove the last char
-        switch ($unit) {
-            case 'g': $value = $ival * 1024 * 1024 * 1024; break;
-            case 'm': $value = $ival * 1024 * 1024; break;
-            case 'k': $value = $ival * 1024; break;
-        }
-        return intval($value);
+
+        return match($unit) {
+            'g' => intval($ival * 1024 * 1024 * 1024),
+            'm' => intval($ival * 1024 * 1024),
+            'k' => intval($ival * 1024),
+            default => intval($value),
+        };
     }
 
     /**

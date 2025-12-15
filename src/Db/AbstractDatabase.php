@@ -12,7 +12,7 @@ use function trim;
 use function strtoupper;
 use function uniqid;
 
-abstract class Database implements DatabaseInterface
+abstract class AbstractDatabase implements DatabaseInterface
 {
     /**
      * @var DriverInterface

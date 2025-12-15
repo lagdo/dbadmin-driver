@@ -29,7 +29,7 @@ use function str_replace;
 use function substr;
 use function trim;
 
-abstract class Grammar implements GrammarInterface
+abstract class AbstractGrammar implements GrammarInterface
 {
     /**
      * @var DriverInterface

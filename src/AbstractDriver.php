@@ -2,8 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\Connection;
-use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
+use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
+use Lagdo\DbAdmin\Driver\Db\DriverConfig;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Closure;
@@ -11,7 +11,7 @@ use Closure;
 use function preg_match;
 use function version_compare;
 
-abstract class Driver implements DriverInterface
+abstract class AbstractDriver implements DriverInterface
 {
     use Driver\ConfigTrait;
     use Driver\ConnectionTrait;
@@ -27,12 +27,12 @@ abstract class Driver implements DriverInterface
     private static array $drivers = [];
 
     /**
-     * @var Connection
+     * @var AbstractConnection
      */
     protected $connection = null;
 
     /**
-     * @var Connection
+     * @var AbstractConnection
      */
     protected $mainConnection = null;
 
@@ -44,7 +44,7 @@ abstract class Driver implements DriverInterface
      */
     public function __construct(protected Utils $utils, array $options)
     {
-        $this->config = new ConfigEntity($utils->trans, $options);
+        $this->config = new DriverConfig($utils->trans, $options);
         $this->beforeConnection();
         // Create and set the main connection.
         $this->connection = $this->createConnection($options);
@@ -90,7 +90,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function connection(): Connection|null
+    public function connection(): AbstractConnection|null
     {
         return $this->connection;
     }
@@ -99,7 +99,7 @@ abstract class Driver implements DriverInterface
      * @inheritDoc
      * @throws AuthException
      */
-    public function openConnection(string $database, string $schema = ''): Connection
+    public function openConnection(string $database, string $schema = ''): AbstractConnection
     {
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->error());
@@ -127,7 +127,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function newConnection(string $database, string $schema = ''): Connection|null
+    public function newConnection(string $database, string $schema = ''): AbstractConnection|null
     {
         $connection = $this->createConnection($this->config->options());
         return !$connection || !$connection->open($database, $schema) ? null : $connection;

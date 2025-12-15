@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Fake;
 
-use Lagdo\DbAdmin\Driver\Db\Connection as AbstractConnection;
+use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 
 /**

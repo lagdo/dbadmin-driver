@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-trait ErrorTrait
+trait ConnectionErrorTrait
 {
     /**
      * The last error code
