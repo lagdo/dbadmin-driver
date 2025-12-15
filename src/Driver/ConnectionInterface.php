@@ -1,7 +1,9 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
+use Lagdo\DbAdmin\Driver\Db\StatementInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 interface ConnectionInterface

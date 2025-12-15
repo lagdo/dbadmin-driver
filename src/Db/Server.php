@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\Connection;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
 use Lagdo\DbAdmin\Driver\Entity\UserEntity;
@@ -14,7 +14,7 @@ use function preg_match_all;
 abstract class Server implements ServerInterface
 {
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $connection;
 
@@ -28,11 +28,11 @@ abstract class Server implements ServerInterface
     {}
 
     /**
-     * @param ConnectionInterface $connection
+     * @param Connection $connection
      *
      * @return void
      */
-    public function setConnection(ConnectionInterface $connection): void
+    public function setConnection(Connection $connection): void
     {
         $this->connection = $connection;
     }

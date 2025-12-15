@@ -2,13 +2,14 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Db\Connection;
 use Lagdo\DbAdmin\Driver\Driver\ConfigInterface;
-use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
+use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
-use Lagdo\DbAdmin\Driver\Driver\TableInterface;
-use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
 use Lagdo\DbAdmin\Driver\Driver\GrammarInterface;
+use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
+use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
+use Lagdo\DbAdmin\Driver\Driver\TableInterface;
 
 interface DriverInterface extends ConfigInterface, ServerInterface,
     DatabaseInterface, TableInterface, QueryInterface, GrammarInterface,
@@ -26,9 +27,9 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      *
      * @param array $options
      *
-     * @return ConnectionInterface|null
+     * @return Connection|null
      */
-    public function createConnection(array $options): ConnectionInterface|null;
+    public function createConnection(array $options): Connection|null;
 
     /**
      * Connect to a database and a schema
@@ -36,9 +37,9 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return ConnectionInterface
+     * @return Connection
      */
-    public function openConnection(string $database, string $schema = ''): ConnectionInterface;
+    public function openConnection(string $database, string $schema = ''): Connection;
 
     /**
      * Create a new connection to a database and a schema
@@ -46,14 +47,14 @@ interface DriverInterface extends ConfigInterface, ServerInterface,
      * @param string $database  The database name
      * @param string $schema    The database schema
      *
-     * @return ConnectionInterface|null
+     * @return Connection|null
      */
-    public function newConnection(string $database, string $schema = ''): ConnectionInterface|null;
+    public function newConnection(string $database, string $schema = ''): Connection|null;
 
     /**
-     * @return ConnectionInterface|null
+     * @return Connection|null
      */
-    public function connection(): ConnectionInterface|null;
+    public function connection(): Connection|null;
 
     /**
      * Close the connection to the server

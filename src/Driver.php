@@ -3,7 +3,6 @@
 namespace Lagdo\DbAdmin\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\Connection;
-use Lagdo\DbAdmin\Driver\Db\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Entity\ConfigEntity;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
@@ -33,7 +32,7 @@ abstract class Driver implements DriverInterface
     protected $connection = null;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $mainConnection = null;
 
@@ -91,7 +90,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function connection(): ConnectionInterface|null
+    public function connection(): Connection|null
     {
         return $this->connection;
     }
@@ -100,7 +99,7 @@ abstract class Driver implements DriverInterface
      * @inheritDoc
      * @throws AuthException
      */
-    public function openConnection(string $database, string $schema = ''): ConnectionInterface
+    public function openConnection(string $database, string $schema = ''): Connection
     {
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->error());
@@ -128,7 +127,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function newConnection(string $database, string $schema = ''): ConnectionInterface|null
+    public function newConnection(string $database, string $schema = ''): Connection|null
     {
         $connection = $this->createConnection($this->config->options());
         return !$connection || !$connection->open($database, $schema) ? null : $connection;
