@@ -62,7 +62,6 @@ abstract class Query implements QueryInterface
         $entity = new TableSelectEntity($table, $select,
             $where, $group, $order, $limit, $page);
         $query = $this->driver->buildSelectQuery($entity);
-        // $this->start = intval(microtime(true));
         return $this->execute($query);
     }
 
