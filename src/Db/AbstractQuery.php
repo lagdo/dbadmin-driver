@@ -4,19 +4,19 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Exception;
 
+use function array_keys;
 use function implode;
 use function is_object;
-use function array_keys;
 use function preg_match;
 use function preg_replace;
-use function substr;
 use function strlen;
+use function substr;
 
 abstract class AbstractQuery implements QueryInterface
 {
