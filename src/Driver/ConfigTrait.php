@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\DriverConfig;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
 use function in_array;
 
@@ -108,13 +109,14 @@ trait ConfigTrait
     }
 
     /**
-     * @param string $type
+     * @param TableFieldEntity $field
      *
-     * @return mixed
+     * @return int
      */
-    public function type(string $type)
+    public function typeLength(TableFieldEntity $field): int
     {
-        return $this->config->types[$type];
+        return !$this->typeExists($field->type) ? 0 :
+            $this->config->types[$field->type] + ($field->unsigned ? 0 : 1);
     }
 
     /**
@@ -187,9 +189,17 @@ trait ConfigTrait
     /**
      * @return string
      */
-    public function enumLength(): string
+    public function sqlStatementRegex(): string
     {
-        return $this->config->enumLength;
+        return $this->config->sqlStatementRegex;
+    }
+
+    /**
+     * @return string
+     */
+    public function enumLengthRegex(): string
+    {
+        return $this->config->enumLengthRegex;
     }
 
     /**

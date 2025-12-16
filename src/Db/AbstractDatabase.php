@@ -6,10 +6,11 @@ use Exception;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
 use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
-use function trim;
 use function strtoupper;
+use function trim;
 use function uniqid;
 
 abstract class AbstractDatabase implements DatabaseInterface
@@ -177,7 +178,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function userTypes(bool $withEnums): array
+    public function userTypes(bool $withValues): array
     {
         return [];
     }
@@ -220,5 +221,13 @@ abstract class AbstractDatabase implements DatabaseInterface
     public function routineId(string $name, array $row): string
     {
         return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function enumValues(TableFieldEntity $field): array
+    {
+        return [];
     }
 }

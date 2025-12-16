@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+
 interface ConfigInterface
 {
     /**
@@ -70,11 +72,11 @@ interface ConfigInterface
     public function typeExists(string $type): bool;
 
     /**
-     * @param string $type
+     * @param TableFieldEntity $field
      *
-     * @return mixed
+     * @return int
      */
-    public function type(string $type);
+    public function typeLength(TableFieldEntity $field): int;
 
     /**
      * @return array
@@ -123,9 +125,16 @@ interface ConfigInterface
     public function inout(): string;
 
     /**
+     * Return the regular expression for queries
+     *
      * @return string
      */
-    public function enumLength(): string;
+    public function sqlStatementRegex(): string;
+
+    /**
+     * @return string
+     */
+    public function enumLengthRegex(): string;
 
     /**
      * @return string

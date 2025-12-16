@@ -3,9 +3,10 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
 
 interface DatabaseInterface
@@ -146,11 +147,18 @@ interface DatabaseInterface
     /**
      * Get user defined types
      *
-     * @param bool $withEnums
+     * @param bool $withValues
      *
      * @return array<UserTypeEntity>
      */
-    public function userTypes(bool $withEnums): array;
+    public function userTypes(bool $withValues): array;
+
+    /**
+     * @param TableFieldEntity $field
+     *
+     * @return array
+     */
+    public function enumValues(TableFieldEntity $field): array;
 
     /**
      * Get existing schemas

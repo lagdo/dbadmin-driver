@@ -27,7 +27,7 @@ trait QueryTrait
      *
      * @return StatementInterface|bool
      */
-    public function select(string $table, array $select, array $where, array $group,
+    public function select(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
         return $this->_query()->select($table, $select, $where, $group, $order, $limit, $page);

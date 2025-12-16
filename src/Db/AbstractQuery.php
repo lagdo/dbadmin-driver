@@ -56,7 +56,7 @@ abstract class AbstractQuery implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function select(string $table, array $select, array $where, array $group,
+    public function select(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
         $entity = new TableSelectEntity($table, $select,
@@ -91,8 +91,8 @@ abstract class AbstractQuery implements QueryInterface
             $assignments[] = "$name = $value";
         }
         $query = $this->driver->escapeTableName($table) . ' SET ' . implode(', ', $assignments);
-        if (!$limit) {
-            $result = $this->execute('UPDATE ' . $query . $queryWhere);
+        if ($limit <= 0) {
+            $result = $this->execute("UPDATE $query $queryWhere");
             return $result !== false;
         }
         $result = $this->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere));
@@ -105,7 +105,7 @@ abstract class AbstractQuery implements QueryInterface
     public function delete(string $table, string $queryWhere, int $limit = 0): bool
     {
         $query = 'FROM ' . $this->driver->escapeTableName($table);
-        if (!$limit) {
+        if ($limit <= 0) {
             $result = $this->execute("DELETE $query $queryWhere");
             return $result !== false;
         }

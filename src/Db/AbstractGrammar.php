@@ -169,7 +169,7 @@ abstract class AbstractGrammar implements GrammarInterface
             return '';
         }
 
-        $enumLength = $this->driver->enumLength();
+        $enumLength = $this->driver->enumLengthRegex();
         $pattern = "~^\\s*\\(?\\s*$enumLength(?:\\s*,\\s*$enumLength)*+\\s*\\)?\\s*\$~";
         if (preg_match($pattern, $length) &&
             preg_match_all("~$enumLength~", $length, $matches)) {
@@ -232,23 +232,6 @@ abstract class AbstractGrammar implements GrammarInterface
     {
         return !$this->setCharset ? '' : 'SET NAMES ' . $this->driver->charset() . ";\n\n";
     }
-
-    /**
-     * Return the regular expression for queries
-     *
-     * @return string
-     */
-    abstract public function queryRegex(): string;
-    // Original code from Adminer
-    // {
-    //     $parse = '[\'"' .
-    //         ($this->driver->jush() == "sql" ? '`#' :
-    //         ($this->driver->jush() == "sqlite" ? '`[' :
-    //         ($this->driver->jush() == "mssql" ? '[' : ''))) . ']|/\*|-- |$' .
-    //         ($this->driver->jush() == "pgsql" ? '|\$[^$]*\$' : '');
-    //     return "\\s*|$parse";
-    // }
-
 
     /**
      * @inheritDoc
@@ -422,7 +405,7 @@ abstract class AbstractGrammar implements GrammarInterface
     private function nextQueryPos(QueryEntity $queryEntity)
     {
         // TODO: Move this to driver implementations
-        $parse = $this->queryRegex();
+        $parse = $this->driver->sqlStatementRegex();
         $delimiter = preg_quote($queryEntity->delimiter);
         // Should always match
         preg_match("($delimiter$parse)", $queryEntity->queries, $match,

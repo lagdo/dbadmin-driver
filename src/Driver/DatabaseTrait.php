@@ -2,9 +2,10 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
 use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
 use Exception;
 
@@ -193,13 +194,23 @@ trait DatabaseTrait
     /**
      * Get user defined types
      *
-     * @param bool $withEnums
+     * @param bool $withValues
      *
      * @return array<UserTypeEntity>
      */
-    public function userTypes(bool $withEnums): array
+    public function userTypes(bool $withValues): array
     {
-        return $this->_database()->userTypes($withEnums);
+        return $this->_database()->userTypes($withValues);
+    }
+
+    /**
+     * @param TableFieldEntity $field
+     *
+     * @return array
+     */
+    public function enumValues(TableFieldEntity $field): array
+    {
+        return $this->_database()->enumValues($field);
     }
 
     /**

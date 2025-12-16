@@ -90,10 +90,26 @@ class DriverConfig
     public $inout = 'IN|OUT|INOUT';
 
     /**
+     * Regex to parse SQL statements in a text
+     *
+     * @var string
+     */
+    public $sqlStatementRegex = '';
+    // Original code from Adminer
+    // {
+    //     $parse = '[\'"' .
+    //         ($this->driver->jush() == "sql" ? '`#' :
+    //         ($this->driver->jush() == "sqlite" ? '`[' :
+    //         ($this->driver->jush() == "mssql" ? '[' : ''))) . ']|/\*|-- |$' .
+    //         ($this->driver->jush() == "pgsql" ? '|\$[^$]*\$' : '');
+    //     return "\\s*|$parse";
+    // }
+
+    /**
      * From index.php
      * @var string
      */
-    public $enumLength = "'(?:''|[^'\\\\]|\\\\.)*'";
+    public $enumLengthRegex = "'(?:''|[^'\\\\]|\\\\.)*'";
 
     /**
      * @var array
