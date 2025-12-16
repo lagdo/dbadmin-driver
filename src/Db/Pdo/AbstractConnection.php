@@ -5,7 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Db\Pdo;
 use Lagdo\DbAdmin\Driver\Db\AbstractConnection as BaseConnection;
 use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Exception\AuthException;
+use Lagdo\Facades\Logger;
 use Exception;
 use PDO;
 
@@ -19,18 +19,26 @@ abstract class AbstractConnection extends BaseConnection
      * @param string $password
      * @param array $options
      *
-     * @return void
+     * @return bool
      */
-    public function dsn(string $dsn, string $username, string $password, array $options = []): void
+    public function dsn(string $dsn, string $username, string $password, array $options = []): bool
     {
         try {
             $this->client = new PDO($dsn, $username, $password, $options);
+            $this->client->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+            $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
+            $this->client->setAttribute(PDO::ATTR_TIMEOUT, 2);
         } catch (Exception $ex) {
-            // auth_error(h($ex->getMessage()));
-            throw new AuthException($this->utils->str->html($ex->getMessage()));
+            $this->client = null;
+            Logger::error("Unable to connect to database using PDO", [
+                'dsn' => $dsn,
+                'username' => $username,
+                'error' => $ex->getMessage(),
+            ]);
+            return false;
         }
-        $this->client->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-        $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
+
+        return true;
     }
 
     /**
