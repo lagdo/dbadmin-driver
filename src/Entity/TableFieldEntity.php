@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Entity;
 
+use function stripos;
+
 class TableFieldEntity extends FieldType
 {
     /**
@@ -141,6 +143,14 @@ class TableFieldEntity extends FieldType
     public function hasDefault(): bool
     {
         return $this->default !== null;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDisabled(): bool
+    {
+        return stripos($this->default ?? '', "GENERATED ALWAYS AS ") === 0;
     }
 
     /**
