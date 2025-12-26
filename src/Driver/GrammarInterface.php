@@ -58,6 +58,55 @@ interface GrammarInterface
     public function buildSelectQuery(TableSelectEntity $select): string;
 
     /**
+     * Build a query to select data from table
+     *
+     * @param string $table
+     * @param array $select Result of processSelectColumns()[0]
+     * @param array $where Result of processSelectWhere()
+     * @param array $group Result of processSelectColumns()[1]
+     * @param array $order Result of processSelectOrder()
+     * @param int $limit Result of processSelectLimit()
+     * @param int $page Index of page starting at zero
+     *
+     * @return string
+     */
+    public function getSelectQuery(string $table, array $select, array $where, array $group = [],
+        array $order = [], int $limit = 1, int $page = 0): string;
+
+    /**
+     * Build a query to insert data into table
+     *
+     * @param string $table
+     * @param array $values Escaped columns in keys, quoted data in values
+     *
+     * @return string
+     */
+    public function getInsertQuery(string $table, array $values): string;
+
+    /**
+     * Build a query to update data in table
+     *
+     * @param string $table
+     * @param array $values Escaped columns in keys, quoted data in values
+     * @param string $queryWhere " WHERE ..."
+     * @param int $limit 0 or 1
+     *
+     * @return string
+     */
+    public function getUpdateQuery(string $table, array $values, string $queryWhere, int $limit = 0): string;
+
+    /**
+     * Build a query to delete data from table
+     *
+     * @param string $table
+     * @param string $queryWhere " WHERE ..."
+     * @param int $limit 0 or 1
+     *
+     * @return string
+     */
+    public function getDeleteQuery(string $table, string $queryWhere, int $limit = 0): string;
+
+    /**
      * Generate modifier for auto increment column
      *
      * @return string
@@ -187,18 +236,6 @@ interface GrammarInterface
      * @return string
      */
     public function getDefaultValueClause(TableFieldEntity $field): string;
-
-    /**
-     * Formulate SQL query with limit
-     *
-     * @param string $query Everything after SELECT
-     * @param string $where Including WHERE
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return string
-     */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string;
 
     /**
      * Format foreign key to use in SQL query

@@ -6,11 +6,9 @@ use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Exception;
 
-use function array_keys;
 use function implode;
 use function is_object;
 use function preg_match;
@@ -43,26 +41,13 @@ abstract class AbstractQuery implements QueryInterface
     }
 
     /**
-     * Formulate SQL modification query with limit 1
-     *
-     * @param string $table
-     * @param string $query Everything after UPDATE or DELETE
-     * @param string $where
-     *
-     * @return string
-     */
-    abstract protected function limitToOne(string $table, string $query, string $where): string;
-
-    /**
      * @inheritDoc
      */
     public function select(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
-        $entity = new TableSelectEntity($table, $select,
-            $where, $group, $order, $limit, $page);
-        $query = $this->driver->buildSelectQuery($entity);
-        return $this->execute($query);
+        return $this->execute($this->driver->getSelectQuery($table, $select,
+            $where, $group, $order, $limit, $page));
     }
 
     /**
@@ -70,15 +55,7 @@ abstract class AbstractQuery implements QueryInterface
      */
     public function insert(string $table, array $values): bool
     {
-        $table = $this->driver->escapeTableName($table);
-        if (empty($values)) {
-            $result = $this->execute("INSERT INTO $table DEFAULT VALUES");
-            return $result !== false;
-        }
-        $result = $this->execute("INSERT INTO $table (" .
-            implode(', ', array_keys($values)) .
-            ') VALUES (' . implode(', ', $values) . ')');
-        return $result !== false;
+        return $this->execute($this->driver->getInsertQuery($table, $values)) !== false;
     }
 
     /**
@@ -86,17 +63,8 @@ abstract class AbstractQuery implements QueryInterface
      */
     public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool
     {
-        $assignments = [];
-        foreach ($values as $name => $value) {
-            $assignments[] = "$name = $value";
-        }
-        $query = $this->driver->escapeTableName($table) . ' SET ' . implode(', ', $assignments);
-        if ($limit <= 0) {
-            $result = $this->execute("UPDATE $query $queryWhere");
-            return $result !== false;
-        }
-        $result = $this->execute('UPDATE' . $this->limitToOne($table, $query, $queryWhere));
-        return $result !== false;
+        return $this->execute($this->driver->getUpdateQuery($table,
+            $values, $queryWhere, $limit)) !== false;
     }
 
     /**
@@ -104,13 +72,8 @@ abstract class AbstractQuery implements QueryInterface
      */
     public function delete(string $table, string $queryWhere, int $limit = 0): bool
     {
-        $query = 'FROM ' . $this->driver->escapeTableName($table);
-        if ($limit <= 0) {
-            $result = $this->execute("DELETE $query $queryWhere");
-            return $result !== false;
-        }
-        $result = $this->execute('DELETE' . $this->limitToOne($table, $query, $queryWhere));
-        return $result !== false;
+        return $this->execute($this->driver->getDeleteQuery($table,
+            $queryWhere, $limit)) !== false;
     }
 
     /**

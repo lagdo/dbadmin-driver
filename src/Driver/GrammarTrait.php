@@ -59,6 +59,39 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
+    public function getSelectQuery(string $table, array $select, array $where, array $group = [],
+        array $order = [], int $limit = 1, int $page = 0): string
+    {
+        return $this->_grammar()->getSelectQuery($table, $select, $where, $group, $order, $limit, $page);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getInsertQuery(string $table, array $values): string
+    {
+        return $this->_grammar()->getInsertQuery($table, $values);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUpdateQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
+    {
+        return $this->_grammar()->getUpdateQuery($table, $values, $queryWhere, $limit);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDeleteQuery(string $table, string $queryWhere, int $limit = 0): string
+    {
+        return $this->_grammar()->getDeleteQuery($table, $queryWhere, $limit = 0);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getAutoIncrementModifier(): string
     {
         return $this->_grammar()->getAutoIncrementModifier();
@@ -158,14 +191,6 @@ trait GrammarTrait
     public function getDefaultValueClause(TableFieldEntity $field): string
     {
         return $this->_grammar()->getDefaultValueClause($field);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string
-    {
-        return $this->_grammar()->getLimitClause($query, $where, $limit, $offset);
     }
 
     /**

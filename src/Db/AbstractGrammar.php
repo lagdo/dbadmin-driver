@@ -13,6 +13,7 @@ use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function array_flip;
+use function array_keys;
 use function array_map;
 use function implode;
 use function intval;
@@ -59,6 +60,29 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
+     * Formulate SQL modification query with limit 1
+     *
+     * @param string $table
+     * @param string $query Everything after UPDATE or DELETE
+     * @param string $where
+     *
+     * @return string
+     */
+    abstract protected function limitToOne(string $table, string $query, string $where): string;
+
+    /**
+     * @inheritDoc
+     */
+    protected function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string
+    {
+        return match(true) {
+            $limit <= 0 => " $query$where",
+            $offset <= 0 => " $query$where LIMIT $limit",
+            default => " $query$where LIMIT $limit OFFSET $offset",
+        };
+    }
+
+    /**
      * @inheritDoc
      */
     public function buildSelectQuery(TableSelectEntity $select): string
@@ -75,16 +99,47 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string
+    public function getSelectQuery(string $table, array $select, array $where, array $group = [],
+        array $order = [], int $limit = 1, int $page = 0): string
     {
-        $sql = " $query$where";
-        if ($limit > 0) {
-            $sql .= " LIMIT $limit";
-            if ($offset > 0) {
-                $sql .= " OFFSET $offset";
-            }
+        $entity = new TableSelectEntity($table, $select,
+            $where, $group, $order, $limit, $page);
+        return $this->buildSelectQuery($entity);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getInsertQuery(string $table, array $values): string
+    {
+        $table = $this->driver->escapeTableName($table);
+        return empty($values) ? "INSERT INTO $table DEFAULT VALUES" :
+            "INSERT INTO $table (" . implode(', ', array_keys($values)) .
+                ') VALUES (' . implode(', ', $values) . ')';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUpdateQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
+    {
+        $assignments = [];
+        foreach ($values as $name => $value) {
+            $assignments[] = "$name = $value";
         }
-        return $sql;
+        $query = $this->driver->escapeTableName($table) . ' SET ' . implode(', ', $assignments);
+        return $limit <= 0 ? "UPDATE $query $queryWhere" :
+            'UPDATE' . $this->limitToOne($table, $query, $queryWhere);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDeleteQuery(string $table, string $queryWhere, int $limit = 0): string
+    {
+        $query = 'FROM ' . $this->driver->escapeTableName($table);
+        return $limit <= 0 ? "DELETE $query $queryWhere" :
+            'DELETE' . $this->limitToOne($table, $query, $queryWhere);
     }
 
     /**
