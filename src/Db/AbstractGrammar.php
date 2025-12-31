@@ -263,7 +263,7 @@ abstract class AbstractGrammar implements GrammarInterface
         if ($this->driver->support('comment') && $field->comment !== '') {
             $comment = ' COMMENT ' . $this->driver->quote($field->comment);
         }
-        $null = $field->null ? ' NULL' : ' NOT NULL'; // NULL for timestamp
+        $null = $field->nullable ? ' NULL' : ' NOT NULL'; // NULL for timestamp
         $autoIncrement = $field->autoIncrement ? $this->getAutoIncrementModifier() : null;
         return [$this->escapeId(trim($field->name)), $this->processType($typeField),
             $null, $this->getDefaultValueClause($field), $onUpdate, $comment, $autoIncrement];

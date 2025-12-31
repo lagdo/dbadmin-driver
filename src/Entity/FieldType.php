@@ -17,7 +17,7 @@ class FieldType
      * @param string $inout
      */
     public function __construct(public string $name = '', public string $type = '',
-        public string $fullType = '', public string $unsigned = '', public bool $null = false,
+        public string $fullType = '', public string $unsigned = '', public bool $nullable = false,
         public string $collation = '', public string $length = '', public string $inout = '')
     {}
 }

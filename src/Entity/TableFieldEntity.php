@@ -123,7 +123,7 @@ class TableFieldEntity extends FieldType
      *
      * @var array
      */
-    private static $attrs = ['name', 'type', 'fullType', 'primary', 'null', 'length',
+    private static $attrs = ['name', 'type', 'fullType', 'primary', 'nullable', 'length',
         'unsigned', 'default', 'autoIncrement', 'generated', 'collation', 'comment',
         'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden',
         'lengthRequired', 'onUpdate', 'onDelete', 'editStatus', 'editPosition'];
@@ -169,7 +169,7 @@ class TableFieldEntity extends FieldType
                 $entity->$attr = $field[$attr];
             }
         }
-        $entity->null = isset($field['null']);
+        $entity->nullable = isset($field['nullable']);
         return $entity;
     }
 
