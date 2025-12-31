@@ -105,28 +105,14 @@ class TableFieldEntity extends FieldType
     public $onDeleteHidden = true;
 
     /**
-     * The field status when the table is edited
-     *
-     * @var string
-     */
-    public $editStatus = 'unchanged';
-
-    /**
-     * The field position in the edit form
-     *
-     * @var string
-     */
-    public $editPosition = 0;
-
-    /**
      * The entity attributes
      *
      * @var array
      */
-    private static $attrs = ['name', 'type', 'fullType', 'primary', 'nullable', 'length',
-        'unsigned', 'default', 'autoIncrement', 'generated', 'collation', 'comment',
-        'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden',
-        'lengthRequired', 'onUpdate', 'onDelete', 'editStatus', 'editPosition'];
+    private static $attrs = ['name', 'type', 'fullType', 'primary', 'nullable',
+        'length', 'default', 'unsigned', 'autoIncrement', 'generated', 'collation',
+        'lengthRequired', 'comment', 'collationHidden', 'unsignedHidden',
+        'onUpdateHidden', 'onDeleteHidden', 'onUpdate', 'onDelete'];
 
     /**
      * The entity attributes
@@ -227,17 +213,6 @@ class TableFieldEntity extends FieldType
             }
         }
         return false;
-    }
-
-    /**
-     * @param array $values
-     *
-     * @return TableFieldEntity
-     */
-    public function updateStatus(array $values): self
-    {
-        $this->editStatus = $this->edited($values) ? 'edited' : 'unchanged';
-        return $this;
     }
 
     /**
