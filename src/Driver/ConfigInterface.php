@@ -62,6 +62,11 @@ interface ConfigInterface
     /**
      * @return array
      */
+    public function structuredTypes(): array;
+
+    /**
+     * @return array
+     */
     public function types(): array;
 
     /**
@@ -77,19 +82,6 @@ interface ConfigInterface
      * @return int
      */
     public function typeLength(TableFieldEntity $field): int;
-
-    /**
-     * @return array
-     */
-    public function structuredTypes(): array;
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return void
-     */
-    public function setStructuredType(string $key, $value): void;
 
     /**
      * Get the driver options

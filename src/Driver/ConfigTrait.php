@@ -5,6 +5,10 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 use Lagdo\DbAdmin\Driver\Db\DriverConfig;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 
+use function array_map;
+use function array_merge;
+use function array_keys;
+use function array_values;
 use function in_array;
 
 trait ConfigTrait
@@ -93,9 +97,18 @@ trait ConfigTrait
     /**
      * @return array
      */
+    public function structuredTypes(): array
+    {
+        return array_map(fn(array $types) => array_keys($types), $this->config->types);
+    }
+
+    /**
+     * @return array
+     */
     public function types(): array
     {
-        return $this->config->types;
+        // return call_user_func_array('array_merge', array_values($this->config->types));
+        return array_merge(...array_values($this->config->types));
     }
 
     /**
@@ -105,7 +118,12 @@ trait ConfigTrait
      */
     public function typeExists(string $type): bool
     {
-        return isset($this->config->types[$type]);
+        foreach ($this->config->types as $types) {
+            if (isset($types[$type])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -115,27 +133,12 @@ trait ConfigTrait
      */
     public function typeLength(TableFieldEntity $field): int
     {
-        return !$this->typeExists($field->type) ? 0 :
-            $this->config->types[$field->type] + ($field->unsigned ? 0 : 1);
-    }
-
-    /**
-     * @return array
-     */
-    public function structuredTypes(): array
-    {
-        return $this->config->structuredTypes;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return void
-     */
-    public function setStructuredType(string $key, $value): void
-    {
-        $this->config->structuredTypes[$key] = $value;
+        foreach ($this->config->types as $types) {
+            if (isset($types[$field->type])) {
+                return $types[$field->type] + ($field->unsigned ? 0 : 1);
+            }
+        }
+        return 0;
     }
 
     /**

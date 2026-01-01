@@ -38,11 +38,6 @@ class DriverConfig
     /**
      * @var array
      */
-    public $structuredTypes = [];
-
-    /**
-     * @var array
-     */
     public $unsigned = [];
 
     /**
@@ -143,21 +138,6 @@ class DriverConfig
      */
     public function __construct(public TranslatorInterface $trans, public array $options)
     {}
-
-    /**
-     * Set the supported types
-     *
-     * @param array $types
-     *
-     * @return void
-     */
-    public function setTypes(array $types): void
-    {
-        foreach ($types as $group => $typeGroup) {
-            $this->structuredTypes[$this->trans->lang($group)] = array_keys($typeGroup);
-            $this->types = array_merge($this->types, $typeGroup);
-        }
-    }
 
     /**
      * Get the driver options
