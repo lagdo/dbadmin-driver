@@ -105,25 +105,6 @@ class TableFieldEntity extends FieldType
     public $onDeleteHidden = true;
 
     /**
-     * The entity attributes
-     *
-     * @var array
-     */
-    private static $attrs = ['name', 'type', 'fullType', 'primary', 'nullable',
-        'length', 'default', 'unsigned', 'autoIncrement', 'generated', 'collation',
-        'lengthRequired', 'comment', 'collationHidden', 'unsignedHidden',
-        'onUpdateHidden', 'onDeleteHidden', 'onUpdate', 'onDelete'];
-
-    /**
-     * The entity attributes
-     *
-     * @var array
-     */
-    private static $fields = ['name', 'type', 'primary', 'autoIncrement', 'unsigned',
-        'length', 'comment', 'collation', 'generated', 'lengthRequired', 'onUpdate',
-        'onDelete', 'collationHidden', 'unsignedHidden', 'onUpdateHidden', 'onDeleteHidden'];
-
-    /**
      * @return boolean
      */
     public function hasDefault(): bool
@@ -137,98 +118,5 @@ class TableFieldEntity extends FieldType
     public function isDisabled(): bool
     {
         return stripos($this->default ?? '', "GENERATED ALWAYS AS ") === 0;
-    }
-
-    /**
-     * Create an entity from database data
-     *
-     * @param array $field
-     *
-     * @return TableFieldEntity
-     */
-    public static function make(array $field): self
-    {
-        $entity = new static();
-        foreach (self::$attrs as $attr) {
-            // Attributes are set only when present.
-            if (isset($field[$attr])) {
-                $entity->$attr = $field[$attr];
-            }
-        }
-        $entity->nullable = isset($field['nullable']);
-        return $entity;
-    }
-
-    /**
-     * Create an entity from js app data
-     *
-     * @param array $field
-     *
-     * @return TableFieldEntity
-     */
-    public static function fromArray(array $field): self
-    {
-        $entity = new static();
-        foreach (self::$attrs as $attr) {
-            $entity->$attr = $field[$attr];
-        }
-        return $entity;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray(): array
-    {
-        $array = [];
-        foreach (self::$attrs as $attr) {
-            $array[$attr] = $this->$attr;
-        }
-        return $array;
-    }
-
-    /**
-     * @param array $values
-     *
-     * @return TableFieldEntity
-     */
-    public function update(array $values): self
-    {
-        foreach (self::$fields as $attr) {
-            isset($values[$attr]) && $this->$attr = $values[$attr];
-        }
-        return $this;
-    }
-
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    public function edited(array $values): bool
-    {
-        foreach (self::$fields as $attr) {
-            if (isset($values[$attr]) && $this->$attr != $values[$attr]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if the values in two fields are equals
-     *
-     * @param TableFieldEntity $field
-     *
-     * @return bool
-     */
-    public function equals(TableFieldEntity $field): bool
-    {
-        foreach (self::$fields as $attr) {
-            if ($field->$attr != $this->$attr) {
-                return false;
-            }
-        }
-        return true;
     }
 }
