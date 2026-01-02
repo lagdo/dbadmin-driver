@@ -11,6 +11,7 @@ use Exception;
 
 use function implode;
 use function is_object;
+use function is_string;
 use function preg_match;
 use function preg_replace;
 use function strlen;
@@ -194,14 +195,13 @@ abstract class AbstractQuery implements QueryInterface
     private function getWhereColumnClause(TableFieldEntity $field, string $column, string $value): string
     {
         $bUseSqlLike = $this->driver->jush() === 'sql' && is_numeric($value) && preg_match('~\.~', $value);
-        return $column . ($bUseSqlLike ?
-            // LIKE because of floats but slow with ints
-            " LIKE " . $this->driver->quote($value) :
-            ($this->driver->jush() === 'mssql' ?
-                // LIKE because of text
-                " LIKE " . $this->driver->quote(preg_replace('~[_%[]~', '[\0]', $value)) :
-                //! enum and set
-                " = " . $this->driver->unconvertField($field, $this->driver->quote($value))));
+        return $column . match(true) {
+            $bUseSqlLike => ' LIKE ' . $this->driver->quote($value),
+            $this->driver->jush() === 'mssql' => // LIKE because of text
+                ' LIKE ' . $this->driver->quote(preg_replace('~[_%[]~', '[\0]', $value)),
+            //! enum and set
+            default => ' = ' . $this->driver->unconvertField($field, $this->driver->quote($value)),
+        };
     }
 
     /**
@@ -213,11 +213,28 @@ abstract class AbstractQuery implements QueryInterface
      */
     private function getWhereCollateClause(TableFieldEntity $field, string $column, string $value): string
     {
-        $bCollate = $this->driver->jush() === 'sql' &&
-            preg_match('~char|text~', $field->type) && preg_match("~[^ -@]~", $value);
-        return !$bCollate ? '' :
+        $collate = $this->driver->jush() === 'sql' &&
+            preg_match('~char|text~', $field->type) &&
+            preg_match("~[^ -@]~", $value);
+        return !$collate ? '' :
             // not just [a-z] to catch non-ASCII characters
-            "$column = " . $this->driver->quote($value) . " COLLATE " . $this->driver->charset() . "_bin";
+            "$column = " . $this->driver->quote($value) . ' COLLATE ' . $this->driver->charset() . '_bin';
+    }
+
+    /**
+     * @param string $column
+     * @param string|array $value
+     *
+     * @return array
+     */
+    private function getWhereClauseValues(string $column, string|array $value): array
+    {
+        if (is_string($value)) {
+            return [$this->driver->escapeKey($column), $value];
+        }
+
+        $expr = $this->driver->bracketEscape($value['expr'], 1); // 1 - back
+        return [$this->driver->escapeKey($expr), $value['value']];
     }
 
     /**
@@ -231,20 +248,21 @@ abstract class AbstractQuery implements QueryInterface
     public function where(array $where, array $fields = []): string
     {
         $clauses = [];
-        $wheres = $where["where"] ?? [];
-        foreach ((array) $wheres as $key => $value) {
-            $key = $this->driver->bracketEscape($key, 1); // 1 - back
-            $column = $this->driver->escapeKey($key);
-            $clauses[] = $this->getWhereColumnClause($fields[$key], $column, $value);
-            if (($clause = $this->getWhereCollateClause($fields[$key], $column, $value))) {
+        $wheres = $where['where'] ?? [];
+        foreach ((array) $wheres as $column => $value) {
+            $field = $fields[$column];
+            [$column, $value] = $this->getWhereClauseValues($column, $value);
+
+            $clauses[] = $this->getWhereColumnClause($field, $column, $value);
+            if (($clause = $this->getWhereCollateClause($field, $column, $value))) {
                 $clauses[] = $clause;
             }
         }
-        $nulls = $where["null"] ?? [];
-        foreach ((array) $nulls as $key) {
-            $clauses[] = $this->driver->escapeKey($key) . " IS NULL";
+        $nulls = $where['null'] ?? [];
+        foreach ((array) $nulls as $column) {
+            $clauses[] = $this->driver->escapeKey($column) . ' IS NULL';
         }
-        return implode(" AND ", $clauses);
+        return implode(' AND ', $clauses);
     }
 
     /**
