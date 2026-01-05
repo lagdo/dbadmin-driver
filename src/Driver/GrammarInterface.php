@@ -122,7 +122,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style): string;
+    public function getTableDefinitionQueries(string $table, bool $autoIncrement, string $style): string;
 
     /**
      * Command to create an index
@@ -134,12 +134,12 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string;
+    public function getIndexCreationQuery(string $table, string $type, string $name, string $columns): string;
 
     /**
      * Get SQL command to create foreign keys
      *
-     * getCreateTableQuery() produces CREATE TABLE without FK CONSTRAINTs
+     * getTableDefinitionQueries() produces CREATE TABLE without FK CONSTRAINTs
      * getForeignKeysQueries() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
      * so that all FKs can be added after all tables have been created, avoiding any need
      * to reorder CREATE TABLE statements in order of their FK dependencies
@@ -157,7 +157,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getTruncateTableQuery(string $table): string;
+    public function getTableTruncationQuery(string $table): string;
 
     /**
      * Get SQL command to change database
@@ -176,7 +176,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function getCreateTriggerQuery(string $table): string;
+    public function getTriggerCreationQuery(string $table): string;
 
     /**
      * Get escaped table name

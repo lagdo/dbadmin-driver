@@ -100,17 +100,17 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style): string
+    public function getTableDefinitionQueries(string $table, bool $autoIncrement, string $style): string
     {
-        return $this->_grammar()->getCreateTableQuery($table, $autoIncrement, $style);
+        return $this->_grammar()->getTableDefinitionQueries($table, $autoIncrement, $style);
     }
 
     /**
      * @inheritDoc
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string
+    public function getIndexCreationQuery(string $table, string $type, string $name, string $columns): string
     {
-        return $this->_grammar()->getCreateIndexQuery($table, $type, $name, $columns);
+        return $this->_grammar()->getIndexCreationQuery($table, $type, $name, $columns);
     }
 
     /**
@@ -124,9 +124,9 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getTruncateTableQuery(string $table): string
+    public function getTableTruncationQuery(string $table): string
     {
-        return $this->_grammar()->getTruncateTableQuery($table);
+        return $this->_grammar()->getTableTruncationQuery($table);
     }
 
     /**
@@ -140,9 +140,9 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getCreateTriggerQuery(string $table): string
+    public function getTriggerCreationQuery(string $table): string
     {
-        return $this->_grammar()->getCreateTriggerQuery($table);
+        return $this->_grammar()->getTriggerCreationQuery($table);
     }
 
     /**

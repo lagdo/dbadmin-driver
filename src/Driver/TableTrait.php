@@ -114,7 +114,7 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return array array($name => array("db" => , "ns" => , "table" => , "source" => [], "target" => [], "onDelete" => , "onUpdate" => ))
+     * @return array
      */
     public function foreignKeys(string $table): array
     {

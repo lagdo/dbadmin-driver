@@ -15,6 +15,7 @@ use Lagdo\DbAdmin\Driver\Utils\Utils;
 use function array_flip;
 use function array_keys;
 use function array_map;
+use function count;
 use function implode;
 use function intval;
 use function in_array;
@@ -348,7 +349,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getCreateTableQuery(string $table, bool $autoIncrement, string $style): string
+    public function getTableDefinitionQueries(string $table, bool $autoIncrement, string $style): string
     {
         return '';
     }
@@ -356,15 +357,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUseDatabaseQuery(string $database, string $style = ''): string
+    public function getIndexCreationQuery(string $table, string $type, string $name, string $columns): string
     {
         return '';
     }
@@ -380,23 +373,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getTruncateTableQuery(string $table): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCreateTriggerQuery(string $table): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAutoIncrementModifier(): string
+    public function getTriggerCreationQuery(string $table): string
     {
         return '';
     }
@@ -509,12 +486,13 @@ abstract class AbstractGrammar implements GrammarInterface
      */
     public function getDefaultValueClause(TableFieldEntity $field): string
     {
-        $default = $field->default;
-        // Todo: use match
-        return $default === null ? '' : ' DEFAULT ' .
-            (preg_match('~char|binary|text|enum|set~', $field->type) ||
-            preg_match('~^(?![a-z])~i', $default) ?
-                $this->driver->quote($default) : $default);
+        return match(true) {
+            $field->default === null => '',
+            preg_match('~char|binary|text|enum|set~', $field->type),
+            preg_match('~^(?![a-z])~i', $field->default) =>
+                ' DEFAULT ' . $this->driver->quote($field->default),
+            default => " DEFAULT {$field->default}",
+        };
     }
 
     /**
