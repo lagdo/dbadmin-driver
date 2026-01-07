@@ -4,6 +4,8 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\GrammarInterface;
+use Lagdo\DbAdmin\Driver\Entity\AbstractTableEntity;
+use Lagdo\DbAdmin\Driver\Entity\ColumnEntity;
 use Lagdo\DbAdmin\Driver\Entity\FieldType;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
@@ -27,6 +29,7 @@ use function preg_replace;
 use function rtrim;
 use function strlen;
 use function strtr;
+use function str_ireplace;
 use function str_replace;
 use function substr;
 use function trim;
@@ -177,25 +180,6 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey): string
-    {
-        [$sources, $targets] = $this->fkFields($foreignKey);
-        $onActions = $this->driver->actions();
-        $query = " FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
-            $this->escapeTableName($foreignKey->table) . " ($targets)";
-        if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
-            $query .= " ON DELETE {$foreignKey->onDelete}";
-        }
-        if (preg_match("~^($onActions)\$~", $foreignKey->onUpdate)) {
-            $query .= " ON UPDATE {$foreignKey->onUpdate}";
-        }
-
-        return $query;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function bracketEscape(string $idf, bool $back = false): string
     {
         // escape brackets inside name='x[]'
@@ -239,7 +223,7 @@ abstract class AbstractGrammar implements GrammarInterface
      *
      * @param FieldType $field
      */
-    public function processType(FieldType $field, string $collate = "COLLATE"): string
+    public function getFieldType(FieldType $field, string $collate = "COLLATE"): string
     {
         $length = $this->processLength($field->length);
         $type = preg_match($this->driver->numberRegex(), $field->type) &&
@@ -252,22 +236,65 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
+     * This is the process_field() function in Adminer.
+     *
      * @inheritDoc
      */
-    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array
+    public function getFieldClauses(TableFieldEntity $field, TableFieldEntity $typeField): ColumnEntity
     {
-        $onUpdate = '';
+        // MariaDB exports CURRENT_TIMESTAMP as a function.
+        if ($field->onUpdate) {
+            $field->onUpdate = str_ireplace("current_timestamp()", "CURRENT_TIMESTAMP", $field->onUpdate);
+        }
+
+        $column = new ColumnEntity($field);
+
+        $column->name = $this->escapeId($field->name);
+        $column->type = $this->getFieldType($typeField);
+        $column->nullValue = $field->nullable ? ' NULL' : ' NOT NULL'; // NULL for timestamp
+        $column->defaultValue = $this->getDefaultValueClause($field);
         if (preg_match('~timestamp|datetime~', $field->type) && $field->onUpdate) {
-            $onUpdate = ' ON UPDATE ' . $field->onUpdate;
+            $column->onUpdate = " ON UPDATE {$field->onUpdate}";
         }
-        $comment = '';
         if ($this->driver->support('comment') && $field->comment !== '') {
-            $comment = ' COMMENT ' . $this->driver->quote($field->comment);
+            $column->comment = ' COMMENT ' . $this->driver->quote($field->comment);
         }
-        $null = $field->nullable ? ' NULL' : ' NOT NULL'; // NULL for timestamp
-        $autoIncrement = $field->autoIncrement ? $this->getAutoIncrementModifier() : null;
-        return [$this->escapeId(trim($field->name)), $this->processType($typeField),
-            $null, $this->getDefaultValueClause($field), $onUpdate, $comment, $autoIncrement];
+        $column->autoIncrement = $field->autoIncrement ? $this->getAutoIncrementModifier() : null;
+
+        return $column;
+    }
+
+    /**
+     * @param ForeignKeyEntity $foreignKey
+     *
+     * @return string
+     */
+    protected function formatForeignKey(ForeignKeyEntity $foreignKey): string
+    {
+        [$sources, $targets] = $this->fkFields($foreignKey);
+        $onActions = $this->driver->actions();
+        $query = "FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
+            $this->escapeTableName($foreignKey->table) . " ($targets)";
+        if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
+            $query .= " ON DELETE {$foreignKey->onDelete}";
+        }
+        if (preg_match("~^($onActions)\$~", $foreignKey->onUpdate)) {
+            $query .= " ON UPDATE {$foreignKey->onUpdate}";
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param AbstractTableEntity $table
+     * @param string $prefix
+     *
+     * @return array<string>
+     */
+    protected function getForeignKeyClauses(AbstractTableEntity $table, string $prefix = ''): array
+    {
+        return array_map(fn(ForeignKeyEntity $fkField) =>
+            $prefix . $this->formatForeignKey($fkField), $table->foreignKeys);
     }
 
     /**
@@ -488,8 +515,8 @@ abstract class AbstractGrammar implements GrammarInterface
     {
         return match(true) {
             $field->default === null => '',
-            preg_match('~char|binary|text|enum|set~', $field->type),
-            preg_match('~^(?![a-z])~i', $field->default) =>
+            preg_match('~char|binary|text|enum|set~', $field->type) > 0,
+            preg_match('~^(?![a-z])~i', $field->default) > 0 =>
                 ' DEFAULT ' . $this->driver->quote($field->default),
             default => " DEFAULT {$field->default}",
         };

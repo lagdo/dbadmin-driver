@@ -17,31 +17,6 @@ trait DatabaseTrait
     abstract protected function _database(): DatabaseInterface;
 
     /**
-     * Create table
-     *
-     * @param TableEntity $tableAttrs
-     *
-     * @return bool
-     */
-    public function createTable(TableEntity $tableAttrs): bool
-    {
-        return $this->_database()->createTable($tableAttrs);
-    }
-
-    /**
-     * Alter table
-     *
-     * @param string $table
-     * @param TableEntity $tableAttrs
-     *
-     * @return bool
-     */
-    public function alterTable(string $table, TableEntity $tableAttrs): bool
-    {
-        return $this->_database()->alterTable($table, $tableAttrs);
-    }
-
-    /**
      * Alter indexes
      *
      * @param string $table Escaped table name

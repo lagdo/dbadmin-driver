@@ -2,9 +2,12 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Entity\ColumnEntity;
 use Lagdo\DbAdmin\Driver\Entity\FieldType;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableAlterEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableCreateEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
@@ -112,6 +115,24 @@ interface GrammarInterface
      * @return string
      */
     public function getAutoIncrementModifier(): string;
+
+    /**
+     * Get SQL commands to create a table
+     *
+     * @param TableCreateEntity $table
+     *
+     * @return array<string>
+     */
+    public function getTableCreationQueries(TableCreateEntity $table): array;
+
+    /**
+     * Get SQL commands to alter a table
+     *
+     * @param TableAlterEntity $table
+     *
+     * @return array<string>
+     */
+    public function getTableAlterationQueries(TableAlterEntity $table): array;
 
     /**
      * Get SQL command to create table
@@ -238,15 +259,6 @@ interface GrammarInterface
     public function getDefaultValueClause(TableFieldEntity $field): string;
 
     /**
-     * Format foreign key to use in SQL query
-     *
-     * @param ForeignKeyEntity $foreignKey
-     *
-     * @return string
-     */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey): string;
-
-    /**
      * Escape or unescape string to use inside form []
      *
      * @param string $idf
@@ -281,7 +293,7 @@ interface GrammarInterface
      *
      * @return string
      */
-    public function processType(FieldType $field, string $collate = "COLLATE"): string;
+    public function getFieldType(FieldType $field, string $collate = "COLLATE"): string;
 
     /**
      * Create SQL string from field
@@ -289,9 +301,9 @@ interface GrammarInterface
      * @param TableFieldEntity $field Basic field information
      * @param TableFieldEntity $typeField Information about field type
      *
-     * @return array
+     * @return ColumnEntity
      */
-    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array;
+    public function getFieldClauses(TableFieldEntity $field, TableFieldEntity $typeField): ColumnEntity;
 
     /**
      * Check if utf8mb4 might be needed

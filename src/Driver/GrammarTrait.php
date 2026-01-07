@@ -2,9 +2,12 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
+use Lagdo\DbAdmin\Driver\Entity\ColumnEntity;
 use Lagdo\DbAdmin\Driver\Entity\FieldType;
 use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
 use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableAlterEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableCreateEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
@@ -95,6 +98,30 @@ trait GrammarTrait
     public function getAutoIncrementModifier(): string
     {
         return $this->_grammar()->getAutoIncrementModifier();
+    }
+
+    /**
+     * Get SQL commands to create a table
+     *
+     * @param TableCreateEntity $table
+     *
+     * @return array<string>
+     */
+    public function getTableCreationQueries(TableCreateEntity $table): array
+    {
+        return $this->_grammar()->getTableCreationQueries($table);
+    }
+
+    /**
+     * Get SQL commands to alter a table
+     *
+     * @param TableAlterEntity $table
+     *
+     * @return array<string>
+     */
+    public function getTableAlterationQueries(TableAlterEntity $table): array
+    {
+        return $this->_grammar()->getTableAlterationQueries($table);
     }
 
     /**
@@ -196,14 +223,6 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function formatForeignKey(ForeignKeyEntity $foreignKey): string
-    {
-        return $this->_grammar()->formatForeignKey($foreignKey);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function bracketEscape(string $idf, bool $back = false): string
     {
         return $this->_grammar()->bracketEscape($idf, $back);
@@ -230,17 +249,17 @@ trait GrammarTrait
      *
      * @param FieldType $field
      */
-    public function processType(FieldType $field, string $collate = "COLLATE"): string
+    public function getFieldType(FieldType $field, string $collate = "COLLATE"): string
     {
-        return $this->_grammar()->processType($field, $collate);
+        return $this->_grammar()->getFieldType($field, $collate);
     }
 
     /**
      * @inheritDoc
      */
-    public function processField(TableFieldEntity $field, TableFieldEntity $typeField): array
+    public function getFieldClauses(TableFieldEntity $field, TableFieldEntity $typeField): ColumnEntity
     {
-        return $this->_grammar()->processField($field, $typeField);
+        return $this->_grammar()->getFieldClauses($field, $typeField);
     }
 
     /**

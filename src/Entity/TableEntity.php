@@ -76,6 +76,11 @@ class TableEntity
     public $foreign = [];
 
     /**
+     * @var bool
+     */
+    public $hasAutoIncrement = false;
+
+    /**
      * @var integer
      */
     public $autoIncrement = 0;

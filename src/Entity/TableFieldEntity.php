@@ -56,11 +56,11 @@ class TableFieldEntity extends FieldType
     public $primary = false;
 
     /**
-     * If the field is generated
+     * How the field is generated
      *
-     * @var boolean
+     * @var string
      */
-    public $generated = false;
+    public $generated = '';
 
     /**
      * The field types

@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 
 trait TableTrait
@@ -90,7 +91,7 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return array
+     * @return array<TableFieldEntity>
      */
     public function fields(string $table): array
     {
@@ -178,18 +179,6 @@ trait TableTrait
     public function triggerOptions(): array
     {
         return $this->_table()->triggerOptions();
-    }
-
-    /**
-     * Get referencable tables with single column primary key except self
-     *
-     * @param string $table
-     *
-     * @return array
-     */
-    public function referencableTables(string $table): array
-    {
-        return $this->_table()->referencableTables($table);
     }
 
     /**

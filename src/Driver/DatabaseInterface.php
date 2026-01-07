@@ -12,25 +12,6 @@ use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
 interface DatabaseInterface
 {
     /**
-     * Create table
-     *
-     * @param TableEntity $tableAttrs
-     *
-     * @return bool
-     */
-    public function createTable(TableEntity $tableAttrs): bool;
-
-    /**
-     * Alter table
-     *
-     * @param string $table
-     * @param TableEntity $tableAttrs
-     *
-     * @return bool
-     */
-    public function alterTable(string $table, TableEntity $tableAttrs): bool;
-
-    /**
      * Alter indexes
      *
      * @param string $table Escaped table name

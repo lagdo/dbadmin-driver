@@ -103,14 +103,6 @@ abstract class AbstractTable implements TableInterface
     /**
      * @inheritDoc
      */
-    public function referencableTables(string $table): array
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function tableHelp(string $name): string
     {
         return '';

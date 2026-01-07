@@ -220,4 +220,12 @@ trait ConfigTrait
     {
         return $this->config->onActions();
     }
+
+    /**
+     * @return array
+     */
+    public function fieldDefaults(): array
+    {
+        return ['', 'DEFAULT', ...$this->config->generated];
+    }
 }

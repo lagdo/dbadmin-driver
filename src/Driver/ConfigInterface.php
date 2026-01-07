@@ -137,4 +137,9 @@ interface ConfigInterface
      * @return array
      */
     public function onActions(): array;
+
+    /**
+     * @return array
+     */
+    public function fieldDefaults(): array;
 }

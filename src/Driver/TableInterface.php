@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
 use Lagdo\DbAdmin\Driver\Entity\TableEntity;
+use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
 
 interface TableInterface
@@ -67,7 +68,7 @@ interface TableInterface
      *
      * @param string $table
      *
-     * @return array
+     * @return array<TableFieldEntity>
      */
     public function fields(string $table): array;
 
@@ -132,15 +133,6 @@ interface TableInterface
      * @return array ("Timing" => [], "Event" => [], "Type" => [])
      */
     public function triggerOptions(): array;
-
-    /**
-     * Get referencable tables with single column primary key except self
-     *
-     * @param string $table
-     *
-     * @return array
-     */
-    public function referencableTables(string $table): array;
 
     /**
      * Get help link for table
