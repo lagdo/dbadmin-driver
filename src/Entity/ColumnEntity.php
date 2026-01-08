@@ -61,6 +61,6 @@ class ColumnEntity
      *
      * @param TableFieldEntity $field
      */
-    public function __construct(public TableFieldEntity $field)
+    public function __construct(public readonly TableFieldEntity $field)
     {}
 }
