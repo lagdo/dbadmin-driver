@@ -329,8 +329,11 @@ abstract class AbstractGrammar implements GrammarInterface
      */
     public function unescapeId(string $idf): string
     {
+        if (!preg_match('~^[`\'"[]~', $idf)) {
+            return $idf;
+        }
         $last = substr($idf, -1);
-        return str_replace($last . $last, $last, substr($idf, 1, -1));
+        return str_replace("{$last}{$last}", $last, substr($idf, 1, -1));
     }
 
     /**
