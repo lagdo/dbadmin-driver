@@ -15,6 +15,9 @@
         "issues": "https://github.com/lagdo/dbadmin-driver/issues",
         "source": "https://github.com/lagdo/dbadmin-driver"
     },
+    "require": {
+        "php": ">=8.1.0"
+    },
     "autoload": {
         "psr-4": {
             "Lagdo\\DbAdmin\\Driver\\": "src/"
