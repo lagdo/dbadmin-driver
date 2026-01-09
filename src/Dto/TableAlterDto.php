@@ -1,25 +1,25 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
-class TableAlterEntity extends AbstractTableEntity
+class TableAlterDto extends AbstractTableDto
 {
     /**
-     * @var TableEntity
+     * @var TableDto
      */
     public $current = null;
 
     /**
      * Columns to add.
      *
-     * @var array<ColumnEntity>
+     * @var array<ColumnDto>
      */
     public $addedColumns = [];
 
     /**
      * Columns to change.
      *
-     * @var array<ColumnEntity>
+     * @var array<ColumnDto>
      */
     public $changedColumns = [];
 

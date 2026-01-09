@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Db;
 
-use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\StatementFieldDto;
 
 interface StatementInterface
 {
@@ -30,7 +30,7 @@ interface StatementInterface
     /**
      * Fetch the next field
      *
-     * @return StatementFieldEntity|null
+     * @return StatementFieldDto|null
      */
-    public function fetchField(): StatementFieldEntity|null;
+    public function fetchField(): StatementFieldDto|null;
 }

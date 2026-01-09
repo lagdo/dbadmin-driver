@@ -4,9 +4,9 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\TableInterface;
-use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
+use Lagdo\DbAdmin\Driver\Dto\PartitionDto;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TriggerDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 abstract class AbstractTable implements TableInterface
@@ -36,12 +36,12 @@ abstract class AbstractTable implements TableInterface
     /**
      * @inheritDoc
      */
-    public function tableStatusOrName(string $table, bool $fast = false): TableEntity
+    public function tableStatusOrName(string $table, bool $fast = false): TableDto
     {
         if (($status = $this->tableStatus($table, $fast))) {
             return $status;
         }
-        return new TableEntity($table);
+        return new TableDto($table);
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * @inheritDoc
      */
-    public function supportForeignKeys(TableEntity $tableStatus): bool
+    public function supportForeignKeys(TableDto $tableStatus): bool
     {
         return false;
     }
@@ -63,7 +63,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * @inheritDoc
      */
-    public function partitionsInfo(string $table): PartitionEntity|null
+    public function partitionsInfo(string $table): PartitionDto|null
     {
         return null;
     }
@@ -71,7 +71,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * @inheritDoc
      */
-    public function isView(TableEntity $tableStatus): bool
+    public function isView(TableDto $tableStatus): bool
     {
         return false;
     }
@@ -79,7 +79,7 @@ abstract class AbstractTable implements TableInterface
     /**
      * @inheritDoc
      */
-    public function trigger(string $name, string $table = ''): TriggerEntity|null
+    public function trigger(string $name, string $table = ''): TriggerDto|null
     {
         return null;
     }

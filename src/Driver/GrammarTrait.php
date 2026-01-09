@@ -2,15 +2,15 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\ColumnEntity;
-use Lagdo\DbAdmin\Driver\Entity\FieldType;
-use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableAlterEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableCreateEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
+use Lagdo\DbAdmin\Driver\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Dto\FieldType;
+use Lagdo\DbAdmin\Driver\Dto\ForeignKeyDto;
+use Lagdo\DbAdmin\Driver\Dto\QueryDto;
+use Lagdo\DbAdmin\Driver\Dto\TableAlterDto;
+use Lagdo\DbAdmin\Driver\Dto\TableCreateDto;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Dto\TableSelectDto;
 
 trait GrammarTrait
 {
@@ -38,7 +38,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function convertField(TableFieldEntity $field): string
+    public function convertField(TableFieldDto $field): string
     {
         return $this->_grammar()->convertField($field);
     }
@@ -46,7 +46,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function unconvertField(TableFieldEntity $field, string $value): string
+    public function unconvertField(TableFieldDto $field, string $value): string
     {
         return $this->_grammar()->unconvertField($field, $value);
     }
@@ -54,7 +54,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function buildSelectQuery(TableSelectEntity $select): string
+    public function buildSelectQuery(TableSelectDto $select): string
     {
         return $this->_grammar()->buildSelectQuery($select);
     }
@@ -103,11 +103,11 @@ trait GrammarTrait
     /**
      * Get SQL commands to create a table
      *
-     * @param TableCreateEntity $table
+     * @param TableCreateDto $table
      *
      * @return array<string>
      */
-    public function getTableCreationQueries(TableCreateEntity $table): array
+    public function getTableCreationQueries(TableCreateDto $table): array
     {
         return $this->_grammar()->getTableCreationQueries($table);
     }
@@ -115,11 +115,11 @@ trait GrammarTrait
     /**
      * Get SQL commands to alter a table
      *
-     * @param TableAlterEntity $table
+     * @param TableAlterDto $table
      *
      * @return array<string>
      */
-    public function getTableAlterationQueries(TableAlterEntity $table): array
+    public function getTableAlterationQueries(TableAlterDto $table): array
     {
         return $this->_grammar()->getTableAlterationQueries($table);
     }
@@ -143,7 +143,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getForeignKeysQueries(TableEntity $table): array
+    public function getForeignKeysQueries(TableDto $table): array
     {
         return $this->_grammar()->getForeignKeysQueries($table);
     }
@@ -199,9 +199,9 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function parseQueries(QueryEntity $queryEntity): bool
+    public function parseQueries(QueryDto $queryDto): bool
     {
-        return $this->_grammar()->parseQueries($queryEntity);
+        return $this->_grammar()->parseQueries($queryDto);
     }
 
     /**
@@ -215,7 +215,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getDefaultValueClause(TableFieldEntity $field): string
+    public function getDefaultValueClause(TableFieldDto $field): string
     {
         return $this->_grammar()->getDefaultValueClause($field);
     }
@@ -257,7 +257,7 @@ trait GrammarTrait
     /**
      * @inheritDoc
      */
-    public function getFieldClauses(TableFieldEntity $field, TableFieldEntity $typeField): ColumnEntity
+    public function getFieldClauses(TableFieldDto $field, TableFieldDto $typeField): ColumnDto
     {
         return $this->_grammar()->getFieldClauses($field, $typeField);
     }

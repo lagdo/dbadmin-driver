@@ -1,12 +1,12 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
 use Closure;
 
 use function implode;
 
-abstract class AbstractTableEntity
+abstract class AbstractTableDto
 {
     /**
      * @var string
@@ -44,7 +44,7 @@ abstract class AbstractTableEntity
     public $partitioning = '';
 
     /**
-     * @var array<ForeignKeyEntity>
+     * @var array<ForeignKeyDto>
      */
     public $foreignKeys = [];
 

@@ -5,8 +5,8 @@ namespace Lagdo\DbAdmin\Driver\Db;
 use Exception;
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
-use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\RoutineInfoDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function strtoupper;
@@ -202,7 +202,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function routine(string $name, string $type): RoutineInfoEntity|null
+    public function routine(string $name, string $type): RoutineInfoDto|null
     {
         return null;
     }
@@ -226,7 +226,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      * @inheritDoc
      */
-    public function enumValues(TableFieldEntity $field): array
+    public function enumValues(TableFieldDto $field): array
     {
         return [];
     }

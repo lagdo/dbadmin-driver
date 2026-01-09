@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Fake;
 
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Entity\StatementFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\StatementFieldDto;
 
 use function count;
 use function array_values;
@@ -66,9 +66,9 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchField(): StatementFieldEntity|null
+    public function fetchField(): StatementFieldDto|null
     {
         return null;
-        // return new StatementFieldEntity();
+        // return new StatementFieldDto();
     }
 }

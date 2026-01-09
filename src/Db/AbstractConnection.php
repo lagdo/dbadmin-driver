@@ -4,8 +4,8 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
 use Closure;
 
 use function array_map;
@@ -173,7 +173,7 @@ abstract class AbstractConnection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function value($value, TableFieldEntity $field): mixed
+    public function value($value, TableFieldDto $field): mixed
     {
         return is_resource($value) ? stream_get_contents($value) : $value;
     }

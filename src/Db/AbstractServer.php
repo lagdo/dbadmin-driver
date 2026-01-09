@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
-use Lagdo\DbAdmin\Driver\Entity\UserEntity;
+use Lagdo\DbAdmin\Driver\Dto\UserDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function preg_match;
@@ -60,12 +60,12 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * @param UserEntity $user
+     * @param UserDto $user
      * @param array $grant
      *
      * @return void
      */
-    private function addUserGrant(UserEntity $user, array $grant)
+    private function addUserGrant(UserDto $user, array $grant)
     {
         if (preg_match('~GRANT (.*) ON (.*) TO ~', $grant[0], $match) &&
             preg_match_all('~ *([^(,]*[^ ,(])( *\([^)]+\))?~', $match[1], $matches, PREG_SET_ORDER)) {
@@ -89,9 +89,9 @@ abstract class AbstractServer implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function getUserGrants(string $user, string $host): UserEntity
+    public function getUserGrants(string $user, string $host): UserDto
     {
-        $entity = new UserEntity($user, $host);
+        $entity = new UserDto($user, $host);
 
         // From user.inc.php
         //! use information_schema for MySQL 5 - column names in column privileges are not escaped
@@ -110,7 +110,7 @@ abstract class AbstractServer implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function getUserPrivileges(UserEntity $user): void
+    public function getUserPrivileges(UserDto $user): void
     {
         $user->privileges = $this->driver->rows('SHOW PRIVILEGES');
     }

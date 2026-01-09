@@ -2,10 +2,10 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
+use Lagdo\DbAdmin\Driver\Dto\PartitionDto;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Dto\TriggerDto;
 
 interface TableInterface
 {
@@ -15,16 +15,16 @@ interface TableInterface
      * @param string $table
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity|null
+     * @return TableDto|null
      */
-    public function tableStatus(string $table, bool $fast = false): TableEntity|null;
+    public function tableStatus(string $table, bool $fast = false): TableDto|null;
 
     /**
      * Get all tables statuses
      *
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity[]
+     * @return TableDto[]
      */
     public function tableStatuses(bool $fast = false): array;
 
@@ -41,34 +41,34 @@ interface TableInterface
      * @param string $table
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity
+     * @return TableDto
      */
-    public function tableStatusOrName(string $table, bool $fast = false): TableEntity;
+    public function tableStatusOrName(string $table, bool $fast = false): TableDto;
 
     /**
      * Find out whether the identifier is view
      *
-     * @param TableEntity $tableStatus
+     * @param TableDto $tableStatus
      *
      * @return bool
      */
-    public function isView(TableEntity $tableStatus): bool;
+    public function isView(TableDto $tableStatus): bool;
 
     /**
      * Check if table supports foreign keys
      *
-     * @param TableEntity $tableStatus
+     * @param TableDto $tableStatus
      *
      * @return bool
      */
-    public function supportForeignKeys(TableEntity $tableStatus): bool;
+    public function supportForeignKeys(TableDto $tableStatus): bool;
 
     /**
      * Get information about fields
      *
      * @param string $table
      *
-     * @return array<TableFieldEntity>
+     * @return array<TableFieldDto>
      */
     public function fields(string $table): array;
 
@@ -93,20 +93,20 @@ interface TableInterface
     /**
      * Get defined check constraints
      *
-     * @param TableEntity $status
+     * @param TableDto $status
      *
      * @return array
      */
-    public function checkConstraints(TableEntity $status): array;
+    public function checkConstraints(TableDto $status): array;
 
     /**
      * Get partitions info
      *
      * @param string $table
      *
-     * @return PartitionEntity|null
+     * @return PartitionDto|null
      */
-    public function partitionsInfo(string $table): PartitionEntity|null;
+    public function partitionsInfo(string $table): PartitionDto|null;
 
     /**
      * Get information about a trigger
@@ -114,9 +114,9 @@ interface TableInterface
      * @param string $name
      * @param string $table
      *
-     * @return TriggerEntity
+     * @return TriggerDto
      */
-    public function trigger(string $name, string $table = ''): TriggerEntity|null;
+    public function trigger(string $name, string $table = ''): TriggerDto|null;
 
     /**
      * Get defined triggers

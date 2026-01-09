@@ -1,8 +1,8 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
-class ForeignKeyEntity
+class ForeignKeyDto
 {
     /**
      * @var string

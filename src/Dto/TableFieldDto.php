@@ -1,10 +1,10 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
 use function stripos;
 
-class TableFieldEntity extends FieldType
+class TableFieldDto extends FieldType
 {
     /**
      * The field default value

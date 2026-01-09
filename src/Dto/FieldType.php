@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
 class FieldType
 {
@@ -11,7 +11,7 @@ class FieldType
      * @param string $type
      * @param string $fullType
      * @param string $unsigned
-     * @param bool $null
+     * @param bool $nullable
      * @param string $collation
      * @param string $length
      * @param string $inout

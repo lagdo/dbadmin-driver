@@ -1,11 +1,11 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
 /**
  * Formatted inputs for a table column.
  */
-class ColumnEntity
+class ColumnDto
 {
     /**
      * @var string
@@ -59,8 +59,8 @@ class ColumnEntity
     /**
      * The constructor
      *
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      */
-    public function __construct(public readonly TableFieldEntity $field)
+    public function __construct(public readonly TableFieldDto $field)
     {}
 }

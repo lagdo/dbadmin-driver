@@ -3,8 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 use Exception;
 
 trait QueryTrait
@@ -144,12 +144,12 @@ trait QueryTrait
     /**
      * Get approximate number of rows
      *
-     * @param TableEntity $tableStatus
+     * @param TableDto $tableStatus
      * @param array $where
      *
      * @return int|null
      */
-    public function countRows(TableEntity $tableStatus, array $where): int|null
+    public function countRows(TableDto $tableStatus, array $where): int|null
     {
         return $this->_query()->countRows($tableStatus, $where);
     }
@@ -199,11 +199,11 @@ trait QueryTrait
      *
      * @param string $idf Escaped column name
      * @param array $value ["op" => , "val" => ]
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $value, TableFieldEntity $field): string
+    public function convertSearch(string $idf, array $value, TableFieldDto $field): string
     {
         return $this->_query()->convertSearch($idf, $value, $field);
     }

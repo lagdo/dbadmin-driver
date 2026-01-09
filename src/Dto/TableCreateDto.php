@@ -1,13 +1,13 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
-class TableCreateEntity extends AbstractTableEntity
+class TableCreateDto extends AbstractTableDto
 {
     /**
      * Columns to add.
      *
-     * @var array<ColumnEntity>
+     * @var array<ColumnDto>
      */
     public $columns = [];
 

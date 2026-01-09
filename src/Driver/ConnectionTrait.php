@@ -5,7 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 
 trait ConnectionTrait
 {
@@ -131,7 +131,7 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function value($value, TableFieldEntity $field): mixed
+    public function value($value, TableFieldDto $field): mixed
     {
         return $this->connection()->value($value, $field);
     }

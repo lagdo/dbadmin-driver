@@ -2,10 +2,10 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\PartitionEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\TriggerEntity;
+use Lagdo\DbAdmin\Driver\Dto\PartitionDto;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Dto\TriggerDto;
 
 trait TableTrait
 {
@@ -20,9 +20,9 @@ trait TableTrait
      * @param string $table
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity|null
+     * @return TableDto|null
      */
-    public function tableStatus(string $table, bool $fast = false): TableEntity|null
+    public function tableStatus(string $table, bool $fast = false): TableDto|null
     {
         return $this->_table()->tableStatus($table, $fast);
     }
@@ -32,7 +32,7 @@ trait TableTrait
      *
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity[]
+     * @return TableDto[]
      */
     public function tableStatuses(bool $fast = false): array
     {
@@ -55,9 +55,9 @@ trait TableTrait
      * @param string $table
      * @param bool $fast Return only "Name", "Engine" and "Comment" fields
      *
-     * @return TableEntity
+     * @return TableDto
      */
-    public function tableStatusOrName(string $table, bool $fast = false): TableEntity
+    public function tableStatusOrName(string $table, bool $fast = false): TableDto
     {
         return $this->_table()->tableStatusOrName($table, $fast);
     }
@@ -65,11 +65,11 @@ trait TableTrait
     /**
      * Find out whether the identifier is view
      *
-     * @param TableEntity $tableStatus
+     * @param TableDto $tableStatus
      *
      * @return bool
      */
-    public function isView(TableEntity $tableStatus): bool
+    public function isView(TableDto $tableStatus): bool
     {
         return $this->_table()->isView($tableStatus);
     }
@@ -77,11 +77,11 @@ trait TableTrait
     /**
      * Check if table supports foreign keys
      *
-     * @param TableEntity $tableStatus
+     * @param TableDto $tableStatus
      *
      * @return bool
      */
-    public function supportForeignKeys(TableEntity $tableStatus): bool
+    public function supportForeignKeys(TableDto $tableStatus): bool
     {
         return $this->_table()->supportForeignKeys($tableStatus);
     }
@@ -91,7 +91,7 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return array<TableFieldEntity>
+     * @return array<TableFieldDto>
      */
     public function fields(string $table): array
     {
@@ -125,11 +125,11 @@ trait TableTrait
     /**
      * Get defined check constraints
      *
-     * @param TableEntity $status
+     * @param TableDto $status
      *
      * @return array
      */
-    public function checkConstraints(TableEntity $status): array
+    public function checkConstraints(TableDto $status): array
     {
         return $this->_table()->checkConstraints($status);
     }
@@ -139,9 +139,9 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return PartitionEntity|null
+     * @return PartitionDto|null
      */
-    public function partitionsInfo(string $table): PartitionEntity|null
+    public function partitionsInfo(string $table): PartitionDto|null
     {
         return $this->_table()->partitionsInfo($table);
     }
@@ -152,9 +152,9 @@ trait TableTrait
      * @param string $name
      * @param string $table
      *
-     * @return TriggerEntity
+     * @return TriggerDto
      */
-    public function trigger(string $name, string $table = ''): TriggerEntity|null
+    public function trigger(string $name, string $table = ''): TriggerDto|null
     {
         return $this->_table()->trigger($name, $table);
     }

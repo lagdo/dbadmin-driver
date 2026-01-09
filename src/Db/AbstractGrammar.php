@@ -4,14 +4,14 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\GrammarInterface;
-use Lagdo\DbAdmin\Driver\Entity\AbstractTableEntity;
-use Lagdo\DbAdmin\Driver\Entity\ColumnEntity;
-use Lagdo\DbAdmin\Driver\Entity\FieldType;
-use Lagdo\DbAdmin\Driver\Entity\ForeignKeyEntity;
-use Lagdo\DbAdmin\Driver\Entity\QueryEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableSelectEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\AbstractTableDto;
+use Lagdo\DbAdmin\Driver\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Dto\FieldType;
+use Lagdo\DbAdmin\Driver\Dto\ForeignKeyDto;
+use Lagdo\DbAdmin\Driver\Dto\QueryDto;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableSelectDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 use function array_flip;
@@ -89,7 +89,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function buildSelectQuery(TableSelectEntity $select): string
+    public function buildSelectQuery(TableSelectDto $select): string
     {
         $query = implode(', ', $select->fields) .
             ' FROM ' . $this->driver->escapeTableName($select->table);
@@ -106,7 +106,7 @@ abstract class AbstractGrammar implements GrammarInterface
     public function getSelectQuery(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): string
     {
-        $entity = new TableSelectEntity($table, $select,
+        $entity = new TableSelectDto($table, $select,
             $where, $group, $order, $limit, $page);
         return $this->buildSelectQuery($entity);
     }
@@ -147,11 +147,11 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
-     * @param ForeignKeyEntity $foreignKey
+     * @param ForeignKeyDto $foreignKey
      *
      * @return array
      */
-    private function fkFields(ForeignKeyEntity $foreignKey)
+    private function fkFields(ForeignKeyDto $foreignKey)
     {
         $escape = fn(string $idf): string => $this->escapeId($idf);
         return [
@@ -161,11 +161,11 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
-     * @param ForeignKeyEntity $foreignKey
+     * @param ForeignKeyDto $foreignKey
      *
      * @return string
      */
-    private function fkTablePrefix(ForeignKeyEntity $foreignKey)
+    private function fkTablePrefix(ForeignKeyDto $foreignKey)
     {
         $prefix = '';
         if ($foreignKey->database !== '' && $foreignKey->database !== $this->driver->database()) {
@@ -240,14 +240,14 @@ abstract class AbstractGrammar implements GrammarInterface
      *
      * @inheritDoc
      */
-    public function getFieldClauses(TableFieldEntity $field, TableFieldEntity $typeField): ColumnEntity
+    public function getFieldClauses(TableFieldDto $field, TableFieldDto $typeField): ColumnDto
     {
         // MariaDB exports CURRENT_TIMESTAMP as a function.
         if ($field->onUpdate) {
             $field->onUpdate = str_ireplace("current_timestamp()", "CURRENT_TIMESTAMP", $field->onUpdate);
         }
 
-        $column = new ColumnEntity($field);
+        $column = new ColumnDto($field);
 
         $column->name = $this->escapeId($field->name);
         $column->type = $this->getFieldType($typeField);
@@ -265,11 +265,11 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
-     * @param ForeignKeyEntity $foreignKey
+     * @param ForeignKeyDto $foreignKey
      *
      * @return string
      */
-    protected function formatForeignKey(ForeignKeyEntity $foreignKey): string
+    protected function formatForeignKey(ForeignKeyDto $foreignKey): string
     {
         [$sources, $targets] = $this->fkFields($foreignKey);
         $onActions = $this->driver->actions();
@@ -286,14 +286,14 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
-     * @param AbstractTableEntity $table
+     * @param AbstractTableDto $table
      * @param string $prefix
      *
      * @return array<string>
      */
-    protected function getForeignKeyClauses(AbstractTableEntity $table, string $prefix = ''): array
+    protected function getForeignKeyClauses(AbstractTableDto $table, string $prefix = ''): array
     {
-        return array_map(fn(ForeignKeyEntity $fkField) =>
+        return array_map(fn(ForeignKeyDto $fkField) =>
             $prefix . $this->formatForeignKey($fkField), $table->foreignKeys);
     }
 
@@ -363,7 +363,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function convertField(TableFieldEntity $field): string
+    public function convertField(TableFieldDto $field): string
     {
         return '';
     }
@@ -371,7 +371,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function unconvertField(TableFieldEntity $field, string $value): string
+    public function unconvertField(TableFieldDto $field, string $value): string
     {
         return $value;
     }
@@ -395,7 +395,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getForeignKeysQueries(TableEntity $table): array
+    public function getForeignKeysQueries(TableDto $table): array
     {
         return [];
     }
@@ -409,50 +409,50 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
-     * @param QueryEntity $queryEntity
+     * @param QueryDto $queryDto
      *
      * @return bool
      */
-    private function setDelimiter(QueryEntity $queryEntity)
+    private function setDelimiter(QueryDto $queryDto)
     {
         $space = "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
-        if ($queryEntity->offset !== 0 ||
-            !preg_match("~^$space*+DELIMITER\\s+(\\S+)~i", $queryEntity->queries, $match)) {
+        if ($queryDto->offset !== 0 ||
+            !preg_match("~^$space*+DELIMITER\\s+(\\S+)~i", $queryDto->queries, $match)) {
             return false;
         }
-        $queryEntity->delimiter = $match[1];
-        $queryEntity->queries = substr($queryEntity->queries, strlen($match[0]));
+        $queryDto->delimiter = $match[1];
+        $queryDto->queries = substr($queryDto->queries, strlen($match[0]));
         return true;
     }
 
     /**
-     * @param QueryEntity $queryEntity
+     * @param QueryDto $queryDto
      * @param string $found
      * @param array $match
      *
      * @return bool
      */
-    private function notQuery(QueryEntity $queryEntity, string $found, array &$match)
+    private function notQuery(QueryDto $queryDto, string $found, array &$match)
     {
         return preg_match('(' . ($found == '/*' ? '\*/' : ($found == '[' ? ']' :
             (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\."))) . '|$)s',
-            $queryEntity->queries, $match, PREG_OFFSET_CAPTURE, $queryEntity->offset) > 0;
+            $queryDto->queries, $match, PREG_OFFSET_CAPTURE, $queryDto->offset) > 0;
     }
 
     /**
-     * @param QueryEntity $queryEntity
+     * @param QueryDto $queryDto
      * @param string $found
      *
      * @return void
      */
-    private function skipComments(QueryEntity $queryEntity, string $found)
+    private function skipComments(QueryDto $queryDto, string $found)
     {
         // Find matching quote or comment end
         $match = [];
-        while ($this->notQuery($queryEntity, $found, $match)) {
+        while ($this->notQuery($queryDto, $found, $match)) {
             //! Respect sql_mode NO_BACKSLASH_ESCAPES
             $s = $match[0][0];
-            $queryEntity->offset = $match[0][1] + strlen($s);
+            $queryDto->offset = $match[0][1] + strlen($s);
             if (($s[0] ?? '') != "\\") {
                 break;
             }
@@ -460,42 +460,42 @@ abstract class AbstractGrammar implements GrammarInterface
     }
 
     /**
-     * @param QueryEntity $queryEntity
+     * @param QueryDto $queryDto
      *
      * @return int
      */
-    private function nextQueryPos(QueryEntity $queryEntity)
+    private function nextQueryPos(QueryDto $queryDto)
     {
         // TODO: Move this to driver implementations
         $parse = $this->driver->sqlStatementRegex();
-        $delimiter = preg_quote($queryEntity->delimiter);
+        $delimiter = preg_quote($queryDto->delimiter);
         // Should always match
-        preg_match("($delimiter$parse)", $queryEntity->queries, $match,
-            PREG_OFFSET_CAPTURE, $queryEntity->offset);
+        preg_match("($delimiter$parse)", $queryDto->queries, $match,
+            PREG_OFFSET_CAPTURE, $queryDto->offset);
         [$found, $pos] = $match[0];
-        if (!is_string($found) && $queryEntity->queries == '') {
+        if (!is_string($found) && $queryDto->queries == '') {
             return -1;
         }
-        $queryEntity->offset = $pos + strlen($found);
-        if (empty($found) || rtrim($found) == $queryEntity->delimiter) {
+        $queryDto->offset = $pos + strlen($found);
+        if (empty($found) || rtrim($found) == $queryDto->delimiter) {
             return intval($pos);
         }
         // Find matching quote or comment end
-        $this->skipComments($queryEntity, $found);
+        $this->skipComments($queryDto, $found);
         return 0;
     }
 
     /**
      * @inheritDoc
      */
-    public function parseQueries(QueryEntity $queryEntity): bool
+    public function parseQueries(QueryDto $queryDto): bool
     {
-        $queryEntity->queries = trim($queryEntity->queries);
-        while ($queryEntity->queries !== '') {
-            if ($this->setDelimiter($queryEntity)) {
+        $queryDto->queries = trim($queryDto->queries);
+        while ($queryDto->queries !== '') {
+            if ($this->setDelimiter($queryDto)) {
                 continue;
             }
-            $pos = $this->nextQueryPos($queryEntity);
+            $pos = $this->nextQueryPos($queryDto);
             if ($pos < 0) {
                 return false;
             }
@@ -503,9 +503,9 @@ abstract class AbstractGrammar implements GrammarInterface
                 continue;
             }
             // End of a query
-            $queryEntity->query = substr($queryEntity->queries, 0, $pos);
-            $queryEntity->queries = substr($queryEntity->queries, $queryEntity->offset);
-            $queryEntity->offset = 0;
+            $queryDto->query = substr($queryDto->queries, 0, $pos);
+            $queryDto->queries = substr($queryDto->queries, $queryDto->offset);
+            $queryDto->offset = 0;
             return true;
         }
         return false;
@@ -514,7 +514,7 @@ abstract class AbstractGrammar implements GrammarInterface
     /**
      * @inheritDoc
      */
-    public function getDefaultValueClause(TableFieldEntity $field): string
+    public function getDefaultValueClause(TableFieldDto $field): string
     {
         return match(true) {
             $field->default === null => '',

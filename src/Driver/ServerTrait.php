@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\UserEntity;
+use Lagdo\DbAdmin\Driver\Dto\UserDto;
 
 trait ServerTrait
 {
@@ -49,9 +49,9 @@ trait ServerTrait
      * @param string $user      The username
      * @param string $host      The host name
      *
-     * @return UserEntity
+     * @return UserDto
      */
-    public function getUserGrants(string $user, string $host): UserEntity
+    public function getUserGrants(string $user, string $host): UserDto
     {
         return $this->_server()->getUserGrants($user, $host);
     }
@@ -59,11 +59,11 @@ trait ServerTrait
     /**
      * Get the user privileges
      *
-     * @param UserEntity $user
+     * @param UserDto $user
      *
      * @return void
      */
-    public function getUserPrivileges(UserEntity $user): void
+    public function getUserPrivileges(UserDto $user): void
     {
         $this->_server()->getUserPrivileges($user);
     }

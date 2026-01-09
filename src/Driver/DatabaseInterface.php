@@ -3,11 +3,11 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Exception;
-use Lagdo\DbAdmin\Driver\Entity\RoutineEntity;
-use Lagdo\DbAdmin\Driver\Entity\RoutineInfoEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
-use Lagdo\DbAdmin\Driver\Entity\UserTypeEntity;
+use Lagdo\DbAdmin\Driver\Dto\RoutineDto;
+use Lagdo\DbAdmin\Driver\Dto\RoutineInfoDto;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Dto\UserTypeDto;
 
 interface DatabaseInterface
 {
@@ -15,8 +15,8 @@ interface DatabaseInterface
      * Alter indexes
      *
      * @param string $table Escaped table name
-     * @param array $alter  Indexes to alter. Array of IndexEntity.
-     * @param array $drop   Indexes to drop. Array of IndexEntity.
+     * @param array $alter  Indexes to alter. Array of IndexDto.
+     * @param array $drop   Indexes to drop. Array of IndexDto.
      *
      * @return bool
      */
@@ -130,16 +130,16 @@ interface DatabaseInterface
      *
      * @param bool $withValues
      *
-     * @return array<UserTypeEntity>
+     * @return array<UserTypeDto>
      */
     public function userTypes(bool $withValues): array;
 
     /**
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      *
      * @return array
      */
-    public function enumValues(TableFieldEntity $field): array;
+    public function enumValues(TableFieldDto $field): array;
 
     /**
      * Get existing schemas
@@ -161,14 +161,14 @@ interface DatabaseInterface
      * @param string $name
      * @param string $type "FUNCTION" or "PROCEDURE"
      *
-     * @return RoutineInfoEntity|null
+     * @return RoutineInfoDto|null
      */
-    public function routine(string $name, string $type): RoutineInfoEntity|null;
+    public function routine(string $name, string $type): RoutineInfoDto|null;
 
     /**
      * Get list of routines
      *
-     * @return array<RoutineEntity>
+     * @return array<RoutineDto>
      */
     public function routines(): array;
 

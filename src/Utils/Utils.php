@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Utils;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 
 use function array_key_exists;
 use function in_array;
@@ -151,12 +151,12 @@ class Utils
     /**
      * Check if the field is a blob
      *
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      * @param array $userTypes
      *
      * @return bool
      */
-    public function isBlob(TableFieldEntity $field, array $userTypes = []): bool
+    public function isBlob(TableFieldDto $field, array $userTypes = []): bool
     {
         return preg_match('~blob|bytea|raw|file~', $field->type) &&
             !in_array($field->type, $userTypes);

@@ -1,11 +1,11 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Entity;
+namespace Lagdo\DbAdmin\Driver\Dto;
 
 use function count;
 use function implode;
 
-class TableSelectEntity
+class TableSelectDto
 {
     /**
      * The table name

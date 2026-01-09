@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\PreparedStatement;
 use Lagdo\DbAdmin\Driver\Db\StatementInterface;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 
 interface ConnectionInterface
 {
@@ -120,11 +120,11 @@ interface ConnectionInterface
      * Convert value returned by database to actual value
      *
      * @param string|resource|null $value
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      *
      * @return mixed
      */
-    public function value($value, TableFieldEntity $field): mixed;
+    public function value($value, TableFieldDto $field): mixed;
 
     /**
      * Explain select

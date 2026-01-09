@@ -4,8 +4,8 @@ namespace Lagdo\DbAdmin\Driver\Db;
 
 use Lagdo\DbAdmin\Driver\DriverInterface;
 use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
-use Lagdo\DbAdmin\Driver\Entity\TableEntity;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableDto;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Exception;
 
@@ -88,7 +88,7 @@ abstract class AbstractQuery implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function countRows(TableEntity $tableStatus, array $where): int|null
+    public function countRows(TableDto $tableStatus, array $where): int|null
     {
         return null;
     }
@@ -96,7 +96,7 @@ abstract class AbstractQuery implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function convertSearch(string $idf, array $value, TableFieldEntity $field): string
+    public function convertSearch(string $idf, array $value, TableFieldDto $field): string
     {
         return $idf;
     }
@@ -186,13 +186,13 @@ abstract class AbstractQuery implements QueryInterface
     }
 
     /**
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      * @param string $column
      * @param string $value
      *
      * @return string
      */
-    private function getWhereColumnClause(TableFieldEntity $field, string $column, string $value): string
+    private function getWhereColumnClause(TableFieldDto $field, string $column, string $value): string
     {
         $bUseSqlLike = $this->driver->jush() === 'sql' && is_numeric($value) && preg_match('~\.~', $value);
         return $column . match(true) {
@@ -205,13 +205,13 @@ abstract class AbstractQuery implements QueryInterface
     }
 
     /**
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      * @param string $column
      * @param string $value
      *
      * @return string
      */
-    private function getWhereCollateClause(TableFieldEntity $field, string $column, string $value): string
+    private function getWhereCollateClause(TableFieldDto $field, string $column, string $value): string
     {
         $collate = $this->driver->jush() === 'sql' &&
             preg_match('~char|text~', $field->type) &&
@@ -241,7 +241,7 @@ abstract class AbstractQuery implements QueryInterface
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string
-     * @param array<TableFieldEntity> $fields
+     * @param array<TableFieldDto> $fields
      *
      * @return string
      */

@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Driver;
 
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 
 interface ConfigInterface
 {
@@ -77,11 +77,11 @@ interface ConfigInterface
     public function typeExists(string $type): bool;
 
     /**
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      *
      * @return int
      */
-    public function typeLength(TableFieldEntity $field): int;
+    public function typeLength(TableFieldDto $field): int;
 
     /**
      * Get the driver options

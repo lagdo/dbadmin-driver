@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Driver;
 
 use Lagdo\DbAdmin\Driver\Db\DriverConfig;
-use Lagdo\DbAdmin\Driver\Entity\TableFieldEntity;
+use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
 
 use function array_map;
 use function array_merge;
@@ -127,11 +127,11 @@ trait ConfigTrait
     }
 
     /**
-     * @param TableFieldEntity $field
+     * @param TableFieldDto $field
      *
      * @return int
      */
-    public function typeLength(TableFieldEntity $field): int
+    public function typeLength(TableFieldDto $field): int
     {
         foreach ($this->config->types as $types) {
             if (isset($types[$field->type])) {
