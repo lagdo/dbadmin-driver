@@ -9,11 +9,11 @@ use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Closure;
 
 use function array_map;
-use function array_key_exists;
 use function count;
 use function implode;
 use function is_array;
 use function is_resource;
+use function key_exists;
 use function preg_match_all;
 use function stream_get_contents;
 use function strlen;
@@ -83,22 +83,18 @@ abstract class AbstractConnection implements ConnectionInterface
      *
      * @return mixed
      */
-    protected function options(string $name, $default = ''): mixed
+    protected function options(string $name = '', $default = ''): mixed
     {
         if (!($name = trim($name))) {
             return $this->options;
         }
-        if (array_key_exists($name, $this->options)) {
+        if (key_exists($name, $this->options)) {
             return $this->options[$name];
         }
         if ($name === 'server') {
             $server = $this->options['host'] ?? '';
-            $port = $this->options['port'] ?? ''; // Optional
-            // Append the port to the host if it is defined.
-            if (($port)) {
-                $server .= ":$port";
-            }
-            return $server;
+            return key_exists('port', $this->options) ?
+                $server . ":" . $this->options['port'] : $server;
         }
         // if ($name === 'ssl') {
         //     return false; // No SSL options yet
