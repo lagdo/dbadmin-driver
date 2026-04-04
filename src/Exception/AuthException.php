@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Exception;
+namespace Lagdo\DbAdmin\Support\Exception;
 
 use Exception;
 

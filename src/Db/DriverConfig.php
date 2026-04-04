@@ -1,11 +1,9 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Db;
+namespace Lagdo\DbAdmin\Support\Db;
 
-use Lagdo\DbAdmin\Driver\Utils\TranslatorInterface;
+use Lagdo\DbAdmin\Support\Utils\TranslatorInterface;
 
-use function array_keys;
-use function array_merge;
 use function explode;
 
 class DriverConfig

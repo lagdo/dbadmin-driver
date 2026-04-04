@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Utils;
+namespace Lagdo\DbAdmin\Support\Utils;
 
 use function str_replace;
 use function preg_replace;

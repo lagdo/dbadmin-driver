@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Lagdo\\DbAdmin\\Driver\\": "src/"
+            "Lagdo\\DbAdmin\\Support\\": "src/"
         }
     }
 }

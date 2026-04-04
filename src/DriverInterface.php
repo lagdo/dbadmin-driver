@@ -1,25 +1,27 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Support;
 
-use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
-use Lagdo\DbAdmin\Driver\Driver\ConfigInterface;
-use Lagdo\DbAdmin\Driver\Driver\ConnectionInterface;
-use Lagdo\DbAdmin\Driver\Driver\DatabaseInterface;
-use Lagdo\DbAdmin\Driver\Driver\GrammarInterface;
-use Lagdo\DbAdmin\Driver\Driver\QueryInterface;
-use Lagdo\DbAdmin\Driver\Driver\ServerInterface;
-use Lagdo\DbAdmin\Driver\Driver\TableInterface;
+use Lagdo\DbAdmin\Support\Db\Engine\Driver\AbstractConnection;
+use Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
-interface DriverInterface extends ConfigInterface, ServerInterface, DatabaseInterface,
-    TableInterface, QueryInterface, GrammarInterface, ConnectionInterface
+interface DriverInterface extends Driver\ConfigInterface,
+    Driver\ConnectionInterface, Driver\ServerInterface,
+    Driver\DatabaseInterface, Driver\TableInterface, Driver\QueryInterface
 {
     /**
      * Get the driver name
      *
      * @return string
      */
-    public function name();
+    public function name(): string;
+
+    /**
+     * Get the driver grammar
+     *
+     * @return GrammarInterface
+     */
+    public function grammar(): GrammarInterface;
 
     /**
      * Create a connection to a server

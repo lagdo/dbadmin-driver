@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Dto;
+namespace Lagdo\DbAdmin\Support\Dto;
 
 /**
  * Formatted inputs for a table column.

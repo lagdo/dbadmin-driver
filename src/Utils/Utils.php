@@ -1,8 +1,8 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver\Utils;
+namespace Lagdo\DbAdmin\Support\Utils;
 
-use Lagdo\DbAdmin\Driver\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 
 use function array_key_exists;
 use function in_array;
@@ -32,6 +32,18 @@ class Utils
     public function html(string $string): string
     {
         return $this->str->html($string);
+    }
+
+    /**
+     * Get a translated string
+     *
+     * @param string $idf
+     *
+     * @return string
+     */
+    public function lang(string $idf, ...$params): string
+    {
+        return $this->trans->lang($idf, ...$params);
     }
 
     /**

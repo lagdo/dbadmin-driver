@@ -1,11 +1,11 @@
 <?php
 
-namespace Lagdo\DbAdmin\Driver;
+namespace Lagdo\DbAdmin\Support;
 
-use Lagdo\DbAdmin\Driver\Db\AbstractConnection;
-use Lagdo\DbAdmin\Driver\Db\DriverConfig;
-use Lagdo\DbAdmin\Driver\Exception\AuthException;
-use Lagdo\DbAdmin\Driver\Utils\Utils;
+use Lagdo\DbAdmin\Support\Db\DriverConfig;
+use Lagdo\DbAdmin\Support\Db\Engine\Driver\AbstractConnection;
+use Lagdo\DbAdmin\Support\Exception\AuthException;
+use Lagdo\DbAdmin\Support\Utils\Utils;
 use Closure;
 
 use function preg_match;
@@ -13,13 +13,12 @@ use function version_compare;
 
 abstract class AbstractDriver implements DriverInterface
 {
-    use Driver\ConfigTrait;
-    use Driver\ConnectionTrait;
-    use Driver\ServerTrait;
-    use Driver\TableTrait;
-    use Driver\DatabaseTrait;
-    use Driver\QueryTrait;
-    use Driver\GrammarTrait;
+    use Db\Admin\Driver\ConfigTrait;
+    use Db\Admin\Driver\ConnectionTrait;
+    use Db\Admin\Driver\ServerTrait;
+    use Db\Admin\Driver\TableTrait;
+    use Db\Admin\Driver\DatabaseTrait;
+    use Db\Admin\Driver\QueryTrait;
 
     /**
      * @var array
