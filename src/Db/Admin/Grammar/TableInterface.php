@@ -38,12 +38,12 @@ interface TableInterface
      *
      * @return string
      */
-    public function getTableDefinitionQueries(string $table, bool $autoIncrement, string $style): string;
+    public function getExportTableQueries(string $table, bool $autoIncrement, string $style): string;
 
     /**
      * Get SQL command to create foreign keys
      *
-     * getTableDefinitionQueries() produces CREATE TABLE without FK CONSTRAINTs
+     * getExportTableQueries() produces CREATE TABLE without FK CONSTRAINTs
      * getForeignKeyQueries() produces all FK CONSTRAINTs as ALTER TABLE ... ADD CONSTRAINT
      * so that all FKs can be added after all tables have been created, avoiding any need
      * to reorder CREATE TABLE statements in order of their FK dependencies

@@ -43,9 +43,9 @@ trait TableTrait
     /**
      * @inheritDoc
      */
-    public function getTableDefinitionQueries(string $table, bool $autoIncrement, string $style): string
+    public function getExportTableQueries(string $table, bool $autoIncrement, string $style): string
     {
-        return $this->_table()->getTableDefinitionQueries($table, $autoIncrement, $style);
+        return $this->_table()->getExportTableQueries($table, $autoIncrement, $style);
     }
 
     /**
