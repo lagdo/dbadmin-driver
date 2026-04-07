@@ -82,4 +82,23 @@ interface DatabaseInterface
      * @return array<string>
      */
     public function getTruncateTablesQueries(array $tables): array;
+
+    /**
+     * Command to update a view
+     *
+     * @param string $view The view name
+     * @param array $values The view values
+     *
+     * @return array<string>
+     */
+    public function getUpdateViewQueries(string $view, array $values): array;
+
+    /**
+     * Command to drop a view
+     *
+     * @param string $view The view name
+     *
+     * @return string
+     */
+    public function getDropViewQuery(string $view): string;
 }

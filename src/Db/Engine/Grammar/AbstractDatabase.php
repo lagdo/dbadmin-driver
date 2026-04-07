@@ -8,6 +8,9 @@ use Lagdo\DbAdmin\Support\GrammarInterface;
 use Lagdo\DbAdmin\Support\Utils\Utils;
 
 use function preg_match;
+use function strtoupper;
+use function trim;
+use function uniqid;
 
 abstract class AbstractDatabase implements DatabaseInterface
 {
@@ -42,5 +45,48 @@ abstract class AbstractDatabase implements DatabaseInterface
     public function getCharsetQuery(): string
     {
         return !$this->setCharset ? '' : 'SET NAMES ' . $this->driver->charset() . ";\n\n";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUpdateViewQueries(string $view, array $values): array
+    {
+        // From view.inc.php
+        $origType = 'VIEW';
+        if ($this->driver->jush() === 'pgsql') {
+            $status = $this->driver->tableStatus($view);
+            $origType = strtoupper($status->engine);
+        }
+
+        $name = trim($values['name']);
+        $type = $values['materialized'] ? 'MATERIALIZED VIEW' : 'VIEW';
+        $tempName = "{$name}_dbadmin_" . uniqid();
+
+        $view = $this->grammar->escapeTableName($view);
+        $name = $this->grammar->escapeTableName($name);
+        $tempName = $this->grammar->escapeTableName($tempName);
+        return [
+            "DROP $origType $view",
+            "CREATE $type $name AS\n" . $values['select'],
+            "DROP $type $name",
+            "CREATE $type $tempName AS\n" . $values['select'],
+            "DROP $type $tempName",
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDropViewQuery(string $view): string
+    {
+        // From view.inc.php
+        $origType = 'VIEW';
+        if ($this->driver->jush() == 'pgsql') {
+            $status = $this->driver->tableStatus($view);
+            $origType = strtoupper($status->engine);
+        }
+
+        return "DROP $origType " . $this->grammar->escapeTableName($view);
     }
 }

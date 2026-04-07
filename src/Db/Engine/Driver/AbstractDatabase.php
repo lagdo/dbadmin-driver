@@ -11,9 +11,7 @@ use Lagdo\DbAdmin\Support\Utils\Utils;
 use Exception;
 
 use function count;
-use function strtoupper;
 use function trim;
-use function uniqid;
 
 abstract class AbstractDatabase implements DatabaseInterface
 {
@@ -100,10 +98,10 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      * Drop old object and create a new one
      *
-     * @param string $drop Drop old object query
-     * @param string $create Create new object query
+     * @param string $dropOrig Drop old object query
+     * @param string $createNew Create new object query
      * @param string $dropCreated Drop new object query
-     * @param string $test Create test object query
+     * @param string $createTest Create test object query
      * @param string $dropTest Drop test object query
      * @param string $oldName
      * @param string $newName
@@ -111,29 +109,31 @@ abstract class AbstractDatabase implements DatabaseInterface
      * @return string
      * @throws Exception
      */
-    private function dropAndCreate(string $drop, string $create, string $dropCreated,
-        string $test, string $dropTest, string $oldName, string $newName): string
+    private function dropAndCreate(string $dropOrig, string $createNew, string $dropCreated,
+        string $createTest, string $dropTest, string $oldName, string $newName): string
     {
-        if ($oldName == '' && $newName == '') {
-            $this->driver->executeQuery($drop);
+        if ($oldName === '' && $newName === '') {
+            $this->driver->executeQuery($dropOrig);
             return 'dropped';
         }
-        if ($oldName == '') {
-            $this->driver->executeQuery($create);
+        if ($oldName === '') {
+            $this->driver->executeQuery($createNew);
             return 'created';
         }
-        if ($oldName != $newName) {
-            $created = $this->driver->execute($create);
-            $dropped = $this->driver->execute($drop);
-            // $this->executeSavedQuery(!($created && $this->driver->execute($drop)));
+        if ($oldName !== $newName) {
+            $created = $this->driver->execute($createNew);
+            $dropped = $this->driver->execute($dropOrig);
+            // $this->executeSavedQuery(!($created && $this->driver->execute($dropOrig)));
             if (!$dropped && $created) {
                 $this->driver->execute($dropCreated);
             }
             return 'altered';
         }
-        /*$this->executeSavedQuery(!($this->driver->execute($test) &&
+
+        /*$this->executeSavedQuery(!($this->driver->execute($createTest) &&
             $this->driver->execute($dropTest) &&
-            $this->driver->execute($drop) && $this->driver->execute($create)));*/
+            $this->driver->execute($dropOrig) &&
+            $this->driver->execute($createNew)));*/
         return 'altered';
     }
 
@@ -142,22 +142,10 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function updateView(string $view, array $values): string
     {
-        // From view.inc.php
-        $origType = 'VIEW';
-        if ($this->driver->jush() === 'pgsql') {
-            $status = $this->driver->tableStatus($view);
-            $origType = strtoupper($status->engine);
-        }
-
-        $name = trim($values['name']);
-        $type = $values['materialized'] ? 'MATERIALIZED VIEW' : 'VIEW';
-        $tempName = $name . '_adminer_' . uniqid();
-
-        return $this->dropAndCreate("DROP $origType " . $this->grammar->escapeTableName($view),
-            "CREATE $type " . $this->grammar->escapeTableName($name) . " AS\n" . $values['select'],
-            "DROP $type " . $this->grammar->escapeTableName($name),
-            "CREATE $type " . $this->grammar->escapeTableName($tempName) . " AS\n" . $values['select'],
-            "DROP $type " . $this->grammar->escapeTableName($tempName), $view, $name);
+        [$dropOrig, $createNew, $dropCreated, $createTest, $dropTest] =
+            $this->grammar->getUpdateViewQueries($view, $values);
+        return $this->dropAndCreate($dropOrig, $createNew, $dropCreated,
+            $createTest, $dropTest, $view, trim($values['name']));
     }
 
     /**
@@ -170,15 +158,7 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function dropView(string $view): bool
     {
-        // From view.inc.php
-        $origType = 'VIEW';
-        if ($this->driver->jush() == 'pgsql') {
-            $status = $this->driver->tableStatus($view);
-            $origType = strtoupper($status->engine);
-        }
-
-        $sql = "DROP $origType " . $this->grammar->escapeTableName($view);
-        return $this->driver->executeQuery($sql);
+        return $this->driver->executeQuery($this->grammar->getDropViewQuery($view));
     }
 
     /**

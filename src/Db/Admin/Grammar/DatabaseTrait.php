@@ -80,4 +80,20 @@ trait DatabaseTrait
     {
         return $this->_database()->getTruncateTablesQueries($tables);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUpdateViewQueries(string $view, array $values): array
+    {
+        return $this->_database()->getUpdateViewQueries($view, $values);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDropViewQuery(string $view): string
+    {
+        return $this->_database()->getDropViewQuery($view);
+    }
 }
