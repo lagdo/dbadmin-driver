@@ -7,11 +7,60 @@ use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 interface ConfigInterface
 {
     /**
-     * Get the server jush
+     * Get the database engine name
      *
      * @return string
      */
     public function jush(): string;
+
+    /**
+     * Check if the driver is MySQL or MariaDB.
+     *
+     * @return bool
+     */
+    public function sql(): bool;
+
+    /**
+     * Check if the driver is MySQL.
+     *
+     * @return bool
+     */
+    public function mysql(): bool;
+
+    /**
+     * Check if the driver is MariaDB.
+     *
+     * @return bool
+     */
+    public function maria(): bool;
+
+    /**
+     * Check if the driver is PostgreSQL.
+     *
+     * @return bool
+     */
+    public function pgsql(): bool;
+
+    /**
+     * Check if the driver is SQLite.
+     *
+     * @return bool
+     */
+    public function sqlite(): bool;
+
+    /**
+     * Check if the driver is Microsoft SQL Server.
+     *
+     * @return bool
+     */
+    public function mssql(): bool;
+
+    /**
+     * Check if the driver is Oracle.
+     *
+     * @return bool
+     */
+    public function oracle(): bool;
 
     /**
      * Get the Adminer version

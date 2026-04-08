@@ -70,7 +70,7 @@ abstract class AbstractQuery implements QueryInterface
         if (!empty($where)) {
             $query .= ' WHERE ' . implode(' AND ', $where);
         }
-        return ($isGroup && ($this->driver->jush() == 'sql' || count($groups) == 1) ?
+        return ($isGroup && ($this->driver->sql() || count($groups) == 1) ?
             'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query" :
             'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " .
             implode(', ', $groups) . ') x' : $query)
@@ -94,7 +94,7 @@ abstract class AbstractQuery implements QueryInterface
     {
         $table = $this->grammar->escapeTableName($table);
         if (empty($values)) {
-            return $this->driver->jush() === 'mysql' ?
+            return $this->driver->sql() ?
                 "INSERT INTO $table () VALUES ()" :
                 "INSERT INTO $table DEFAULT VALUES";
         }

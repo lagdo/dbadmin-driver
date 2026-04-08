@@ -90,7 +90,7 @@ abstract class AbstractDatabase implements DatabaseInterface
         $name = trim($values['name']);
         $type = $values['materialized'] ? ' MATERIALIZED VIEW ' : ' VIEW ';
 
-        $sql = ($this->driver->jush() === 'mssql' ? 'ALTER' : 'CREATE OR REPLACE') .
+        $sql = ($this->driver->mssql() ? 'ALTER' : 'CREATE OR REPLACE') .
             $type . $this->grammar->escapeTableName($name) . " AS\n" . $values['select'];
         return $this->driver->executeQuery($sql);
     }

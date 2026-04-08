@@ -19,13 +19,78 @@ trait ConfigTrait
     protected $config;
 
     /**
-     * Get the server jush
+     * Get the database engine name
      *
      * @return string
      */
     public function jush(): string
     {
         return $this->config->jush;
+    }
+
+    /**
+     * Get the database flavor
+     *
+     * @return string
+     */
+    abstract public function flavor(): string;
+
+    /**
+     * Check if the driver is MySQL or MariaDB.
+     *
+     * @return bool
+     */
+    public function sql(): bool
+    {
+        return $this->jush() === 'sql';
+    }
+
+    /**
+     * @return bool
+     */
+    public function mysql(): bool
+    {
+        return $this->jush() === 'sql' && $this->flavor() === 'mysql';
+    }
+
+    /**
+     * @return bool
+     */
+    public function maria(): bool
+    {
+        return $this->jush() === 'sql' && $this->flavor() === 'maria';
+    }
+
+    /**
+     * @return bool
+     */
+    public function pgsql(): bool
+    {
+        return $this->jush() === 'pgsql';
+    }
+
+    /**
+     * @return bool
+     */
+    public function sqlite(): bool
+    {
+        return $this->jush() === 'sqlite';
+    }
+
+    /**
+     * @return bool
+     */
+    public function mssql(): bool
+    {
+        return $this->jush() === 'mssql';
+    }
+
+    /**
+     * @return bool
+     */
+    public function oracle(): bool
+    {
+        return $this->jush() === 'oracle';
     }
 
     /**
@@ -99,7 +164,7 @@ trait ConfigTrait
      */
     public function structuredTypes(): array
     {
-        return array_map(fn(array $types) => array_keys($types), $this->config->types);
+        return array_map(array_keys(...), $this->config->types);
     }
 
     /**

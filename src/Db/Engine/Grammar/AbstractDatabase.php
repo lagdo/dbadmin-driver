@@ -54,7 +54,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         // From view.inc.php
         $origType = 'VIEW';
-        if ($this->driver->jush() === 'pgsql') {
+        if ($this->driver->pgsql()) {
             $status = $this->driver->tableStatus($view);
             $origType = strtoupper($status->engine);
         }
@@ -82,7 +82,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         // From view.inc.php
         $origType = 'VIEW';
-        if ($this->driver->jush() == 'pgsql') {
+        if ($this->driver->pgsql()) {
             $status = $this->driver->tableStatus($view);
             $origType = strtoupper($status->engine);
         }

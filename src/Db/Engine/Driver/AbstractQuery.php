@@ -183,10 +183,10 @@ abstract class AbstractQuery implements QueryInterface
      */
     private function getWhereColumnClause(TableFieldDto $field, string $column, string $value): string
     {
-        $bUseSqlLike = $this->driver->jush() === 'sql' && is_numeric($value) && preg_match('~\.~', $value);
+        $bUseSqlLike = $this->driver->sql() && is_numeric($value) && preg_match('~\.~', $value);
         return $column . match(true) {
             $bUseSqlLike => ' LIKE ' . $this->driver->quote($value),
-            $this->driver->jush() === 'mssql' => // LIKE because of text
+            $this->driver->mssql() => // LIKE because of text
                 ' LIKE ' . $this->driver->quote(preg_replace('~[_%[]~', '[\0]', $value)),
             //! enum and set
             default => ' = ' . $this->grammar->unconvertField($field, $this->driver->quote($value)),
@@ -202,7 +202,7 @@ abstract class AbstractQuery implements QueryInterface
      */
     private function getWhereCollateClause(TableFieldDto $field, string $column, string $value): string
     {
-        $collate = $this->driver->jush() === 'sql' &&
+        $collate = $this->driver->sql() &&
             preg_match('~char|text~', $field->type) &&
             preg_match("~[^ -@]~", $value);
         return !$collate ? '' :

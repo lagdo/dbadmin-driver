@@ -91,10 +91,10 @@ class DriverConfig
     // Original code from Adminer
     // {
     //     $parse = '[\'"' .
-    //         ($this->driver->jush() == "sql" ? '`#' :
-    //         ($this->driver->jush() == "sqlite" ? '`[' :
-    //         ($this->driver->jush() == "mssql" ? '[' : ''))) . ']|/\*|-- |$' .
-    //         ($this->driver->jush() == "pgsql" ? '|\$[^$]*\$' : '');
+    //         ($this->driver->sql() ? '`#' :
+    //         ($this->driver->sqlite() ? '`[' :
+    //         ($this->driver->mssql() ? '[' : ''))) . ']|/\*|-- |$' .
+    //         ($this->driver->pgsql() ? '|\$[^$]*\$' : '');
     //     return "\\s*|$parse";
     // }
 

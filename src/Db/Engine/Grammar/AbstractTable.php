@@ -128,7 +128,7 @@ abstract class AbstractTable implements TableInterface
             in_array($field->unsigned, $this->driver->unsigned()) ?
             " {$field->unsigned}" : "";
         $collation = preg_match('~char|text|enum|set~', $field->type) &&
-            $field->collation ? " $collate " . ($this->driver->jush() === 'mssql' ?
+            $field->collation ? " $collate " . ($this->driver->mssql() ?
                 $field->collation : $this->driver->quote($field->collation)) : "";
         return " {$field->type}{$length}{$type}{$collation}";
     }
