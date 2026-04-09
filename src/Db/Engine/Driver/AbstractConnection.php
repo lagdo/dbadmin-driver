@@ -192,11 +192,10 @@ abstract class AbstractConnection implements ConnectionInterface
             $field = $this->defaultField();
         }
         $result = $this->query($query);
-        if (!$result || !$result->rowCount()) {
+        if (!$result || $result === true || $result->rowCount() === 0) {
             return null;
         }
 
-        // return pg_fetch_result($result->result, 0, $field);
         $row = $result->fetchRow();
         return is_array($row) && count($row) > $field ? $row[$field] : null;
     }
