@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Support\Db\Engine\Connection\Pdo;
 
 use Lagdo\DbAdmin\Support\Db\Engine\Connection\PreparedStatement;
 use Lagdo\DbAdmin\Support\Db\Engine\Connection\StatementInterface;
-use Lagdo\DbAdmin\Support\Db\Engine\Driver\AbstractConnection as BaseConnection;
+use Lagdo\DbAdmin\Support\Db\Engine\Connection\AbstractConnection as BaseConnection;
 use Lagdo\Facades\Logger;
 use Exception;
 use PDO;

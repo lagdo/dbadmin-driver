@@ -2,10 +2,25 @@
 
 namespace Lagdo\DbAdmin\Support;
 
+use Lagdo\DbAdmin\Support\Db\Admin;
+use Lagdo\DbAdmin\Support\Db\Engine;
+use Lagdo\DbAdmin\Support\Utils\Utils;
+
 abstract class AbstractGrammar implements GrammarInterface
 {
-    use Db\Admin\Grammar\SyntaxTrait;
-    use Db\Admin\Grammar\DatabaseTrait;
-    use Db\Admin\Grammar\TableTrait;
-    use Db\Admin\Grammar\QueryTrait;
+    /**
+     * @param AbstractDriver $driver
+     * @param Utils $utils
+     */
+    public function __construct(protected AbstractDriver $driver, protected Utils $utils)
+    {}
+
+    use Admin\Grammar\SyntaxTrait;
+    use Engine\Grammar\SyntaxTrait;
+    use Admin\Grammar\DatabaseTrait;
+    use Engine\Grammar\DatabaseTrait;
+    use Admin\Grammar\TableTrait;
+    use Engine\Grammar\TableTrait;
+    use Admin\Grammar\QueryTrait;
+    use Engine\Grammar\QueryTrait;
 }

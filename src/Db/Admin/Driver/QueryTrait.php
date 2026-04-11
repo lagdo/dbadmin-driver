@@ -3,16 +3,22 @@
 namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
 use Lagdo\DbAdmin\Support\Db\Engine\Connection\StatementInterface;
-use Lagdo\DbAdmin\Support\Dto\TableDto;
-use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 use Exception;
 
 trait QueryTrait
 {
     /**
+     * @var QueryInterface
+     */
+    private QueryInterface $query;
+
+    /**
      * @return QueryInterface
      */
-    abstract protected function _query(): QueryInterface;
+    private function _q(): QueryInterface
+    {
+        return $this->query ??= new Query($this, $this->grammar(), $this->utils);
+    }
 
     /**
      * Select data from table
@@ -30,7 +36,7 @@ trait QueryTrait
     public function select(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
-        return $this->_query()->select($table, $select, $where, $group, $order, $limit, $page);
+        return $this->_q()->select($table, $select, $where, $group, $order, $limit, $page);
     }
 
     /**
@@ -43,7 +49,7 @@ trait QueryTrait
      */
     public function insert(string $table, array $values): bool
     {
-        return $this->_query()->insert($table, $values);
+        return $this->_q()->insert($table, $values);
     }
 
     /**
@@ -58,7 +64,7 @@ trait QueryTrait
      */
     public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool
     {
-        return $this->_query()->update($table, $values, $queryWhere, $limit);
+        return $this->_q()->update($table, $values, $queryWhere, $limit);
     }
 
     /**
@@ -72,7 +78,7 @@ trait QueryTrait
      */
     public function delete(string $table, string $queryWhere, int $limit = 0): bool
     {
-        return $this->_query()->delete($table, $queryWhere, $limit);
+        return $this->_q()->delete($table, $queryWhere, $limit);
     }
 
     /**
@@ -86,31 +92,8 @@ trait QueryTrait
      */
     // public function insertOrUpdate(string $table, array $rows, array $primary): bool
     // {
-    //     return $this->_query()->insertOrUpdate($table, $rows, $primary);
+    //     return $this->_q()->insertOrUpdate($table, $rows, $primary);
     // }
-
-    /**
-     * Get last auto increment ID
-     *
-     * @return string
-     */
-    public function lastAutoIncrementId(): string
-    {
-        return $this->_query()->lastAutoIncrementId();
-    }
-
-    /**
-     * Return query with a timeout
-     *
-     * @param string $query
-     * @param int $timeout In seconds
-     *
-     * @return string or null if the driver doesn't support query timeouts
-     */
-    public function slowQuery(string $query, int $timeout): string|null
-    {
-        return $this->_query()->slowQuery($query, $timeout);
-    }
 
     /**
      * Execute query
@@ -125,7 +108,7 @@ trait QueryTrait
     public function executeQuery(string $query, bool $execute = true,
         bool $failed = false/*, string $time = ''*/): bool
     {
-        return $this->_query()->executeQuery($query, $execute, $failed/*, $time*/);
+        return $this->_q()->executeQuery($query, $execute, $failed/*, $time*/);
     }
 
     /**
@@ -138,20 +121,7 @@ trait QueryTrait
      */
     public function where(array $where, array $fields = []): string
     {
-        return $this->_query()->where($where, $fields);
-    }
-
-    /**
-     * Get approximate number of rows
-     *
-     * @param TableDto $tableStatus
-     * @param array $where
-     *
-     * @return int|null
-     */
-    public function countRows(TableDto $tableStatus, array $where): int|null
-    {
-        return $this->_query()->countRows($tableStatus, $where);
+        return $this->_q()->where($where, $fields);
     }
 
     /**
@@ -159,7 +129,7 @@ trait QueryTrait
      */
     public function applyQueries(string $query, array $tables, $escape = null): bool
     {
-        return $this->_query()->applyQueries($query, $tables, $escape);
+        return $this->_q()->applyQueries($query, $tables, $escape);
     }
 
     /**
@@ -167,7 +137,7 @@ trait QueryTrait
      */
     public function values(string $query, int $column = 0): array
     {
-        return $this->_query()->values($query, $column);
+        return $this->_q()->values($query, $column);
     }
 
     /**
@@ -175,7 +145,7 @@ trait QueryTrait
      */
     public function colValues(string $query, string $column): array
     {
-        return $this->_query()->colValues($query, $column);
+        return $this->_q()->colValues($query, $column);
     }
 
     /**
@@ -183,7 +153,7 @@ trait QueryTrait
      */
     public function rows(string $query): array
     {
-        return $this->_query()->rows($query);
+        return $this->_q()->rows($query);
     }
 
     /**
@@ -191,33 +161,7 @@ trait QueryTrait
      */
     public function keyValues(string $query, bool $setKeys = true): array
     {
-        return $this->_query()->keyValues($query, $setKeys);
-    }
-
-    /**
-     * Convert column to be searchable
-     *
-     * @param string $idf Escaped column name
-     * @param array $value ["op" => , "val" => ]
-     * @param TableFieldDto $field
-     *
-     * @return string
-     */
-    public function convertSearch(string $idf, array $value, TableFieldDto $field): string
-    {
-        return $this->_query()->convertSearch($idf, $value, $field);
-    }
-
-    /**
-     * Get view SELECT
-     *
-     * @param string $name
-     *
-     * @return array array("select" => )
-     */
-    public function view(string $name): array
-    {
-        return $this->_query()->view($name);
+        return $this->_q()->keyValues($query, $setKeys);
     }
 
     /**
@@ -225,7 +169,7 @@ trait QueryTrait
      */
     public function execute(string $query): StatementInterface|bool
     {
-        return $this->_query()->execute($query);
+        return $this->_q()->execute($query);
     }
 
     /**
@@ -233,7 +177,7 @@ trait QueryTrait
      */
     public function begin(): bool
     {
-        return $this->_query()->begin();
+        return $this->_q()->begin();
     }
 
     /**
@@ -241,7 +185,7 @@ trait QueryTrait
      */
     public function commit(): bool
     {
-        return $this->_query()->commit();
+        return $this->_q()->commit();
     }
 
     /**
@@ -249,6 +193,6 @@ trait QueryTrait
      */
     public function rollback(): bool
     {
-        return $this->_query()->rollback();
+        return $this->_q()->rollback();
     }
 }

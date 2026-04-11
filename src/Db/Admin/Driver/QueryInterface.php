@@ -3,12 +3,40 @@
 namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
 use Lagdo\DbAdmin\Support\Db\Engine\Connection\StatementInterface;
-use Lagdo\DbAdmin\Support\Dto\TableDto;
-use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 use Exception;
 
 interface QueryInterface
 {
+    /**
+     * Execute and remember query
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
+     */
+    public function execute(string $query): StatementInterface|bool;
+
+    /**
+     * Begin transaction
+     *
+     * @return bool
+     */
+    public function begin(): bool;
+
+    /**
+     * Commit transaction
+     *
+     * @return bool
+     */
+    public function commit(): bool;
+
+    /**
+     * Rollback transaction
+     *
+     * @return bool
+     */
+    public function rollback(): bool;
+
     /**
      * Select data from table
      *
@@ -59,34 +87,6 @@ interface QueryInterface
     public function delete(string $table, string $queryWhere, int $limit = 0): bool;
 
     /**
-     * Insert or update data in table
-     *
-     * @param string $table
-     * @param array $rows
-     * @param array $primary of arrays with escaped columns in keys and quoted data in values
-     *
-     * @return bool
-     */
-    // public function insertOrUpdate(string $table, array $rows, array $primary): bool;
-
-    /**
-     * Get last auto increment ID
-     *
-     * @return string
-     */
-    public function lastAutoIncrementId(): string;
-
-    /**
-     * Return query with a timeout
-     *
-     * @param string $query
-     * @param int $timeout In seconds
-     *
-     * @return string|null
-     */
-    public function slowQuery(string $query, int $timeout): string|null;
-
-    /**
      * Execute query
      *
      * @param string $query
@@ -110,25 +110,13 @@ interface QueryInterface
     public function where(array $where, array $fields = []): string;
 
     /**
-     * Get approximate number of rows
+     * Get all rows of result
      *
-     * @param TableDto $tableStatus
-     * @param array $where
+     * @param string $query
      *
-     * @return int|null
+     * @return array
      */
-    public function countRows(TableDto $tableStatus, array $where): int|null;
-
-    /**
-     * Convert column to be searchable
-     *
-     * @param string $idf escaped column name
-     * @param array $value array("op" => , "val" => )
-     * @param TableFieldDto $field
-     *
-     * @return string
-     */
-    public function convertSearch(string $idf, array $value, TableFieldDto $field): string;
+    public function rows(string $query): array;
 
     /**
      * Apply command to all array items
@@ -170,52 +158,4 @@ interface QueryInterface
      * @return array
      */
     public function keyValues(string $query, bool $setKeys = true): array;
-
-    /**
-     * Get all rows of result
-     *
-     * @param string $query
-     *
-     * @return array
-     */
-    public function rows(string $query): array;
-
-    /**
-     * Execute and remember query
-     *
-     * @param string $query
-     *
-     * @return StatementInterface|bool
-     */
-    public function execute(string $query): StatementInterface|bool;
-
-    /**
-     * Begin transaction
-     *
-     * @return bool
-     */
-    public function begin(): bool;
-
-    /**
-     * Commit transaction
-     *
-     * @return bool
-     */
-    public function commit(): bool;
-
-    /**
-     * Rollback transaction
-     *
-     * @return bool
-     */
-    public function rollback(): bool;
-
-    /**
-     * Get view SELECT
-     *
-     * @param string $name
-     *
-     * @return array array("select" => )
-     */
-    public function view(string $name): array;
 }

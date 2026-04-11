@@ -1,8 +1,7 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Engine\Driver;
+namespace Lagdo\DbAdmin\Support\Db\Engine\Connection;
 
-use Lagdo\DbAdmin\Support\Db\Admin\Driver\ConnectionInterface;
 use Lagdo\DbAdmin\Support\DriverInterface;
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Support\GrammarInterface;

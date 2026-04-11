@@ -2,20 +2,8 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Admin\Grammar;
 
-use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
-use Lagdo\DbAdmin\Support\Dto\TableSelectDto;
-
 interface QueryInterface
 {
-    /**
-     * Select data from table
-     *
-     * @param TableSelectDto $select
-     *
-     * @return string
-     */
-    public function getTableSelectQuery(TableSelectDto $select): string;
-
     /**
      * Get query to compute number of found rows
      *
@@ -78,15 +66,6 @@ interface QueryInterface
     public function getRowDeleteQuery(string $table, string $queryWhere, int $limit = 0): string;
 
     /**
-     * Convert field in select and edit
-     *
-     * @param TableFieldDto $field one element from $this->fields()
-     *
-     * @return string
-     */
-    public function convertField(TableFieldDto $field): string;
-
-    /**
      * Get select clause for convertible fields
      *
      * @param array $columns
@@ -96,14 +75,4 @@ interface QueryInterface
      * @return string
      */
     public function convertFields(array $columns, array $fields, array $select = []): string;
-
-    /**
-     * Convert value in edit after applying functions back
-     *
-     * @param TableFieldDto $field One element from $this->fields()
-     * @param string $value
-     *
-     * @return string
-     */
-    public function unconvertField(TableFieldDto $field, string $value): string;
 }

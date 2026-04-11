@@ -1,8 +1,7 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
+namespace Lagdo\DbAdmin\Support\Db\Admin\Config;
 
-use Lagdo\DbAdmin\Support\Db\DriverConfig;
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 
 use function array_map;
@@ -16,7 +15,15 @@ trait ConfigTrait
     /**
      * @var DriverConfig
      */
-    protected $config;
+    private DriverConfig $config;
+
+    /**
+     * @return DriverConfig
+     */
+    protected function config(): DriverConfig
+    {
+        return $this->config;
+    }
 
     /**
      * Get the database engine name
@@ -25,7 +32,7 @@ trait ConfigTrait
      */
     public function jush(): string
     {
-        return $this->config->jush;
+        return $this->config()->jush;
     }
 
     /**
@@ -100,7 +107,7 @@ trait ConfigTrait
      */
     public function version(): string
     {
-        return $this->config->version;
+        return $this->config()->version;
     }
 
     /**
@@ -108,7 +115,7 @@ trait ConfigTrait
      */
     public function support(string $feature): bool
     {
-        return in_array($feature, $this->config->features);
+        return in_array($feature, $this->config()->features);
     }
 
     /**
@@ -116,7 +123,7 @@ trait ConfigTrait
      */
     public function unsigned(): array
     {
-        return $this->config->unsigned;
+        return $this->config()->unsigned;
     }
 
     /**
@@ -124,7 +131,7 @@ trait ConfigTrait
      */
     public function functions(): array
     {
-        return $this->config->functions;
+        return $this->config()->functions;
     }
 
     /**
@@ -132,7 +139,7 @@ trait ConfigTrait
      */
     public function grouping(): array
     {
-        return $this->config->grouping;
+        return $this->config()->grouping;
     }
 
     /**
@@ -140,7 +147,7 @@ trait ConfigTrait
      */
     public function operators(): array
     {
-        return $this->config->operators;
+        return $this->config()->operators;
     }
 
     /**
@@ -148,7 +155,7 @@ trait ConfigTrait
      */
     public function insertFunctions(): array
     {
-        return $this->config->insertFunctions;
+        return $this->config()->insertFunctions;
     }
 
     /**
@@ -156,7 +163,7 @@ trait ConfigTrait
      */
     public function editFunctions(): array
     {
-        return $this->config->editFunctions;
+        return $this->config()->editFunctions;
     }
 
     /**
@@ -164,7 +171,8 @@ trait ConfigTrait
      */
     public function structuredTypes(): array
     {
-        return array_map(array_keys(...), $this->config->types);
+        return $this->sqlite() ? array_keys($this->config()->types[0]) :
+            array_map(array_keys(...), $this->config()->types);
     }
 
     /**
@@ -172,8 +180,8 @@ trait ConfigTrait
      */
     public function types(): array
     {
-        // return call_user_func_array('array_merge', array_values($this->config->types));
-        return array_merge(...array_values($this->config->types));
+        // return call_user_func_array('array_merge', array_values($this->config()->types));
+        return array_merge(...array_values($this->config()->types));
     }
 
     /**
@@ -183,7 +191,7 @@ trait ConfigTrait
      */
     public function typeExists(string $type): bool
     {
-        foreach ($this->config->types as $types) {
+        foreach ($this->config()->types as $types) {
             if (isset($types[$type])) {
                 return true;
             }
@@ -198,7 +206,7 @@ trait ConfigTrait
      */
     public function typeLength(TableFieldDto $field): int
     {
-        foreach ($this->config->types as $types) {
+        foreach ($this->config()->types as $types) {
             if (isset($types[$field->type])) {
                 return $types[$field->type] + ($field->unsigned ? 0 : 1);
             }
@@ -213,7 +221,7 @@ trait ConfigTrait
      */
     public function options(): array
     {
-        return $this->config->options();
+        return $this->config()->options();
     }
 
     /**
@@ -223,7 +231,7 @@ trait ConfigTrait
      */
     public function database(): string
     {
-        return $this->config->database;
+        return $this->config()->database;
     }
 
     /**
@@ -233,7 +241,7 @@ trait ConfigTrait
      */
     public function schema(): string
     {
-        return $this->config->schema;
+        return $this->config()->schema;
     }
 
     /**
@@ -243,7 +251,7 @@ trait ConfigTrait
      */
     public function numberRegex(): string
     {
-        return $this->config->numberRegex;
+        return $this->config()->numberRegex;
     }
 
     /**
@@ -251,7 +259,7 @@ trait ConfigTrait
      */
     public function inout(): string
     {
-        return $this->config->inout;
+        return $this->config()->inout;
     }
 
     /**
@@ -259,7 +267,7 @@ trait ConfigTrait
      */
     public function sqlStatementRegex(): string
     {
-        return $this->config->sqlStatementRegex;
+        return $this->config()->sqlStatementRegex;
     }
 
     /**
@@ -267,7 +275,7 @@ trait ConfigTrait
      */
     public function enumLengthRegex(): string
     {
-        return $this->config->enumLengthRegex;
+        return $this->config()->enumLengthRegex;
     }
 
     /**
@@ -275,7 +283,7 @@ trait ConfigTrait
      */
     public function actions(): string
     {
-        return $this->config->actions;
+        return $this->config()->actions;
     }
 
     /**
@@ -283,7 +291,7 @@ trait ConfigTrait
      */
     public function onActions(): array
     {
-        return $this->config->onActions();
+        return $this->config()->onActions();
     }
 
     /**
@@ -291,6 +299,6 @@ trait ConfigTrait
      */
     public function fieldDefaults(): array
     {
-        return ['', 'DEFAULT', ...$this->config->generated];
+        return ['', 'DEFAULT', ...$this->config()->generated];
     }
 }

@@ -7,24 +7,6 @@ use Lagdo\DbAdmin\Support\Dto\QueryDto;
 interface SyntaxInterface
 {
     /**
-     * Escape database identifier
-     *
-     * @param string $idf
-     *
-     * @return string
-     */
-    public function escapeId(string $idf): string;
-
-    /**
-     * Unescape database identifier
-     *
-     * @param string $idf
-     *
-     * @return string
-     */
-    public function unescapeId(string $idf): string;
-
-    /**
      * Get escaped table name
      *
      * @param string $idf

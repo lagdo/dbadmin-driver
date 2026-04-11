@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Engine\Driver;
+namespace Lagdo\DbAdmin\Support\Db\Engine\Connection;
 
 trait ConnectionErrorTrait
 {

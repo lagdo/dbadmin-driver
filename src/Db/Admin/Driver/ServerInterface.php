@@ -7,32 +7,6 @@ use Lagdo\DbAdmin\Support\Dto\UserDto;
 interface ServerInterface
 {
     /**
-     * Get logged user
-     *
-     * @return string
-     */
-    public function user(): string;
-
-    /**
-     * Get the users and hosts
-     *
-     * @param string $database  The database name
-     *
-     * @return array
-     */
-    public function getUsers(string $database): array;
-
-    /**
-     * Get the grants of a user on a given host
-     *
-     * @param string $user      The username
-     * @param string $host      The host name
-     *
-     * @return UserDto
-     */
-    public function getUserGrants(string $user, string $host): UserDto;
-
-    /**
      * Get the user privileges
      *
      * @param UserDto $user
@@ -42,136 +16,19 @@ interface ServerInterface
     public function getUserPrivileges(UserDto $user): void;
 
     /**
-     * Get cached list of databases
+     * Check if connection has at least the given version
      *
-     * @param bool $flush
+     * @param string $version required version
+     * @param string $mariaDb required MariaDB version
      *
-     * @return array
+     * @return bool
      */
-    public function databases(bool $flush): array;
+    public function minVersion(string $version, string $mariaDb = ''): bool;
 
     /**
-     * Compute size of database
-     *
-     * @param string $database
-     *
-     * @return int
-     */
-    public function databaseSize(string $database): int;
-
-    /**
-     * Get database collation
-     *
-     * @param string $database
-     * @param array $collations
+     * Get connection charset
      *
      * @return string
      */
-    public function databaseCollation(string $database, array $collations): string;
-
-    /**
-     * Get supported engines
-     *
-     * @return array
-     */
-    public function engines(): array;
-
-    /**
-     * Get sorted grouped list of collations
-     *
-     * @return array
-     */
-    public function collations(): array;
-
-    /**
-     * Find out if database is information_schema
-     *
-     * @param string $database
-     *
-     * @return bool
-     */
-    public function isInformationSchema(string $database): bool;
-
-    /**
-     * Find out if database is a system database
-     *
-     * @param string $database
-     *
-     * @return bool
-     */
-    public function isSystemSchema(string $database): bool;
-
-    /**
-     * Create a database
-     *
-     * @param string $database
-     * @param string $collation
-     *
-     * @return boolean
-     */
-    public function createDatabase(string $database, string $collation): bool;
-
-    /**
-     * Drop a database
-     *
-     * @param string $database
-     *
-     * @return bool
-     */
-    public function dropDatabase(string $database): bool;
-
-    /**
-     * Get list of available routine languages
-     *
-     * @return array
-     */
-    public function routineLanguages(): array;
-
-    /**
-     * Get server variables
-     *
-     * @return array
-     */
-    public function variables(): array;
-
-    /**
-     * Get status variables
-     *
-     * @return array
-     */
-    public function statusVariables(): array;
-
-    /**
-     * Get process list
-     *
-     * @return array
-     */
-    public function processes(): array;
-
-    /**
-     * Get a process attribute
-     *
-     * @param array $process
-     * @param string $key
-     * @param string $val
-     *
-     * @return string
-     */
-    public function processAttr(array $process, string $key, string $val): string;
-
-    /**
-     * Kill a process
-     *
-     * @param int
-     *
-     * @return bool
-     */
-    // public function killProcess($val): bool;
-
-    /**
-     * Get maximum number of connections
-     *
-     * @return int
-     */
-    // public function maxConnections(): int;
+    public function charset(): string;
 }

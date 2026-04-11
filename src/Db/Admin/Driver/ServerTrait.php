@@ -7,53 +7,16 @@ use Lagdo\DbAdmin\Support\Dto\UserDto;
 trait ServerTrait
 {
     /**
+     * @var ServerInterface
+     */
+    private ServerInterface $server;
+
+    /**
      * @return ServerInterface
      */
-    abstract protected function _server(): ServerInterface;
-
-    /**
-     * Get logged user
-     *
-     * @return string
-     */
-    public function user(): string
+    private function _s(): ServerInterface
     {
-        return $this->_server()->user();
-    }
-
-    /**
-     * Get current schema from the database
-     *
-     * @return string
-     */
-    // public function schema()
-    // {
-    //     return $this->_server()->schema();
-    // }
-
-    /**
-     * Get the users and hosts
-     *
-     * @param string $database  The database name
-     *
-     * @return array
-     */
-    public function getUsers(string $database): array
-    {
-        return $this->_server()->getUsers($database);
-    }
-
-    /**
-     * Get the grants of a user on a given host
-     *
-     * @param string $user      The username
-     * @param string $host      The host name
-     *
-     * @return UserDto
-     */
-    public function getUserGrants(string $user, string $host): UserDto
-    {
-        return $this->_server()->getUserGrants($user, $host);
+        return $this->server ??= new Server($this, $this->grammar(), $this->utils);
     }
 
     /**
@@ -65,188 +28,29 @@ trait ServerTrait
      */
     public function getUserPrivileges(UserDto $user): void
     {
-        $this->_server()->getUserPrivileges($user);
+        $this->_s()->getUserPrivileges($user);
     }
 
     /**
-     * Get cached list of databases
+     * Check if connection has at least the given version
      *
-     * @param bool $flush
+     * @param string $version required version
+     * @param string $mariaDb required MariaDB version
      *
-     * @return array
+     * @return bool
      */
-    public function databases(bool $flush): array
+    public function minVersion(string $version, string $mariaDb = ''): bool
     {
-        return $this->_server()->databases($flush);
+        return $this->_s()->minVersion($version, $mariaDb);
     }
 
     /**
-     * Compute size of database
-     *
-     * @param string $database
-     *
-     * @return int
-     */
-    public function databaseSize(string $database): int
-    {
-        return $this->_server()->databaseSize($database);
-    }
-
-    /**
-     * Get database collation
-     *
-     * @param string $database
-     * @param array $collations
+     * Get connection charset
      *
      * @return string
      */
-    public function databaseCollation(string $database, array $collations): string
+    public function charset(): string
     {
-        return $this->_server()->databaseCollation($database, $collations);
+        return $this->_s()->charset();
     }
-
-    /**
-     * Get supported engines
-     *
-     * @return array
-     */
-    public function engines(): array
-    {
-        return $this->_server()->engines();
-    }
-
-    /**
-     * Get sorted grouped list of collations
-     *
-     * @return array
-     */
-    public function collations(): array
-    {
-        return $this->_server()->collations();
-    }
-
-    /**
-     * Find out if database is information_schema
-     *
-     * @param string $database
-     *
-     * @return bool
-     */
-    public function isInformationSchema(string $database): bool
-    {
-        return $this->_server()->isInformationSchema($database);
-    }
-
-    /**
-     * Find out if database is a system database
-     *
-     * @param string $database
-     *
-     * @return bool
-     */
-    public function isSystemSchema(string $database): bool
-    {
-        return $this->_server()->isSystemSchema($database);
-    }
-
-    /**
-     * Create a database
-     *
-     * @param string $database
-     * @param string $collation
-     *
-     * @return string|boolean
-     */
-    public function createDatabase(string $database, string $collation): bool
-    {
-        return $this->_server()->createDatabase($database, $collation);
-    }
-
-    /**
-     * Drop a database
-     *
-     * @param string $database
-     *
-     * @return bool
-     */
-    public function dropDatabase(string $database): bool
-    {
-        return $this->_server()->dropDatabase($database);
-    }
-
-    /**
-     * Get list of available routine languages
-     *
-     * @return array
-     */
-    public function routineLanguages(): array
-    {
-        return $this->_server()->routineLanguages();
-    }
-
-    /**
-     * Get server variables
-     *
-     * @return array
-     */
-    public function variables(): array
-    {
-        return $this->_server()->variables();
-    }
-
-    /**
-     * Get status variables
-     *
-     * @return array
-     */
-    public function statusVariables(): array
-    {
-        return $this->_server()->statusVariables();
-    }
-
-    /**
-     * Get process list
-     *
-     * @return array
-     */
-    public function processes(): array
-    {
-        return $this->_server()->processes();
-    }
-
-    /**
-     * Get a process name
-     *
-     * @param array $process
-     * @param string $key
-     * @param string $val
-     *
-     * @return string
-     */
-    public function processAttr(array $process, string $key, string $val): string
-    {
-        return $this->_server()->processAttr($process, $key, $val);
-    }
-
-    /**
-     * Kill a process
-     *
-     * @param int
-     *
-     * @return bool
-     */
-    // public function killProcess($val): bool
-    // {
-    //     return $this->_server()->killProcess($val);
-    // }
-
-    /**
-     * Get maximum number of connections
-     *
-     * @return int
-     */
-    // public function maxConnections(): int
-    // {
-    //     return $this->_server()->maxConnections();
-    // }
 }

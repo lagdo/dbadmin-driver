@@ -2,39 +2,106 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Driver;
 
-use Lagdo\DbAdmin\Support\Db\Admin\Driver\ServerInterface;
-use Lagdo\DbAdmin\Support\DriverInterface;
+use Lagdo\DbAdmin\Support\AbstractDriver;
+use Lagdo\DbAdmin\Support\AbstractGrammar;
+use Lagdo\DbAdmin\Support\Db\Admin\Config\DriverConfig;
+use Lagdo\DbAdmin\Support\Db\Engine\Connection\AbstractConnection;
+use Lagdo\DbAdmin\Support\Exception\AuthException;
 use Lagdo\DbAdmin\Support\Dto\UserDto;
-use Lagdo\DbAdmin\Support\GrammarInterface;
 use Lagdo\DbAdmin\Support\Utils\Utils;
-
-use function preg_match;
-use function preg_match_all;
 
 abstract class AbstractServer implements ServerInterface
 {
     /**
-     * @var AbstractConnection
+     * @var AbstractConnection|null
      */
-    protected $connection;
+    protected AbstractConnection|null $connection = null;
 
     /**
-     * @param DriverInterface $driver
-     * @param GrammarInterface $grammar
+     * @var AbstractConnection|null
+     */
+    protected AbstractConnection|null $mainConnection = null;
+
+    /**
+     * @var DriverConfig
+     */
+    protected DriverConfig $config;
+
+    /**
+     * @param AbstractDriver $driver
+     * @param AbstractGrammar $grammar
      * @param Utils $utils
      */
-    public function __construct(protected DriverInterface $driver,
-        protected GrammarInterface $grammar, protected Utils $utils)
+    public function __construct(protected AbstractDriver $driver,
+        protected AbstractGrammar $grammar, protected Utils $utils)
     {}
 
     /**
-     * @param AbstractConnection $connection
-     *
      * @return void
      */
-    public function setConnection(AbstractConnection $connection): void
+    abstract protected function starting(): void;
+
+    /**
+     * @return void
+     */
+    abstract protected function connected(): void;
+
+    /**
+     * @param array $options
+     */
+    public function initConnection(DriverConfig $config, array $options)
     {
-        $this->connection = $connection;
+        $this->config = $config;
+        // Fill the config with driver specific values.
+        $this->starting();
+        // Create and set the main connection.
+        $this->connection = $this->createConnection($options);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function connection(): AbstractConnection|null
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws AuthException
+     */
+    public function openConnection(string $database, string $schema = ''): AbstractConnection
+    {
+        if (!$this->connection->open($database, $schema)) {
+            throw new AuthException($this->driver->error());
+        }
+
+        $this->config->setDatabase($database, $schema);
+
+        if ($this->mainConnection === null) {
+            $this->mainConnection = $this->connection;
+            $this->connected();
+        }
+
+        return $this->connection;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function closeConnection(): void
+    {
+        $this->connection->close();
+        $this->connection = null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function newConnection(string $database, string $schema = ''): AbstractConnection|null
+    {
+        $connection = $this->createConnection($this->config->options());
+        return !$connection || !$connection->open($database, $schema) ? null : $connection;
     }
 
     /**
@@ -42,49 +109,7 @@ abstract class AbstractServer implements ServerInterface
      */
     public function getUsers(string $database): array
     {
-        // From privileges.inc.php
-        $clause = ($database == '' ? 'user' : 'db WHERE ' .
-            $this->connection->quote($database) . ' LIKE Db');
-        $query = "SELECT User, Host FROM mysql.$clause ORDER BY Host, User";
-        $statement = $this->connection->query($query);
-        // $grant = $statement;
-        if (!$statement) {
-            // list logged user, information_schema.USER_PRIVILEGES lists just the current user too
-            $statement = $this->connection->query("SELECT SUBSTRING_INDEX(CURRENT_USER, '@', 1) " .
-                "AS User, SUBSTRING_INDEX(CURRENT_USER, '@', -1) AS Host");
-        }
-        $users = [];
-        while ($user = $statement->fetchAssoc()) {
-            $users[] = $user;
-        }
-        return $users;
-    }
-
-    /**
-     * @param UserDto $user
-     * @param array $grant
-     *
-     * @return void
-     */
-    private function addUserGrant(UserDto $user, array $grant)
-    {
-        if (preg_match('~GRANT (.*) ON (.*) TO ~', $grant[0], $match) &&
-            preg_match_all('~ *([^(,]*[^ ,(])( *\([^)]+\))?~', $match[1], $matches, PREG_SET_ORDER)) {
-            //! escape the part between ON and TO
-            foreach ($matches as $val) {
-                $match2 = $match[2] ?? '';
-                $val2 = $val[2] ?? '';
-                if ($val[1] != 'USAGE') {
-                    $user->grants["$match2$val2"][$val[1]] = true;
-                }
-                if (preg_match('~ WITH GRANT OPTION~', $grant[0])) { //! don't check inside strings and identifiers
-                    $user->grants["$match2$val2"]['GRANT OPTION'] = true;
-                }
-            }
-        }
-        if (preg_match("~ IDENTIFIED BY PASSWORD '([^']+)~", $grant[0], $match)) {
-            $user->password = $match[1];
-        }
+        return [];
     }
 
     /**
@@ -93,27 +118,7 @@ abstract class AbstractServer implements ServerInterface
     public function getUserGrants(string $user, string $host): UserDto
     {
         $entity = new UserDto($user, $host);
-
-        // From user.inc.php
-        //! use information_schema for MySQL 5 - column names in column privileges are not escaped
-        $query = 'SHOW GRANTS FOR ' . $this->connection->quote($user) .
-            '@' . $this->connection->quote($host);
-        if (!($statement = $this->connection->query($query))) {
-            return $entity;
-        }
-
-        while ($grant = $statement->fetchRow()) {
-            $this->addUserGrant($entity, $grant);
-        }
         return $entity;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUserPrivileges(UserDto $user): void
-    {
-        $user->privileges = $this->driver->rows('SHOW PRIVILEGES');
     }
 
     /**
@@ -130,54 +135,6 @@ abstract class AbstractServer implements ServerInterface
     public function collations(): array
     {
         return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createDatabase(string $database, string $collation): bool
-    {
-        // Note: The SQLite driver overrides this function.
-        $query = $this->grammar->getCreateDatabaseQuery($database, $collation);
-        return $this->driver->execute($query) !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function dropDatabase(string $database): bool
-    {
-        // Note: The SQLite driver overrides this function.
-        // Cannot drop the connected database.
-        if ($this->driver->database() === $database) {
-            return false;
-        }
-        $query = $this->grammar->getDropDatabaseQuery($database);
-        return $this->driver->execute($query) !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function databaseCollation(string $database, array $collations): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isInformationSchema(string $database): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isSystemSchema(string $database): bool
-    {
-        return false;
     }
 
     /**
@@ -210,13 +167,5 @@ abstract class AbstractServer implements ServerInterface
     public function processes(): array
     {
         return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function processAttr(array $process, string $key, string $val): string
-    {
-        return $this->utils->str->html($val);
     }
 }

@@ -5,95 +5,62 @@ namespace Lagdo\DbAdmin\Support\Db\Admin\Grammar;
 trait DatabaseTrait
 {
     /**
-     * @return DatabaseInterface
+     * @var DatabaseInterface
      */
-    abstract protected function _database(): DatabaseInterface;
+    private DatabaseInterface $database;
 
     /**
-     * @inheritDoc
+     * @return DatabaseInterface
+     */
+    private function _d(): DatabaseInterface
+    {
+        return $this->database ??= new Database($this->driver, $this, $this->utils);
+    }
+
+    /**
+     * Check if utf8mb4 might be needed
+     *
+     * @param string $create
+     *
+     * @return void
      */
     public function setUtf8mb4(string $create): void
     {
-        $this->_database()->setUtf8mb4($create);
+        $this->_d()->setUtf8mb4($create);
     }
 
     /**
-     * @inheritDoc
+     * Get SET NAMES query, if utf8mb4 might be needed
+     *
+     * @return string
      */
     public function getCharsetQuery(): string
     {
-        return $this->_database()->getCharsetQuery();
+        return $this->_d()->getCharsetQuery();
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getUseDatabaseQuery(string $database, string $style = ''): string
-    {
-        return $this->_database()->getUseDatabaseQuery($database, $style);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCreateDatabaseQuery(string $database, string $collation): string
-    {
-        return $this->_database()->getCreateDatabaseQuery($database, $collation);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDropDatabaseQuery(string $database): string
-    {
-        return $this->_database()->getDropDatabaseQuery($database);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAutoIncrementModifier(): string
-    {
-        return $this->_database()->getAutoIncrementModifier();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDropViewsQueries(array $views): array
-    {
-        return $this->_database()->getDropViewsQueries($views);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDropTablesQueries(array $tables): array
-    {
-        return $this->_database()->getDropTablesQueries($tables);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTruncateTablesQueries(array $tables): array
-    {
-        return $this->_database()->getTruncateTablesQueries($tables);
-    }
-
-    /**
-     * @inheritDoc
+     * Command to update a view
+     *
+     * @param string $view The view name
+     * @param array $values The view values
+     *
+     * @return array<string>
      */
     public function getUpdateViewQueries(string $view, array $values): array
     {
-        return $this->_database()->getUpdateViewQueries($view, $values);
+        return $this->_d()->getUpdateViewQueries($view, $values);
     }
 
     /**
-     * @inheritDoc
+     * Command to drop a view
+     *
+     * @param string $view The view name
+     *
+     * @return string
      */
     public function getDropViewQuery(string $view): string
     {
-        return $this->_database()->getDropViewQuery($view);
+        return $this->_d()->getDropViewQuery($view);
     }
 }

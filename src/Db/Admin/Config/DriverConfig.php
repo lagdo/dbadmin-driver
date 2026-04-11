@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db;
+namespace Lagdo\DbAdmin\Support\Db\Admin\Config;
 
 use Lagdo\DbAdmin\Support\Utils\TranslatorInterface;
 
@@ -136,6 +136,18 @@ class DriverConfig
      */
     public function __construct(public TranslatorInterface $trans, public array $options)
     {}
+
+    /**
+     * @param string $database
+     * @param string $schema
+     *
+     * @return void
+     */
+    public function setDatabase(string $database, string $schema): void
+    {
+        $this->database = $database;
+        $this->schema = $schema;
+    }
 
     /**
      * Get the driver options

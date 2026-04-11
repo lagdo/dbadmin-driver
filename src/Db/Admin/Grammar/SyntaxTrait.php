@@ -7,71 +7,88 @@ use Lagdo\DbAdmin\Support\Dto\QueryDto;
 trait SyntaxTrait
 {
     /**
+     * @var SyntaxInterface
+     */
+    private SyntaxInterface $syntax;
+
+    /**
      * @return SyntaxInterface
      */
-    abstract protected function _syntax(): SyntaxInterface;
-
-    /**
-     * @inheritDoc
-     */
-    public function escapeId(string $idf): string
+    private function _s(): SyntaxInterface
     {
-        return $this->_syntax()->escapeId($idf);
+        return $this->syntax ??= new Syntax($this->driver, $this, $this->utils);
     }
 
     /**
-     * @inheritDoc
-     */
-    public function unescapeId(string $idf): string
-    {
-        return $this->_syntax()->unescapeId($idf);
-    }
-
-    /**
-     * @inheritDoc
+     * Get escaped table name
+     *
+     * @param string $idf
+     *
+     * @return string
      */
     public function escapeTableName(string $idf): string
     {
-        return $this->_syntax()->escapeTableName($idf);
+        return $this->_s()->escapeTableName($idf);
     }
 
     /**
-     * @inheritDoc
+     * Escape or unescape string to use inside form []
+     *
+     * @param string $idf
+     * @param bool $back
+     *
+     * @return string
      */
     public function bracketEscape(string $idf, bool $back = false): string
     {
-        return $this->_syntax()->bracketEscape($idf, $back);
+        return $this->_s()->bracketEscape($idf, $back);
     }
 
     /**
-     * @inheritDoc
+     * Escape column key used in where()
+     *
+     * @param string
+     *
+     * @return string
      */
     public function escapeKey(string $key): string
     {
-        return $this->_syntax()->escapeKey($key);
+        return $this->_s()->escapeKey($key);
     }
 
     /**
-     * @inheritDoc
+     * Remove current user definer from SQL command
+     *
+     * @param string $query
+     *
+     * @return string
      */
     public function removeDefiner(string $query): string
     {
-        return $this->_syntax()->removeDefiner($query);
+        return $this->_s()->removeDefiner($query);
     }
 
     /**
-     * @inheritDoc
+     * Filter length value including enums
+     *
+     * @param string $length
+     *
+     * @return string
      */
     public function processLength(string $length): string
     {
-        return $this->_syntax()->processLength($length);
+        return $this->_s()->processLength($length);
     }
 
     /**
-     * @inheritDoc
+     * Parse a string containing SQL queries
+     *
+     * @param QueryDto $queryDto
+     *
+     * @return bool
      */
     public function parseQueries(QueryDto $queryDto): bool
     {
-        return $this->_syntax()->parseQueries($queryDto);
+        return $this->_s()->parseQueries($queryDto);
     }
 }

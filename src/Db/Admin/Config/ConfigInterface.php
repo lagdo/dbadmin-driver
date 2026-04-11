@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
+namespace Lagdo\DbAdmin\Support\Db\Admin\Config;
 
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 

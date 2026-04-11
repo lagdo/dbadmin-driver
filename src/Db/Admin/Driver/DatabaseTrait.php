@@ -2,18 +2,22 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
-use Lagdo\DbAdmin\Support\Dto\RoutineDto;
-use Lagdo\DbAdmin\Support\Dto\RoutineInfoDto;
-use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
-use Lagdo\DbAdmin\Support\Dto\UserTypeDto;
 use Exception;
 
 trait DatabaseTrait
 {
     /**
+     * @var DatabaseInterface
+     */
+    private DatabaseInterface $database;
+
+    /**
      * @return DatabaseInterface
      */
-    abstract protected function _database(): DatabaseInterface;
+    private function _d(): DatabaseInterface
+    {
+        return $this->database ??= new Database($this, $this->grammar(), $this->utils);
+    }
 
     /**
      * Alter indexes
@@ -26,39 +30,7 @@ trait DatabaseTrait
      */
     public function alterIndexes(string $table, array $alter, array $drop): bool
     {
-        return $this->_database()->alterIndexes($table, $alter, $drop);
-    }
-
-    /**
-     * Get tables list
-     *
-     * @return array
-     */
-    public function tables(): array
-    {
-        return $this->_database()->tables();
-    }
-
-    /**
-     * Get sequences list
-     *
-     * @return array
-     */
-    public function sequences(): array
-    {
-        return $this->_database()->sequences();
-    }
-
-    /**
-     * Count tables in all databases
-     *
-     * @param array $databases
-     *
-     * @return array
-     */
-    public function countTables(array $databases): array
-    {
-        return $this->_database()->countTables($databases);
+        return $this->_d()->alterIndexes($table, $alter, $drop);
     }
 
     /**
@@ -70,7 +42,7 @@ trait DatabaseTrait
      */
     public function dropViews(array $views): bool
     {
-        return $this->_database()->dropViews($views);
+        return $this->_d()->dropViews($views);
     }
 
     /**
@@ -82,7 +54,7 @@ trait DatabaseTrait
      */
     public function dropTables(array $tables): bool
     {
-        return $this->_database()->dropTables($tables);
+        return $this->_d()->dropTables($tables);
     }
 
     /**
@@ -94,7 +66,7 @@ trait DatabaseTrait
      */
     public function truncateTables(array $tables): bool
     {
-        return $this->_database()->truncateTables($tables);
+        return $this->_d()->truncateTables($tables);
     }
 
     /**
@@ -107,7 +79,7 @@ trait DatabaseTrait
      */
     public function createView(array $values): bool
     {
-        return $this->_database()->createView($values);
+        return $this->_d()->createView($values);
     }
 
     /**
@@ -121,7 +93,7 @@ trait DatabaseTrait
      */
     public function updateView(string $view, array $values): string
     {
-        return $this->_database()->updateView($view, $values);
+        return $this->_d()->updateView($view, $values);
     }
 
     /**
@@ -134,84 +106,6 @@ trait DatabaseTrait
      */
     public function dropView(string $view): bool
     {
-        return $this->_database()->dropView($view);
-    }
-
-    /**
-     * Get user defined types
-     *
-     * @param bool $withValues
-     *
-     * @return array<UserTypeDto>
-     */
-    public function userTypes(bool $withValues): array
-    {
-        return $this->_database()->userTypes($withValues);
-    }
-
-    /**
-     * @param TableFieldDto $field
-     *
-     * @return array
-     */
-    public function enumValues(TableFieldDto $field): array
-    {
-        return $this->_database()->enumValues($field);
-    }
-
-    /**
-     * Get existing schemas
-     *
-     * @return array
-     */
-    public function schemas(): array
-    {
-        return $this->_database()->schemas();
-    }
-
-    /**
-     * Get events
-     *
-     * @return array
-     */
-    public function events(): array
-    {
-        return $this->_database()->events();
-    }
-
-    /**
-     * Get information about stored routine
-     *
-     * @param string $name
-     * @param string $type "FUNCTION" or "PROCEDURE"
-     *
-     * @return RoutineInfoDto|null
-     */
-    public function routine(string $name, string $type): RoutineInfoDto|null
-    {
-        return $this->_database()->routine($name, $type);
-    }
-
-    /**
-     * Get list of routines
-     *
-     * @return array<RoutineDto>
-     */
-    public function routines(): array
-    {
-        return $this->_database()->routines();
-    }
-
-    /**
-     * Get routine signature
-     *
-     * @param string $name
-     * @param array $row result of routine()
-     *
-     * @return string
-     */
-    public function routineId(string $name, array $row): string
-    {
-        return $this->_database()->routineId($name, $row);
+        return $this->_d()->dropView($view);
     }
 }

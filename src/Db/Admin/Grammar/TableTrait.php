@@ -4,113 +4,58 @@ namespace Lagdo\DbAdmin\Support\Db\Admin\Grammar;
 
 use Lagdo\DbAdmin\Support\Dto\ColumnDto;
 use Lagdo\DbAdmin\Support\Dto\FieldType;
-use Lagdo\DbAdmin\Support\Dto\TableAlterDto;
-use Lagdo\DbAdmin\Support\Dto\TableCreateDto;
-use Lagdo\DbAdmin\Support\Dto\TableDto;
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 
 trait TableTrait
 {
     /**
+     * @var TableInterface
+     */
+    private TableInterface $table;
+
+    /**
      * @return TableInterface
      */
-    abstract protected function _table(): TableInterface;
-
-    /**
-     * Get SQL commands to create a table
-     *
-     * @param TableCreateDto $table
-     *
-     * @return array<string>
-     */
-    public function getCreateTableQueries(TableCreateDto $table): array
+    private function _t(): TableInterface
     {
-        return $this->_table()->getCreateTableQueries($table);
+        return $this->table ??= new Table($this->driver, $this, $this->utils);
     }
 
     /**
-     * Get SQL commands to alter a table
+     * Get default value clause
      *
-     * @param TableAlterDto $table
+     * @param TableFieldDto $field
      *
-     * @return array<string>
-     */
-    public function getAlterTableQueries(TableAlterDto $table): array
-    {
-        return $this->_table()->getAlterTableQueries($table);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getExportTableQueries(string $table, bool $autoIncrement, string $style): string
-    {
-        return $this->_table()->getExportTableQueries($table, $autoIncrement, $style);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getForeignKeyQueries(TableDto $table): array
-    {
-        return $this->_table()->getForeignKeyQueries($table);
-    }
-
-    /**
-     * @inheritDoc
+     * @return string
      */
     public function getDefaultValueClause(TableFieldDto $field): string
     {
-        return $this->_table()->getDefaultValueClause($field);
+        return $this->_t()->getDefaultValueClause($field);
     }
 
     /**
      * Create SQL string from field type
      *
      * @param FieldType $field
+     *
+     * @return string
      */
     public function getFieldType(FieldType $field, string $collate = "COLLATE"): string
     {
-        return $this->_table()->getFieldType($field, $collate);
+        return $this->_t()->getFieldType($field, $collate);
     }
 
     /**
-     * @inheritDoc
+     * Create SQL string from field
+     * This is the process_field() function in Adminer.
+     *
+     * @param TableFieldDto $field Basic field information
+     * @param TableFieldDto $typeField Information about field type
+     *
+     * @return ColumnDto
      */
     public function getFieldClauses(TableFieldDto $field, TableFieldDto $typeField): ColumnDto
     {
-        return $this->_table()->getFieldClauses($field, $typeField);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string
-    {
-        return $this->_table()->getCreateIndexQuery($table, $type, $name, $columns);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAlterIndexQueries(string $table, array $alter, array $drop): array
-    {
-        return $this->_table()->getAlterIndexQueries($table, $alter, $drop);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTruncateTableQuery(string $table): string
-    {
-        return $this->_table()->getTruncateTableQuery($table);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCreateTriggerQuery(string $table): string
-    {
-        return $this->_table()->getCreateTriggerQuery($table);
+        return $this->_t()->getFieldClauses($field, $typeField);
     }
 }
