@@ -1,8 +1,8 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Utils;
+namespace Lagdo\DbAdmin\Driver\Utils;
 
-use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 
 use function array_key_exists;
 use function in_array;
