@@ -2,22 +2,15 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
+use Lagdo\DbAdmin\Support\Db\DbProxyTrait;
 use Lagdo\DbAdmin\Support\Dto\UserDto;
+
+use function preg_match;
+use function version_compare;
 
 trait ServerTrait
 {
-    /**
-     * @var ServerInterface
-     */
-    private ServerInterface $server;
-
-    /**
-     * @return ServerInterface
-     */
-    private function _s(): ServerInterface
-    {
-        return $this->server ??= new Server($this, $this->grammar(), $this->utils);
-    }
+    use DbProxyTrait;
 
     /**
      * Get the user privileges
@@ -28,7 +21,7 @@ trait ServerTrait
      */
     public function getUserPrivileges(UserDto $user): void
     {
-        $this->_s()->getUserPrivileges($user);
+        $user->privileges = $this->_driver()->rows('SHOW PRIVILEGES');
     }
 
     /**
@@ -41,7 +34,12 @@ trait ServerTrait
      */
     public function minVersion(string $version, string $mariaDb = ''): bool
     {
-        return $this->_s()->minVersion($version, $mariaDb);
+        $info = $this->_driver()->connection()?->serverInfo() ?? '';
+        if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
+            $info = $match[1];
+            $version = $mariaDb;
+        }
+        return $version && version_compare($info, $version) >= 0;
     }
 
     /**
@@ -51,6 +49,7 @@ trait ServerTrait
      */
     public function charset(): string
     {
-        return $this->_s()->charset();
+        // SHOW CHARSET would require an extra query
+        return $this->minVersion('5.5.3') ? 'utf8mb4' : 'utf8';
     }
 }

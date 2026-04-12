@@ -2,24 +2,13 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Driver;
 
-use Lagdo\DbAdmin\Support\AbstractDriver;
-use Lagdo\DbAdmin\Support\AbstractGrammar;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 use Lagdo\DbAdmin\Support\Dto\PartitionDto;
 use Lagdo\DbAdmin\Support\Dto\TableDto;
 use Lagdo\DbAdmin\Support\Dto\TriggerDto;
-use Lagdo\DbAdmin\Support\Utils\Utils;
 
-abstract class AbstractTable implements TableInterface
+abstract class AbstractTable extends AbstractDbProxy implements TableInterface
 {
-    /**
-     * @param AbstractDriver $driver
-     * @param AbstractGrammar $grammar
-     * @param Utils $utils
-     */
-    public function __construct(protected AbstractDriver $driver,
-        protected AbstractGrammar $grammar, protected Utils $utils)
-    {}
-
     /**
      * @inheritDoc
      */

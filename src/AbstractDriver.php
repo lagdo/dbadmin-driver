@@ -39,6 +39,30 @@ abstract class AbstractDriver implements DriverInterface
     }
 
     /**
+     * @return AbstractDriver
+     */
+    protected function _driver(): AbstractDriver
+    {
+        return $this;
+    }
+
+    /**
+     * @return GrammarInterface
+     */
+    public function grammar(): GrammarInterface
+    {
+        return $this->_grammar();
+    }
+
+    /**
+     * @return Utils
+     */
+    protected function _utils(): Utils
+    {
+        return $this->utils;
+    }
+
+    /**
      * @param string $driver
      * @param Closure $closure
      *

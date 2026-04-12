@@ -2,22 +2,12 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
+use Lagdo\DbAdmin\Support\Db\DbProxyTrait;
 use Lagdo\DbAdmin\Support\Dto\TableDto;
 
 trait TableTrait
 {
-    /**
-     * @var TableInterface
-     */
-    private TableInterface $table;
-
-    /**
-     * @return TableInterface
-     */
-    private function _t(): TableInterface
-    {
-        return $this->table ??= new Table($this, $this->grammar(), $this->utils);
-    }
+    use DbProxyTrait;
 
     /**
      * Get status of a single table and fall back to name on error
@@ -29,6 +19,7 @@ trait TableTrait
      */
     public function tableStatusOrName(string $table, bool $fast = false): TableDto
     {
-        return $this->_t()->tableStatusOrName($table, $fast);
+        $status = $this->_driver()->tableStatus($table, $fast);
+        return $status === null ? new TableDto($table) : $status;
     }
 }

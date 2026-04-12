@@ -2,15 +2,13 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Driver;
 
-use Lagdo\DbAdmin\Support\AbstractDriver;
-use Lagdo\DbAdmin\Support\AbstractGrammar;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 use Lagdo\DbAdmin\Support\Db\Admin\Config\DriverConfig;
 use Lagdo\DbAdmin\Support\Db\Engine\Connection\AbstractConnection;
 use Lagdo\DbAdmin\Support\Exception\AuthException;
 use Lagdo\DbAdmin\Support\Dto\UserDto;
-use Lagdo\DbAdmin\Support\Utils\Utils;
 
-abstract class AbstractServer implements ServerInterface
+abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
 {
     /**
      * @var AbstractConnection|null
@@ -26,15 +24,6 @@ abstract class AbstractServer implements ServerInterface
      * @var DriverConfig
      */
     protected DriverConfig $config;
-
-    /**
-     * @param AbstractDriver $driver
-     * @param AbstractGrammar $grammar
-     * @param Utils $utils
-     */
-    public function __construct(protected AbstractDriver $driver,
-        protected AbstractGrammar $grammar, protected Utils $utils)
-    {}
 
     /**
      * @return void
@@ -73,7 +62,7 @@ abstract class AbstractServer implements ServerInterface
     public function openConnection(string $database, string $schema = ''): AbstractConnection
     {
         if (!$this->connection->open($database, $schema)) {
-            throw new AuthException($this->driver->error());
+            throw new AuthException($this->_driver()->error());
         }
 
         $this->config->setDatabase($database, $schema);

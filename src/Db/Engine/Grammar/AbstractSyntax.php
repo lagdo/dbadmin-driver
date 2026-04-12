@@ -2,13 +2,13 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Grammar;
 
-use Lagdo\DbAdmin\Support\Db\AbstractDelegate;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 
 use function preg_match;
 use function str_replace;
 use function substr;
 
-abstract class AbstractSyntax extends AbstractDelegate implements SyntaxInterface
+abstract class AbstractSyntax extends AbstractDbProxy implements SyntaxInterface
 {
     /**
      * @inheritDoc
@@ -35,6 +35,6 @@ abstract class AbstractSyntax extends AbstractDelegate implements SyntaxInterfac
      */
     public function processAttr(array $process, string $key, string $val): string
     {
-        return $this->utils->html($val);
+        return $this->_utils()->html($val);
     }
 }

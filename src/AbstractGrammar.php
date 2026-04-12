@@ -8,13 +8,6 @@ use Lagdo\DbAdmin\Support\Utils\Utils;
 
 abstract class AbstractGrammar implements GrammarInterface
 {
-    /**
-     * @param AbstractDriver $driver
-     * @param Utils $utils
-     */
-    public function __construct(protected AbstractDriver $driver, protected Utils $utils)
-    {}
-
     use Admin\Grammar\SyntaxTrait;
     use Engine\Grammar\SyntaxTrait;
     use Admin\Grammar\DatabaseTrait;
@@ -23,4 +16,35 @@ abstract class AbstractGrammar implements GrammarInterface
     use Engine\Grammar\TableTrait;
     use Admin\Grammar\QueryTrait;
     use Engine\Grammar\QueryTrait;
+
+    /**
+     * @param AbstractDriver $driver
+     * @param Utils $utils
+     */
+    public function __construct(private AbstractDriver $driver, private Utils $utils)
+    {}
+
+    /**
+     * @return AbstractDriver
+     */
+    protected function _driver(): AbstractDriver
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @return AbstractGrammar
+     */
+    protected function _grammar(): AbstractGrammar
+    {
+        return $this;
+    }
+
+    /**
+     * @return Utils
+     */
+    protected function _utils(): Utils
+    {
+        return $this->utils;
+    }
 }

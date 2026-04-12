@@ -2,31 +2,20 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Driver;
 
-use Lagdo\DbAdmin\Support\AbstractDriver;
-use Lagdo\DbAdmin\Support\AbstractGrammar;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 use Lagdo\DbAdmin\Support\Dto\RoutineInfoDto;
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
-use Lagdo\DbAdmin\Support\Utils\Utils;
 
-abstract class AbstractDatabase implements DatabaseInterface
+abstract class AbstractDatabase extends AbstractDbProxy implements DatabaseInterface
 {
-    /**
-     * @param AbstractDriver $driver
-     * @param AbstractGrammar $grammar
-     * @param Utils $utils
-     */
-    public function __construct(protected AbstractDriver $driver,
-        protected AbstractGrammar $grammar, protected Utils $utils)
-    {}
-
     /**
      * @inheritDoc
      */
     public function createDatabase(string $database, string $collation): bool
     {
         // Note: The SQLite driver overrides this function.
-        $query = $this->grammar->getCreateDatabaseQuery($database, $collation);
-        return $this->driver->execute($query) !== false;
+        $query = $this->_grammar()->getCreateDatabaseQuery($database, $collation);
+        return $this->_driver()->execute($query) !== false;
     }
 
     /**
@@ -36,11 +25,11 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         // Note: The SQLite driver overrides this function.
         // Cannot drop the connected database.
-        if ($this->driver->database() === $database) {
+        if ($this->_driver()->database() === $database) {
             return false;
         }
-        $query = $this->grammar->getDropDatabaseQuery($database);
-        return $this->driver->execute($query) !== false;
+        $query = $this->_grammar()->getDropDatabaseQuery($database);
+        return $this->_driver()->execute($query) !== false;
     }
 
     /**

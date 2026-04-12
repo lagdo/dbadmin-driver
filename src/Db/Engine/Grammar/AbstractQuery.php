@@ -2,13 +2,13 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Grammar;
 
-use Lagdo\DbAdmin\Support\Db\AbstractDelegate;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 use Lagdo\DbAdmin\Support\Dto\TableSelectDto;
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 
 use function implode;
 
-abstract class AbstractQuery extends AbstractDelegate implements QueryInterface
+abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
 {
     /**
      * Build SQL update or delete query with limit 1
@@ -39,7 +39,7 @@ abstract class AbstractQuery extends AbstractDelegate implements QueryInterface
     public function getTableSelectQuery(TableSelectDto $select): string
     {
         $query = implode(', ', $select->fields) .
-            ' FROM ' . $this->grammar->escapeTableName($select->table);
+            ' FROM ' . $this->_grammar()->escapeTableName($select->table);
         $limit = +$select->limit;
         $offset = $select->page ? $limit * $select->page : 0;
 

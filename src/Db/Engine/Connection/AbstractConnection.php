@@ -2,9 +2,10 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Connection;
 
-use Lagdo\DbAdmin\Support\DriverInterface;
+use Lagdo\DbAdmin\Support\AbstractDriver;
+use Lagdo\DbAdmin\Support\AbstractGrammar;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
-use Lagdo\DbAdmin\Support\GrammarInterface;
 use Lagdo\DbAdmin\Support\Utils\Utils;
 use Closure;
 
@@ -20,7 +21,7 @@ use function strlen;
 use function substr;
 use function trim;
 
-abstract class AbstractConnection implements ConnectionInterface
+abstract class AbstractConnection extends AbstractDbProxy implements ConnectionInterface
 {
     use ConnectionErrorTrait;
 
@@ -44,16 +45,17 @@ abstract class AbstractConnection implements ConnectionInterface
     protected $affectedRows;
 
     /**
-     * @param DriverInterface $driver
-     * @param GrammarInterface $grammar
+     * @param AbstractDriver $driver
+     * @param AbstractGrammar $grammar
      * @param Utils $utils
      * @param array $options
      * @param string $extension The extension name
      */
-    public function __construct(protected DriverInterface $driver,
-        protected GrammarInterface $grammar, protected Utils $utils,
-        protected array $options, protected string $extension)
-    {}
+    public function __construct(AbstractDriver $driver, AbstractGrammar $grammar,
+        Utils $utils, protected array $options, protected string $extension)
+    {
+        parent::__construct($driver, $grammar, $utils);
+    }
 
     /**
      * Connect to a database and a schema

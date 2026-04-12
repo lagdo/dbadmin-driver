@@ -2,20 +2,21 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Admin\Grammar;
 
+use Lagdo\DbAdmin\Support\Db\DbProxyTrait;
+
+use function preg_match;
+use function strtoupper;
+use function trim;
+use function uniqid;
+
 trait DatabaseTrait
 {
-    /**
-     * @var DatabaseInterface
-     */
-    private DatabaseInterface $database;
+    use DbProxyTrait;
 
     /**
-     * @return DatabaseInterface
+     * @var bool
      */
-    private function _d(): DatabaseInterface
-    {
-        return $this->database ??= new Database($this->driver, $this, $this->utils);
-    }
+    protected $setCharset = false;
 
     /**
      * Check if utf8mb4 might be needed
@@ -26,7 +27,10 @@ trait DatabaseTrait
      */
     public function setUtf8mb4(string $create): void
     {
-        $this->_d()->setUtf8mb4($create);
+        // possible false positive
+        if (!$this->setCharset && preg_match('~\butf8mb4~i', $create)) {
+            $this->setCharset = true;
+        }
     }
 
     /**
@@ -36,7 +40,7 @@ trait DatabaseTrait
      */
     public function getCharsetQuery(): string
     {
-        return $this->_d()->getCharsetQuery();
+        return !$this->setCharset ? '' : 'SET NAMES ' . $this->_driver()->charset() . ";\n\n";
     }
 
     /**
@@ -49,7 +53,27 @@ trait DatabaseTrait
      */
     public function getUpdateViewQueries(string $view, array $values): array
     {
-        return $this->_d()->getUpdateViewQueries($view, $values);
+        // From view.inc.php
+        $origType = 'VIEW';
+        if ($this->_driver()->pgsql()) {
+            $status = $this->_driver()->tableStatus($view);
+            $origType = strtoupper($status->engine);
+        }
+
+        $name = trim($values['name']);
+        $type = $values['materialized'] ? 'MATERIALIZED VIEW' : 'VIEW';
+        $tempName = "{$name}_dbadmin_" . uniqid();
+
+        $view = $this->_grammar()->escapeTableName($view);
+        $name = $this->_grammar()->escapeTableName($name);
+        $tempName = $this->_grammar()->escapeTableName($tempName);
+        return [
+            "DROP $origType $view",
+            "CREATE $type $name AS\n" . $values['select'],
+            "DROP $type $name",
+            "CREATE $type $tempName AS\n" . $values['select'],
+            "DROP $type $tempName",
+        ];
     }
 
     /**
@@ -61,6 +85,13 @@ trait DatabaseTrait
      */
     public function getDropViewQuery(string $view): string
     {
-        return $this->_d()->getDropViewQuery($view);
+        // From view.inc.php
+        $origType = 'VIEW';
+        if ($this->_driver()->pgsql()) {
+            $status = $this->_driver()->tableStatus($view);
+            $origType = strtoupper($status->engine);
+        }
+
+        return "DROP $origType " . $this->_grammar()->escapeTableName($view);
     }
 }

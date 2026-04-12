@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Engine\Grammar;
 
-use Lagdo\DbAdmin\Support\Db\AbstractDelegate;
+use Lagdo\DbAdmin\Support\Db\AbstractDbProxy;
 use Lagdo\DbAdmin\Support\Dto\AbstractTableDto;
 use Lagdo\DbAdmin\Support\Dto\ForeignKeyDto;
 use Lagdo\DbAdmin\Support\Dto\TableDto;
@@ -11,7 +11,7 @@ use function array_map;
 use function implode;
 use function preg_match;
 
-abstract class AbstractTable extends AbstractDelegate implements TableInterface
+abstract class AbstractTable extends AbstractDbProxy implements TableInterface
 {
     /**
      * @param ForeignKeyDto $foreignKey
@@ -20,7 +20,7 @@ abstract class AbstractTable extends AbstractDelegate implements TableInterface
      */
     private function fkFields(ForeignKeyDto $foreignKey)
     {
-        $escape = $this->grammar->escapeId(...);
+        $escape = $this->_grammar()->escapeId(...);
         return [
             implode(', ', array_map($escape, $foreignKey->source)),
             implode(', ', array_map($escape, $foreignKey->target)),
@@ -35,11 +35,11 @@ abstract class AbstractTable extends AbstractDelegate implements TableInterface
     private function fkTablePrefix(ForeignKeyDto $foreignKey)
     {
         $prefix = '';
-        if ($foreignKey->database !== '' && $foreignKey->database !== $this->driver->database()) {
-            $prefix .= $this->grammar->escapeId($foreignKey->database) . '.';
+        if ($foreignKey->database !== '' && $foreignKey->database !== $this->_driver()->database()) {
+            $prefix .= $this->_grammar()->escapeId($foreignKey->database) . '.';
         }
-        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->driver->schema()) {
-            $prefix .= $this->grammar->escapeId($foreignKey->schema) . '.';
+        if ($foreignKey->schema !== '' && $foreignKey->schema !== $this->_driver()->schema()) {
+            $prefix .= $this->_grammar()->escapeId($foreignKey->schema) . '.';
         }
         return $prefix;
     }
@@ -52,9 +52,9 @@ abstract class AbstractTable extends AbstractDelegate implements TableInterface
     protected function formatForeignKey(ForeignKeyDto $foreignKey): string
     {
         [$sources, $targets] = $this->fkFields($foreignKey);
-        $onActions = $this->driver->actions();
+        $onActions = $this->_driver()->actions();
         $query = "FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
-            $this->grammar->escapeTableName($foreignKey->table) . " ($targets)";
+            $this->_grammar()->escapeTableName($foreignKey->table) . " ($targets)";
         if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
             $query .= " ON DELETE {$foreignKey->onDelete}";
         }

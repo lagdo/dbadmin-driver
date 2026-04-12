@@ -2,22 +2,63 @@
 
 namespace Lagdo\DbAdmin\Support\Db\Admin\Driver;
 
+use Lagdo\DbAdmin\Support\Db\DbProxyTrait;
 use Lagdo\DbAdmin\Support\Db\Engine\Connection\StatementInterface;
+use Lagdo\DbAdmin\Support\Dto\TableFieldDto;
 use Exception;
+
+use function implode;
+use function is_object;
+use function is_string;
+use function preg_match;
+use function preg_replace;
+use function strlen;
+use function substr;
 
 trait QueryTrait
 {
-    /**
-     * @var QueryInterface
-     */
-    private QueryInterface $query;
+    use DbProxyTrait;
 
     /**
-     * @return QueryInterface
+     * Execute and remember query
+     *
+     * @param string $query
+     *
+     * @return StatementInterface|bool
      */
-    private function _q(): QueryInterface
+    public function execute(string $query): StatementInterface|bool
     {
-        return $this->query ??= new Query($this, $this->grammar(), $this->utils);
+        return $this->_driver()->connection()->query($query);
+    }
+
+    /**
+     * Begin transaction
+     *
+     * @return bool
+     */
+    public function begin(): bool
+    {
+        return $this->execute("BEGIN") !== false;
+    }
+
+    /**
+     * Commit transaction
+     *
+     * @return bool
+     */
+    public function commit(): bool
+    {
+        return $this->execute("COMMIT") !== false;
+    }
+
+    /**
+     * Rollback transaction
+     *
+     * @return bool
+     */
+    public function rollback(): bool
+    {
+        return $this->execute("ROLLBACK") !== false;
     }
 
     /**
@@ -36,7 +77,8 @@ trait QueryTrait
     public function select(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
     {
-        return $this->_q()->select($table, $select, $where, $group, $order, $limit, $page);
+        return $this->execute($this->_grammar()->getRowSelectQuery($table, $select,
+            $where, $group, $order, $limit, $page));
     }
 
     /**
@@ -49,7 +91,7 @@ trait QueryTrait
      */
     public function insert(string $table, array $values): bool
     {
-        return $this->_q()->insert($table, $values);
+        return $this->execute($this->_grammar()->getRowInsertQuery($table, $values)) !== false;
     }
 
     /**
@@ -64,7 +106,8 @@ trait QueryTrait
      */
     public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool
     {
-        return $this->_q()->update($table, $values, $queryWhere, $limit);
+        return $this->execute($this->_grammar()->getRowUpdateQuery($table,
+            $values, $queryWhere, $limit)) !== false;
     }
 
     /**
@@ -78,22 +121,25 @@ trait QueryTrait
      */
     public function delete(string $table, string $queryWhere, int $limit = 0): bool
     {
-        return $this->_q()->delete($table, $queryWhere, $limit);
+        return $this->execute($this->_grammar()->getRowDeleteQuery($table,
+            $queryWhere, $limit)) !== false;
     }
 
     /**
-     * Insert or update data in table
+     * Query printed after execution in the message
      *
-     * @param string $table
-     * @param array $rows
-     * @param array $primary of arrays with escaped columns in keys and quoted data in values
+     * @param string $query Executed query
      *
-     * @return bool
+     * @return string
      */
-    // public function insertOrUpdate(string $table, array $rows, array $primary): bool
-    // {
-    //     return $this->_q()->insertOrUpdate($table, $rows, $primary);
-    // }
+    private function queryToLog(string $query/*, string $time*/): string
+    {
+        if (strlen($query) > 1e6) {
+            // [\x80-\xFF] - valid UTF-8, \n - can end by one-line comment
+            $query = preg_replace('~[\x80-\xFF]+$~', '', substr($query, 0, 1e6)) . "\n…";
+        }
+        return $query;
+    }
 
     /**
      * Execute query
@@ -108,91 +154,207 @@ trait QueryTrait
     public function executeQuery(string $query, bool $execute = true,
         bool $failed = false/*, string $time = ''*/): bool
     {
-        return $this->_q()->executeQuery($query, $execute, $failed/*, $time*/);
+        if ($execute) {
+            // $start = microtime(true);
+            $failed = !$this->execute($query);
+            // $time = $this->trans->formatTime($start);
+        }
+        if ($failed) {
+            $sql = '';
+            if ($query) {
+                $sql = $this->queryToLog($query/*, $time*/);
+            }
+            throw new Exception($this->_driver()->error() . $sql);
+        }
+        return true;
+    }
+
+    /**
+     * @param TableFieldDto $field
+     * @param string $column
+     * @param string $value
+     *
+     * @return string
+     */
+    private function getWhereColumnClause(TableFieldDto $field, string $column, string $value): string
+    {
+        $bUseSqlLike = $this->_driver()->sql() && is_numeric($value) && preg_match('~\.~', $value);
+        return $column . match(true) {
+            $bUseSqlLike => ' LIKE ' . $this->_driver()->quote($value),
+            $this->_driver()->mssql() => // LIKE because of text
+                ' LIKE ' . $this->_driver()->quote(preg_replace('~[_%[]~', '[\0]', $value)),
+            //! enum and set
+            default => ' = ' . $this->_grammar()->unconvertField($field, $this->_driver()->quote($value)),
+        };
+    }
+
+    /**
+     * @param TableFieldDto $field
+     * @param string $column
+     * @param string $value
+     *
+     * @return string
+     */
+    private function getWhereCollateClause(TableFieldDto $field, string $column, string $value): string
+    {
+        $collate = $this->_driver()->sql() &&
+            preg_match('~char|text~', $field->type) &&
+            preg_match("~[^ -@]~", $value);
+        return !$collate ? '' :
+            // not just [a-z] to catch non-ASCII characters
+            "$column = " . $this->_driver()->quote($value) . ' COLLATE ' . $this->_driver()->charset() . '_bin';
+    }
+
+    /**
+     * @param string $column
+     * @param string|array $value
+     *
+     * @return array
+     */
+    private function getWhereClauseValues(string $column, string|array $value): array
+    {
+        if (is_string($value)) {
+            return [$this->_grammar()->escapeKey($column), $value];
+        }
+
+        $expr = $this->_grammar()->bracketEscape($value['expr'], 1); // 1 - back
+        return [$this->_grammar()->escapeKey($expr), $value['value']];
     }
 
     /**
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string
-     * @param array $fields
+     * @param array<TableFieldDto> $fields
      *
      * @return string
      */
     public function where(array $where, array $fields = []): string
     {
-        return $this->_q()->where($where, $fields);
+        $clauses = [];
+        $wheres = $where['where'] ?? [];
+        foreach ((array) $wheres as $column => $value) {
+            $field = $fields[$column];
+            [$column, $value] = $this->getWhereClauseValues($column, $value);
+
+            $clauses[] = $this->getWhereColumnClause($field, $column, $value);
+            if (($clause = $this->getWhereCollateClause($field, $column, $value))) {
+                $clauses[] = $clause;
+            }
+        }
+        $nulls = $where['null'] ?? [];
+        foreach ((array) $nulls as $column) {
+            $clauses[] = $this->_grammar()->escapeKey($column) . ' IS NULL';
+        }
+        return implode(' AND ', $clauses);
     }
 
     /**
-     * @inheritDoc
-     */
-    public function applyQueries(string $query, array $tables, $escape = null): bool
-    {
-        return $this->_q()->applyQueries($query, $tables, $escape);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function values(string $query, int $column = 0): array
-    {
-        return $this->_q()->values($query, $column);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function colValues(string $query, string $column): array
-    {
-        return $this->_q()->colValues($query, $column);
-    }
-
-    /**
-     * @inheritDoc
+     * Get all rows of result
+     *
+     * @param string $query
+     *
+     * @return array
      */
     public function rows(string $query): array
     {
-        return $this->_q()->rows($query);
+        $statement = $this->execute($query);
+        if (!is_object($statement)) { // can return true
+            return [];
+        }
+        $rows = [];
+        while ($row = $statement->fetchAssoc()) {
+            $rows[] = $row;
+        }
+        return $rows;
     }
 
     /**
-     * @inheritDoc
+     * Apply command to all array items
+     *
+     * @param string $query
+     * @param array $tables
+     * @param callback|null $escape
+     *
+     * @return bool
+     */
+    public function applyQueries(string $query, array $tables, $escape = null): bool
+    {
+        if (!$escape) {
+            $escape = $this->_grammar()->escapeTableName(...);
+        }
+        foreach ($tables as $table) {
+            if (!$this->execute("$query " . $escape($table))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Get list of values from database
+     *
+     * @param string $query
+     * @param int $column
+     *
+     * @return array
+     */
+    public function values(string $query, int $column = 0): array
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            $values[] = $row[$column];
+        }
+        return $values;
+    }
+
+    /**
+     * Get list of values from database
+     *
+     * @param string $query
+     * @param string $column
+     *
+     * @return array
+     */
+    public function colValues(string $query, string $column): array
+    {
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchAssoc()) {
+            $values[] = $row[$column];
+        }
+        return $values;
+    }
+
+    /**
+     * Get keys from first column and values from second
+     *
+     * @param string $query
+     * @param bool $setKeys
+     *
+     * @return array
      */
     public function keyValues(string $query, bool $setKeys = true): array
     {
-        return $this->_q()->keyValues($query, $setKeys);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function execute(string $query): StatementInterface|bool
-    {
-        return $this->_q()->execute($query);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function begin(): bool
-    {
-        return $this->_q()->begin();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function commit(): bool
-    {
-        return $this->_q()->commit();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rollback(): bool
-    {
-        return $this->_q()->rollback();
+        $statement = $this->execute($query);
+        if (!is_object($statement)) {
+            return [];
+        }
+        $values = [];
+        while ($row = $statement->fetchRow()) {
+            if ($setKeys) {
+                $values[$row[0]] = $row[1];
+            } else {
+                $values[] = $row[0];
+            }
+        }
+        return $values;
     }
 }
