@@ -12,7 +12,7 @@ class TableSelectDto
      *
      * @var string
      */
-    public $clauses = '';
+    public string $clauses = '';
 
     /**
      * The constructor

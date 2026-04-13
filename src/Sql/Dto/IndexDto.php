@@ -7,40 +7,40 @@ class IndexDto
     /**
      * @var string
      */
-    public $type = '';
+    public string $type = '';
 
     /**
      * @var string
      */
-    public $name = '';
+    public string $name = '';
 
     /**
      * @var string
      */
-    public $action = '';
+    public string $action = '';
 
     /**
      * @var string
      */
-    public $algorithm = '';
+    public string $algorithm = '';
 
     /**
      * @var string
      */
-    public $partial = '';
+    public string $partial = '';
 
     /**
      * @var array
      */
-    public $columns = [];
+    public array $columns = [];
 
     /**
      * @var array
      */
-    public $lengths = [];
+    public array $lengths = [];
 
     /**
      * @var array
      */
-    public $descs = [];
+    public array $descs = [];
 }

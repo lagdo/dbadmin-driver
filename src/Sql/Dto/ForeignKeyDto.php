@@ -7,45 +7,45 @@ class ForeignKeyDto
     /**
      * @var string
      */
-    public $database = '';
+    public string $database = '';
 
     /**
      * @var string
      */
-    public $schema = '';
+    public string $schema = '';
 
     /**
      * @var string
      */
-    public $table = '';
+    public string $table = '';
 
     /**
      * @var string
      */
-    public $definition = '';
+    public string $definition = '';
 
     /**
      * @var array
      */
-    public $source = [];
+    public array $source = [];
 
     /**
      * @var array
      */
-    public $target = [];
+    public array $target = [];
 
     /**
      * @var string
      */
-    public $onUpdate = '';
+    public string $onUpdate = '';
 
     /**
      * @var string
      */
-    public $onDelete = '';
+    public string $onDelete = '';
 
     /**
      * @var boolean
      */
-    public $deferrable = false;
+    public bool $deferrable = false;
 }

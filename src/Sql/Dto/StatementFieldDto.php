@@ -9,42 +9,42 @@ class StatementFieldDto
      *
      * @var string
      */
-    protected $type = '';
+    protected string $type = '';
 
     /**
      * If the field is binary
      *
      * @var bool
      */
-    protected $isBinary = false;
+    protected bool $isBinary = false;
 
     /**
      * The field name
      *
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * The field org name
      *
      * @var string
      */
-    protected $orgName = '';
+    protected string $orgName = '';
 
     /**
      * The field table name
      *
      * @var string
      */
-    protected $table = '';
+    protected string $table = '';
 
     /**
      * The field org table name
      *
      * @var string
      */
-    protected $orgTable = '';
+    protected string $orgTable = '';
 
     /**
      * The constructor

@@ -18,91 +18,91 @@ class TableFieldDto extends FieldType
      *
      * @var boolean
      */
-    public $autoIncrement = false;
+    public bool $autoIncrement = false;
 
     /**
      * The action on update
      *
      * @var string
      */
-    public $onUpdate = '';
+    public string $onUpdate = '';
 
     /**
      * The action on delete
      *
      * @var string
      */
-    public $onDelete = '';
+    public string $onDelete = '';
 
     /**
      * The field privileges
      *
      * @var array
      */
-    public $privileges = [];
+    public array $privileges = [];
 
     /**
      * The field comment
      *
      * @var string
      */
-    public $comment = '';
+    public string $comment = '';
 
     /**
      * If the field is primary key
      *
      * @var boolean
      */
-    public $primary = false;
+    public bool $primary = false;
 
     /**
      * How the field is generated
      *
      * @var string
      */
-    public $generated = '';
+    public string $generated = '';
 
     /**
      * The field types
      *
      * @var array
      */
-    public $types = [];
+    public array $types = [];
 
     /**
      * If the field length is required
      *
      * @var boolean
      */
-    public $lengthRequired = false;
+    public bool $lengthRequired = false;
 
     /**
      * If the field collation is hidden
      *
      * @var boolean
      */
-    public $collationHidden = true;
+    public bool $collationHidden = true;
 
     /**
      * If the field sign id idden
      *
      * @var boolean
      */
-    public $unsignedHidden = false;
+    public bool $unsignedHidden = false;
 
     /**
      * If the field on update trigger is hidden
      *
      * @var boolean
      */
-    public $onUpdateHidden = true;
+    public bool $onUpdateHidden = true;
 
     /**
      * If the field on delete trigger is hidden
      *
      * @var boolean
      */
-    public $onDeleteHidden = true;
+    public bool $onDeleteHidden = true;
 
     /**
      * @return boolean

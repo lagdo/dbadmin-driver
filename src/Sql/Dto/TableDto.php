@@ -7,92 +7,64 @@ class TableDto
     /**
      * @var string
      */
-    public $name = '';
+    public string $name = '';
 
     /**
      * @var string
      */
-    public $engine = '';
+    public string $engine = '';
 
     /**
      * @var string
      */
-    public $schema = '';
+    public string $schema = '';
 
     /**
      * @var string
      */
-    public $collation = '';
+    public string $collation = '';
 
     /**
      * @var integer
      */
-    public $dataLength = 0;
+    public int $dataLength = 0;
 
     /**
      * @var integer
      */
-    public $indexLength = 0;
+    public int $indexLength = 0;
 
     /**
      * @var string
      */
-    public $comment = '';
+    public string $comment = '';
 
     /**
      * @var string
      */
-    public $oid = '';
+    public string $oid = '';
 
     /**
-     * @var array
+     * @var int
      */
-    public $rows = [];
-
-    /**
-     * Columns to add when creating or altering a table.
-     *
-     * @var array
-     */
-    public $fields = [];
-
-    /**
-     * Columns to edit when altering a table.
-     *
-     * @var array
-     */
-    public $edited = [];
-
-    /**
-     * Columns to drop when altering a table.
-     *
-     * @var array
-     */
-    public $dropped = [];
-
-    /**
-     * @var array
-     */
-    public $foreign = [];
+    public int $rowCount = 0;
 
     /**
      * @var bool
      */
-    public $hasAutoIncrement = false;
+    public bool $hasAutoIncrement = false;
 
     /**
      * @var integer
      */
-    public $autoIncrement = 0;
+    public int $autoIncrement = 0;
 
     /**
      * @var string
      */
-    public $partitioning = '';
+    public string $partitioning = '';
 
     /**
-     * The constructor
-     *
      * @param string $name The table name
      */
     public function __construct(string $name)

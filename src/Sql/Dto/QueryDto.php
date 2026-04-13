@@ -9,39 +9,39 @@ class QueryDto
      *
      * @var string
      */
-    public $queries = '';
+    public string $queries = '';
 
     /**
      * The last parsed SQL query.
      *
      * @var string
      */
-    public $query = '';
+    public string $query = '';
 
     /**
      * @var string
      */
-    public $delimiter = ';';
+    public string $delimiter = ';';
 
     /**
      * @var int
      */
-    public $offset = 0;
+    public int $offset = 0;
 
     /**
      * @var int
      */
-    public $limit = 0;
+    public int $limit = 0;
 
     /**
      * @var bool
      */
-    public $errorStops = 0;
+    public bool $errorStops = false;
 
     /**
      * @var bool
      */
-    public $onlyErrors = 0;
+    public bool $onlyErrors = false;
 
     /**
      * The constructor

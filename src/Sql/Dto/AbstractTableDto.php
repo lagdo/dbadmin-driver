@@ -11,42 +11,42 @@ abstract class AbstractTableDto
     /**
      * @var string
      */
-    public $name = '';
+    public string $name = '';
 
     /**
      * @var string
      */
-    public $engine = '';
+    public string $engine = '';
 
     /**
      * @var string
      */
-    public $collation = '';
+    public string $collation = '';
 
     /**
      * @var bool
      */
-    public $hasAutoIncrement = false;
+    public bool $hasAutoIncrement = false;
 
     /**
      * @var integer
      */
-    public $autoIncrement = 0;
+    public int $autoIncrement = 0;
 
     /**
      * @var string
      */
-    public $comment = '';
+    public string $comment = '';
 
     /**
      * @var string
      */
-    public $partitioning = '';
+    public string $partitioning = '';
 
     /**
      * @var array<ForeignKeyDto>
      */
-    public $foreignKeys = [];
+    public array $foreignKeys = [];
 
     /**
      * @param array $properties
@@ -91,7 +91,9 @@ abstract class AbstractTableDto
         $this->collation = $properties['collation'] ?? '';
         $this->comment = $properties['comment'] ?? '';
         $this->hasAutoIncrement = $properties['hasAutoIncrement'] ?? false;
-        $this->autoIncrement = $properties['autoIncrement'] ?? 0;
+        if ($this->hasAutoIncrement) {
+            $this->autoIncrement = (int)($properties['autoIncrement'] ?? 0);
+        }
         // $this->partitioning = $properties['partitioning'] ?? '';
     }
 }

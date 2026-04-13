@@ -7,28 +7,28 @@ class UserDto
     /**
      * @var string
      */
-    public $name = '';
+    public string $name = '';
 
     /**
      * @var string
      */
-    public $host = '';
+    public string $host = '';
 
 
     /**
      * @var string
      */
-    public $password = '';
+    public string $password = '';
 
     /**
      * @var array
      */
-    public $grants = [];
+    public array $grants = [];
 
     /**
      * @var array
      */
-    public $privileges = [];
+    public array $privileges = [];
 
     /**
      * The constructor

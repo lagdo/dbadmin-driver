@@ -7,33 +7,33 @@ class TableAlterDto extends AbstractTableDto
     /**
      * @var TableDto
      */
-    public $current = null;
+    public ?TableDto $current = null;
 
     /**
      * Columns to add.
      *
      * @var array<ColumnDto>
      */
-    public $addedColumns = [];
+    public array $addedColumns = [];
 
     /**
      * Columns to change.
      *
      * @var array<ColumnDto>
      */
-    public $changedColumns = [];
+    public array $changedColumns = [];
 
     /**
      * Columns to drop.
      *
      * @var array<string>
      */
-    public $droppedColumns = [];
+    public array $droppedColumns = [];
 
     /**
      * @var string|null
      */
-    public $error = null;
+    public ?string $error = null;
 
     /**
      * @return void

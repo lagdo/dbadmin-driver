@@ -14,10 +14,5 @@ class RoutineDto
      */
     public function __construct(public string $name, public string $specificName,
         public string $type, public string $dtd)
-    {
-        $this->name = $name;
-        $this->specificName = $specificName;
-        $this->type = $type;
-        $this->dtd = $dtd;
-    }
+    {}
 }

@@ -9,12 +9,12 @@ class TableCreateDto extends AbstractTableDto
      *
      * @var array<ColumnDto>
      */
-    public $columns = [];
+    public array $columns = [];
 
     /**
      * @var string|null
      */
-    public $error = null;
+    public ?string $error = null;
 
     /**
      * @return void

@@ -46,9 +46,9 @@ trait TableTrait
         $type = preg_match($this->_engine()->numberRegex(), $field->type) &&
             in_array($field->unsigned, $this->_engine()->unsigned()) ?
             " {$field->unsigned}" : "";
-        $collation = preg_match('~char|text|enum|set~', $field->type) &&
-            $field->collation ? " $collate " . ($this->_engine()->mssql() ?
-                $field->collation : $this->_engine()->quote($field->collation)) : "";
+        $collation = preg_match('~char|text|enum|set~', $field->type) && $field->collation ?
+            " $collate " . ($this->_engine()->mssql() ? $field->collation :
+                $this->_engine()->quote($field->collation)) : "";
         return " {$field->type}{$length}{$type}{$collation}";
     }
 
@@ -80,7 +80,8 @@ trait TableTrait
         if ($this->_engine()->support('comment') && $field->comment !== '') {
             $column->comment = ' COMMENT ' . $this->_engine()->quote($field->comment);
         }
-        $column->autoIncrement = $field->autoIncrement ? $this->_statement()->getAutoIncrementModifier() : null;
+        $column->autoIncrement = $field->autoIncrement ?
+            $this->_statement()->getAutoIncrementModifier() : null;
 
         return $column;
     }
