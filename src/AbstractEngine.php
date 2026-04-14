@@ -2,22 +2,24 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
+use Lagdo\DbAdmin\Driver\Sql\Config\ConfigTrait;
+use Lagdo\DbAdmin\Driver\Sql\Config\DriverConfig;
+use Lagdo\DbAdmin\Driver\Sql\Connection\ConnectionTrait;
 use Lagdo\DbAdmin\Driver\Sql\Specific;
-use Lagdo\DbAdmin\Driver\Sql\Specific\Config\DriverConfig;
-use Lagdo\DbAdmin\Driver\Sql\Universal;
+use Lagdo\DbAdmin\Driver\Sql\Standard;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 abstract class AbstractEngine implements EngineInterface
 {
-    use Specific\Config\ConfigTrait;
-    use Specific\Connection\ConnectionTrait;
-    use Universal\Engine\ServerTrait;
+    use ConfigTrait;
+    use ConnectionTrait;
+    use Standard\Engine\ServerTrait;
     use Specific\Engine\ServerTrait;
-    use Universal\Engine\DatabaseTrait;
+    use Standard\Engine\DatabaseTrait;
     use Specific\Engine\DatabaseTrait;
-    use Universal\Engine\TableTrait;
+    use Standard\Engine\TableTrait;
     use Specific\Engine\TableTrait;
-    use Universal\Engine\QueryTrait;
+    use Standard\Engine\QueryTrait;
     use Specific\Engine\QueryTrait;
 
     /**

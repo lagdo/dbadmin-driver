@@ -3,18 +3,18 @@
 namespace Lagdo\DbAdmin\Driver;
 
 use Lagdo\DbAdmin\Driver\Sql\Specific;
-use Lagdo\DbAdmin\Driver\Sql\Universal;
+use Lagdo\DbAdmin\Driver\Sql\Standard;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 
 abstract class AbstractStatement implements StatementInterface
 {
-    use Universal\Statement\SyntaxTrait;
+    use Standard\Statement\SyntaxTrait;
     use Specific\Statement\SyntaxTrait;
-    use Universal\Statement\DatabaseTrait;
+    use Standard\Statement\DatabaseTrait;
     use Specific\Statement\DatabaseTrait;
-    use Universal\Statement\TableTrait;
+    use Standard\Statement\TableTrait;
     use Specific\Statement\TableTrait;
-    use Universal\Statement\QueryTrait;
+    use Standard\Statement\QueryTrait;
     use Specific\Statement\QueryTrait;
 
     /**

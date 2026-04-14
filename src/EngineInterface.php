@@ -2,16 +2,16 @@
 
 namespace Lagdo\DbAdmin\Driver;
 
-use Lagdo\DbAdmin\Driver\Sql\Universal;
-use Lagdo\DbAdmin\Driver\Sql\Specific\Config\ConfigInterface;
+use Lagdo\DbAdmin\Driver\Sql\Config\ConfigInterface;
+use Lagdo\DbAdmin\Driver\Sql\Connection\ConnectionInterface;
 use Lagdo\DbAdmin\Driver\Sql\Specific;
-use Lagdo\DbAdmin\Driver\Sql\Specific\Connection\ConnectionInterface;
+use Lagdo\DbAdmin\Driver\Sql\Standard;
 
 interface EngineInterface extends ConfigInterface, ConnectionInterface,
-    Universal\Engine\ServerInterface, Specific\Engine\ServerInterface,
-    Universal\Engine\DatabaseInterface, Specific\Engine\DatabaseInterface,
-    Universal\Engine\TableInterface, Specific\Engine\TableInterface,
-    Universal\Engine\QueryInterface, Specific\Engine\QueryInterface
+    Standard\Engine\ServerInterface, Specific\Engine\ServerInterface,
+    Standard\Engine\DatabaseInterface, Specific\Engine\DatabaseInterface,
+    Standard\Engine\TableInterface, Specific\Engine\TableInterface,
+    Standard\Engine\QueryInterface, Specific\Engine\QueryInterface
 {
     /**
      * Get the driver name
