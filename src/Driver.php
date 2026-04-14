@@ -18,11 +18,9 @@ class Driver
      * @param AbstractEngine $engine
      * @param AbstractStatement $statement
      */
-    public function __construct(public AbstractEngine $engine, public AbstractStatement $statement)
-    {
-        $statement->setEngine($engine);
-        $engine->setStatement($statement);
-    }
+    public function __construct(public readonly AbstractEngine $engine,
+        public readonly AbstractStatement $statement)
+    {}
 
     /**
      * @param string $driver
@@ -45,7 +43,12 @@ class Driver
     {
         $builder = self::$builders[$options['driver']] ?? null;
         [$engine, $statement] = $builder === null ? [null, null] : $builder($utils, $options);
+        if ($engine === null || $statement === null) {
+            return null;
+        }
 
-        return $engine === null || $statement === null ? null : new self($engine, $statement);
+        $statement->setEngine($engine);
+        $engine->setStatement($statement);
+        return new self($engine, $statement);
     }
 }
