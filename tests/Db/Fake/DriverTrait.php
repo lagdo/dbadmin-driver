@@ -1,6 +1,6 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Fake;
+namespace Lagdo\DbAdmin\Driver\Tests\Db\Fake;
 
 trait DriverTrait
 {

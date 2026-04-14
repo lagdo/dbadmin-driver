@@ -1,9 +1,9 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Fake;
+namespace Lagdo\DbAdmin\Driver\Tests\Db\Fake;
 
-use Lagdo\DbAdmin\Support\Db\Engine\Connection\StatementInterface;
-use Lagdo\DbAdmin\Support\Db\Engine\Driver\AbstractConnection;
+use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
+use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection;
 
 /**
  * Fake Connection class for testing

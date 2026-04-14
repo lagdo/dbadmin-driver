@@ -1,8 +1,8 @@
 <?php
 
-namespace Lagdo\DbAdmin\Support\Db\Fake;
+namespace Lagdo\DbAdmin\Driver\Tests\Db\Fake;
 
-use Lagdo\DbAdmin\Support\Utils\TranslatorInterface;
+use Lagdo\DbAdmin\Driver\Utils\TranslatorInterface;
 
 /**
  * Fake Translator class for testing
