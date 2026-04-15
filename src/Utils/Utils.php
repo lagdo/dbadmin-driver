@@ -173,4 +173,17 @@ class Utils
         return preg_match('~blob|bytea|raw|file~', $field->type) &&
             !in_array($field->type, $userTypes);
     }
+
+    /**
+     * Check if field should be shortened
+     *
+     * @param TableFieldDto $field
+     *
+     * @return bool
+     */
+    public function isShortable(TableFieldDto $field): bool
+    {
+        $pattern = '~char|text|json|lob|geometry|point|linestring|polygon|string|bytea~';
+        return preg_match($pattern, $field->type) > 0;
+    }
 }

@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
 use Lagdo\DbAdmin\Driver\Sql\Dto\QueryDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 
 use function array_flip;
 use function implode;
@@ -210,5 +211,59 @@ trait SyntaxTrait
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param TableFieldDto $field
+     * @param string $value
+     * @param string $function
+     *
+     * @return string
+     */
+    private function getInputFieldExpression(TableFieldDto $field,
+        string $value, string $function): string
+    {
+        $fieldName = $this->_statement()->escapeId($field->name);
+        $expression = $this->_engine()->quote($value);
+
+        if (preg_match('~^(now|getdate|uuid)$~', $function)) {
+            return "$function()";
+        }
+        if (preg_match('~^current_(date|timestamp)$~', $function)) {
+            return $function;
+        }
+        if (preg_match('~^([+-]|\|\|)$~', $function)) {
+            return "$fieldName $function $expression";
+        }
+        if (preg_match('~^[+-] interval$~', $function)) {
+            return "$fieldName $function " .
+                (preg_match("~^(\\d+|'[0-9.: -]') [A-Z_]+\$~i", $value) &&
+                    !$this->_engine()->pgsql() ? $value : $expression);
+        }
+        if (preg_match('~^(addtime|subtime|concat)$~', $function)) {
+            return "$function($fieldName, $expression)";
+        }
+        if (preg_match('~^(md5|sha1|password|encrypt)$~', $function)) {
+            return "$function($expression)";
+        }
+        return $expression;
+    }
+
+    /**
+     * @param TableFieldDto $field Single field from fields()
+     * @param string $value
+     * @param string $function
+     *
+     * @return string
+     */
+    public function getUnconvertedFieldValue(TableFieldDto $field,
+        string $value, string $function = ''): string
+    {
+        if ($function === 'SQL') {
+            return $value; // SQL injection
+        }
+
+        $expression = $this->getInputFieldExpression($field, $value, $function);
+        return $this->_statement()->unconvertField($field, $expression);
     }
 }
