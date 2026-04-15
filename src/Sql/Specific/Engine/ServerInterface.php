@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Sql\Dto\UserDto;
+use Closure;
 
 interface ServerInterface
 {
@@ -24,7 +25,7 @@ interface ServerInterface
      *
      * @return AbstractConnection
      */
-    public function openConnection(string $database, string $schema = ''): AbstractConnection;
+    public function openMainConnection(string $database, string $schema = ''): AbstractConnection;
 
     /**
      * Create a new connection to a database and a schema
@@ -34,12 +35,22 @@ interface ServerInterface
      *
      * @return AbstractConnection|null
      */
-    public function newConnection(string $database, string $schema = ''): AbstractConnection|null;
+    public function openNewConnection(string $database, string $schema = ''): AbstractConnection|null;
 
     /**
      * @return AbstractConnection|null
      */
     public function connection(): AbstractConnection|null;
+
+    /**
+     * Execute the given closure using the provided connection.
+     *
+     * @param AbstractConnection $connection
+     * @param Closure $function
+     *
+     * @return void
+     */
+    public function withConnection(AbstractConnection $connection, Closure $function): void;
 
     /**
      * Close the connection to the server

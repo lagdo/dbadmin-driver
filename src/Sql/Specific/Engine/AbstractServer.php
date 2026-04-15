@@ -7,6 +7,7 @@ use Lagdo\DbAdmin\Driver\Sql\Config\DriverConfig;
 use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Exception\AuthException;
 use Lagdo\DbAdmin\Driver\Sql\Dto\UserDto;
+use Closure;
 
 abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
 {
@@ -16,11 +17,6 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     protected AbstractConnection|null $connection = null;
 
     /**
-     * @var AbstractConnection|null
-     */
-    protected AbstractConnection|null $mainConnection = null;
-
-    /**
      * @var DriverConfig
      */
     protected DriverConfig $config;
@@ -28,7 +24,7 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     /**
      * @return void
      */
-    abstract protected function starting(): void;
+    abstract protected function configure(): void;
 
     /**
      * @return void
@@ -38,19 +34,17 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     /**
      * @param DriverConfig $config
      */
-    public function initConnection(DriverConfig $config)
+    final public function setConfig(DriverConfig $config)
     {
         $this->config = $config;
         // Fill the config with driver specific values.
-        $this->starting();
-        // Create and set the main connection.
-        $this->connection = $this->createConnection($config->options);
+        $this->configure();
     }
 
     /**
      * @inheritDoc
      */
-    public function connection(): AbstractConnection|null
+    final public function connection(): AbstractConnection|null
     {
         return $this->connection;
     }
@@ -59,18 +53,20 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
      * @inheritDoc
      * @throws AuthException
      */
-    public function openConnection(string $database, string $schema = ''): AbstractConnection
+    final public function openMainConnection(string $database, string $schema = ''): AbstractConnection
     {
+        if ($this->connection !== null) {
+            $this->closeConnection();
+        }
+
+        // Create and set the main connection.
+        $this->connection = $this->createConnection($this->config->options);
         if (!$this->connection->open($database, $schema)) {
             throw new AuthException($this->_engine()->error());
         }
 
         $this->config->setDatabase($database, $schema);
-
-        if ($this->mainConnection === null) {
-            $this->mainConnection = $this->connection;
-            $this->connected();
-        }
+        $this->connected();
 
         return $this->connection;
     }
@@ -78,7 +74,7 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function closeConnection(): void
+    final public function closeConnection(): void
     {
         $this->connection->close();
         $this->connection = null;
@@ -87,10 +83,28 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function newConnection(string $database, string $schema = ''): AbstractConnection|null
+    final public function openNewConnection(string $database, string $schema = ''): AbstractConnection|null
     {
         $connection = $this->createConnection($this->config->options());
         return !$connection || !$connection->open($database, $schema) ? null : $connection;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final public function withConnection(AbstractConnection $connection, Closure $function): void
+    {
+        // Save the main connection, and use the provied one.
+        $mainConnection = $this->connection;
+        $this->connection = $connection;
+
+        // Run the provided function.
+        try {
+            $function();
+        } finally {
+            // Reset the main connection.
+            $this->connection = $mainConnection;
+        }
     }
 
     /**

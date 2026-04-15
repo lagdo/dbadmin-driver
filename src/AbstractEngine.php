@@ -45,7 +45,7 @@ abstract class AbstractEngine implements EngineInterface
     {
         $this->statement = $statement;
         // Must be called after the statement is set.
-        $this->_server()->initConnection($this->config);
+        $this->_server()->setConfig($this->config);
     }
 
     /**

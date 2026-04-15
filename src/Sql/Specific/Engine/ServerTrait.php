@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Sql\Dto\UserDto;
+use Closure;
 
 trait ServerTrait
 {
@@ -32,9 +33,9 @@ trait ServerTrait
      *
      * @return AbstractConnection
      */
-    public function openConnection(string $database, string $schema = ''): AbstractConnection
+    public function openMainConnection(string $database, string $schema = ''): AbstractConnection
     {
-        return $this->_server()->openConnection($database, $schema);
+        return $this->_server()->openMainConnection($database, $schema);
     }
 
     /**
@@ -45,9 +46,9 @@ trait ServerTrait
      *
      * @return AbstractConnection|null
      */
-    public function newConnection(string $database, string $schema = ''): AbstractConnection|null
+    public function openNewConnection(string $database, string $schema = ''): AbstractConnection|null
     {
-        return $this->_server()->newConnection($database, $schema);
+        return $this->_server()->openNewConnection($database, $schema);
     }
 
     /**
@@ -56,6 +57,19 @@ trait ServerTrait
     public function connection(): AbstractConnection|null
     {
         return $this->_server()->connection();
+    }
+
+    /**
+     * Execute the given closure using the provided connection.
+     *
+     * @param AbstractConnection $connection
+     * @param Closure $function
+     *
+     * @return void
+     */
+    public function withConnection(AbstractConnection $connection, Closure $function): void
+    {
+        $this->_server()->withConnection($connection, $function);
     }
 
     /**
