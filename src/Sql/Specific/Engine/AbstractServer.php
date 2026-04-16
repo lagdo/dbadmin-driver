@@ -55,13 +55,9 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
      */
     final public function openMainConnection(string $database, string $schema = ''): AbstractConnection
     {
-        if ($this->connection !== null) {
-            $this->closeConnection();
-        }
-
-        // Create and set the main connection.
+        $this->closeConnection();
         $this->connection = $this->createConnection($this->config->options);
-        if (!$this->connection->open($database, $schema)) {
+        if (!$this->connection?->open($database, $schema)) {
             throw new AuthException($this->_engine()->error());
         }
 
@@ -76,7 +72,7 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
      */
     final public function closeConnection(): void
     {
-        $this->connection->close();
+        $this->connection?->close();
         $this->connection = null;
     }
 
@@ -120,8 +116,7 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
      */
     public function getUserGrants(string $user, string $host): UserDto
     {
-        $entity = new UserDto($user, $host);
-        return $entity;
+        return new UserDto($user, $host);
     }
 
     /**
