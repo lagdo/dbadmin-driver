@@ -50,7 +50,7 @@ trait TableTrait
     }
 
     /**
-     * Find out whether the identifier is view
+     * Find out whether the identifier is a view
      *
      * @param TableDto $tableStatus
      *
@@ -59,6 +59,18 @@ trait TableTrait
     public function isView(TableDto $tableStatus): bool
     {
         return $this->_table()->isView($tableStatus);
+    }
+
+    /**
+     * Find out whether the identifier is a table (not a view)
+     *
+     * @param TableDto $tableStatus
+     *
+     * @return bool
+     */
+    public function isTable(TableDto $tableStatus): bool
+    {
+        return $this->_table()->isTable($tableStatus);
     }
 
     /**

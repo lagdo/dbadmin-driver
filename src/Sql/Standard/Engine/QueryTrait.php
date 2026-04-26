@@ -295,42 +295,44 @@ trait QueryTrait
      * Get list of values from database
      *
      * @param string $query
-     * @param int $column
+     * @param string|int $column
      *
      * @return array
      */
-    public function values(string $query, int $column = 0): array
+    public function columnValues(string $query, string|int $column = 0): array
     {
         $statement = $this->execute($query);
         if (!is_object($statement)) {
             return [];
         }
+
+        $fetchRow = is_string($column) ?
+            $statement->fetchAssoc(...) : $statement->fetchRow(...);
         $values = [];
-        while ($row = $statement->fetchRow()) {
+        while ($row = $fetchRow()) {
             $values[] = $row[$column];
         }
         return $values;
     }
 
     /**
-     * Get list of values from database
+     * Get a value from database
      *
      * @param string $query
-     * @param string $column
+     * @param string|int $column
      *
-     * @return array
+     * @return mixed
      */
-    public function colValues(string $query, string $column): array
+    public function columnValue(string $query, string|int $column = 0): mixed
     {
         $statement = $this->execute($query);
         if (!is_object($statement)) {
-            return [];
+            return null;
         }
-        $values = [];
-        while ($row = $statement->fetchAssoc()) {
-            $values[] = $row[$column];
-        }
-        return $values;
+
+        $row = is_string($column) ?
+            $statement->fetchAssoc() : $statement->fetchRow();
+        return !$row ? null : $row[$column];
     }
 
     /**

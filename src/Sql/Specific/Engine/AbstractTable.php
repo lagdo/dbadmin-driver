@@ -42,6 +42,18 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     }
 
     /**
+     * Find out whether the identifier is a table (not a view)
+     *
+     * @param TableDto $tableStatus
+     *
+     * @return bool
+     */
+    public function isTable(TableDto $tableStatus): bool
+    {
+        return !$this->isView($tableStatus);
+    }
+
+    /**
      * @inheritDoc
      */
     public function trigger(string $name, string $table = ''): TriggerDto|null

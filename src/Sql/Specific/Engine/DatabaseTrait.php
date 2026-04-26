@@ -52,7 +52,7 @@ trait DatabaseTrait
     }
 
     /**
-     * Find out if database is information_schema
+     * Find out if a database is information_schema
      *
      * @param string $database
      *
@@ -73,6 +73,18 @@ trait DatabaseTrait
     public function isSystemSchema(string $database): bool
     {
         return $this->_database()->isSystemSchema($database);
+    }
+
+    /**
+     * Find out if a database is a user database
+     *
+     * @param string $database
+     *
+     * @return bool
+     */
+    public function isUserSchema(string $database): bool
+    {
+        return $this->_database()->isUserSchema($database);
     }
 
     /**

@@ -134,21 +134,21 @@ interface QueryInterface
      * Get list of values from database
      *
      * @param string $query
-     * @param int $column
+     * @param string|int $column
      *
      * @return array
      */
-    public function values(string $query, int $column = 0): array;
+    public function columnValues(string $query, string|int $column = 0): array;
 
     /**
-     * Get list of values from database
+     * Get a value from database
      *
      * @param string $query
-     * @param string $column
+     * @param string|int $column
      *
-     * @return array
+     * @return mixed
      */
-    public function colValues(string $query, string $column): array;
+    public function columnValue(string $query, string|int $column = 0): mixed;
 
     /**
      * Get keys from first column and values from second

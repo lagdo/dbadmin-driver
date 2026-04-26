@@ -17,37 +17,17 @@ class TableDto
     /**
      * @var string
      */
+    public string $oid = '';
+
+    /**
+     * @var string
+     */
     public string $schema = '';
 
     /**
      * @var string
      */
     public string $collation = '';
-
-    /**
-     * @var integer
-     */
-    public int $dataLength = 0;
-
-    /**
-     * @var integer
-     */
-    public int $indexLength = 0;
-
-    /**
-     * @var string
-     */
-    public string $comment = '';
-
-    /**
-     * @var string
-     */
-    public string $oid = '';
-
-    /**
-     * @var int
-     */
-    public int $rowCount = 0;
 
     /**
      * @var bool
@@ -58,6 +38,31 @@ class TableDto
      * @var integer
      */
     public int $autoIncrement = 0;
+
+    /**
+     * @var int|null
+     */
+    public int|null $dataLength = null;
+
+    /**
+     * @var int|null
+     */
+    public int|null $dataFree = null;
+
+    /**
+     * @var int|null
+     */
+    public int|null $indexLength = null;
+
+    /**
+     * @var int|null
+     */
+    public int|null $rowCount = null;
+
+    /**
+     * @var string|null
+     */
+    public string|null $comment = null;
 
     /**
      * @var string

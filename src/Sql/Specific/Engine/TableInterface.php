@@ -36,13 +36,22 @@ interface TableInterface
     public function tableNames(): array;
 
     /**
-     * Find out whether the identifier is view
+     * Find out whether the identifier is a view
      *
      * @param TableDto $tableStatus
      *
      * @return bool
      */
     public function isView(TableDto $tableStatus): bool;
+
+    /**
+     * Find out whether the identifier is a table (not a view)
+     *
+     * @param TableDto $tableStatus
+     *
+     * @return bool
+     */
+    public function isTable(TableDto $tableStatus): bool;
 
     /**
      * Check if table supports foreign keys

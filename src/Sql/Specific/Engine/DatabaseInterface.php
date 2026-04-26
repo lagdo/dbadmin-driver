@@ -47,13 +47,22 @@ interface DatabaseInterface
     public function isInformationSchema(string $database): bool;
 
     /**
-     * Find out if database is a system database
+     * Find out if a database is a system database
      *
      * @param string $database
      *
      * @return bool
      */
     public function isSystemSchema(string $database): bool;
+
+    /**
+     * Find out if a database is a user database
+     *
+     * @param string $database
+     *
+     * @return bool
+     */
+    public function isUserSchema(string $database): bool;
 
     /**
      * Create a database

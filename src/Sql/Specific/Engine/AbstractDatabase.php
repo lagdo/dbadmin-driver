@@ -58,6 +58,18 @@ abstract class AbstractDatabase extends AbstractDbProxy implements DatabaseInter
     }
 
     /**
+     * Find out if a database is a user database
+     *
+     * @param string $database
+     *
+     * @return bool
+     */
+    public function isUserSchema(string $database): bool
+    {
+        return !$this->isSystemSchema($database) || !$this->isInformationSchema($database);
+    }
+
+    /**
      * @inheritDoc
      */
     public function sequences(): array
