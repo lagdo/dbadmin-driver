@@ -44,9 +44,9 @@ class TableFieldDto extends FieldType
     /**
      * The field comment
      *
-     * @var string
+     * @var string|null
      */
-    public string $comment = '';
+    public string|null $comment = null;
 
     /**
      * If the field is primary key

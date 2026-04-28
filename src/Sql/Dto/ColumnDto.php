@@ -38,9 +38,9 @@ class ColumnDto
     public string $onUpdate = '';
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $comment = '';
+    public string|null $comment = null;
 
     /**
      * @var string
@@ -52,8 +52,9 @@ class ColumnDto
      */
     public function clause(): string
     {
+        $comment = $this->comment ?? '';
         return "{$this->name}{$this->type}{$this->nullValue}{$this->defaultValue}" .
-            "{$this->onUpdate}{$this->comment}{$this->autoIncrement}";
+            "{$this->onUpdate}{$comment}{$this->autoIncrement}";
     }
 
     /**

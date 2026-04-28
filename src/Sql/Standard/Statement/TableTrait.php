@@ -77,7 +77,7 @@ trait TableTrait
         if (preg_match('~timestamp|datetime~', $field->type) && $field->onUpdate) {
             $column->onUpdate = " ON UPDATE {$field->onUpdate}";
         }
-        if ($this->_engine()->support('comment') && $field->comment !== '') {
+        if ($this->_engine()->support('comment') && $field->comment !== null) {
             $column->comment = ' COMMENT ' . $this->_engine()->quote($field->comment);
         }
         $column->autoIncrement = $field->autoIncrement ?

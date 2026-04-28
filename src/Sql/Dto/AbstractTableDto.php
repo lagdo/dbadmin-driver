@@ -34,9 +34,9 @@ abstract class AbstractTableDto
     public int $autoIncrement = 0;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $comment = '';
+    public string|null $comment = null;
 
     /**
      * @var string
@@ -64,7 +64,7 @@ abstract class AbstractTableDto
     public function options(Closure $quote): string
     {
         $options = [];
-        if ($this->comment) {
+        if ($this->comment !== null) {
             $options[] = 'COMMENT=' . $quote($this->comment);
         }
         if ($this->engine) {
@@ -89,7 +89,7 @@ abstract class AbstractTableDto
         $this->name = $properties['name'] ?? '';
         $this->engine = $properties['engine'] ?? '';
         $this->collation = $properties['collation'] ?? '';
-        $this->comment = $properties['comment'] ?? '';
+        $this->comment = $properties['comment'] ?? null;
         $this->hasAutoIncrement = $properties['hasAutoIncrement'] ?? false;
         if ($this->hasAutoIncrement) {
             $this->autoIncrement = (int)($properties['autoIncrement'] ?? 0);
