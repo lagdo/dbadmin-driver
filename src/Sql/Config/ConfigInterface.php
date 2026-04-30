@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Config;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 
 interface ConfigInterface
 {
@@ -126,11 +126,11 @@ interface ConfigInterface
     public function typeExists(string $type): bool;
 
     /**
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return int
      */
-    public function typeLength(TableFieldDto $field): int;
+    public function typeLength(ColumnDto $column): int;
 
     /**
      * Get the driver options
@@ -190,5 +190,5 @@ interface ConfigInterface
     /**
      * @return array
      */
-    public function fieldDefaults(): array;
+    public function columnDefaults(): array;
 }

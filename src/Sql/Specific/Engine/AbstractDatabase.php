@@ -3,8 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\RoutineInfoDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 
 abstract class AbstractDatabase extends AbstractDbProxy implements DatabaseInterface
 {
@@ -128,7 +128,7 @@ abstract class AbstractDatabase extends AbstractDbProxy implements DatabaseInter
     /**
      * @inheritDoc
      */
-    public function enumValues(TableFieldDto $field): array
+    public function enumValues(ColumnDto $column): array
     {
         return [];
     }

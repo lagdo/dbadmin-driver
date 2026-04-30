@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
-class QueryDto
+class QueryInputDto
 {
     /**
      * The SQL queries to parse.

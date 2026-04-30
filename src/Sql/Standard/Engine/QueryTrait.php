@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Standard\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
 use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Exception;
 
 use function implode;
@@ -170,51 +170,51 @@ trait QueryTrait
     }
 
     /**
-     * @param TableFieldDto $field
-     * @param string $column
+     * @param ColumnDto $column
+     * @param string $name
      * @param string $value
      *
      * @return string
      */
-    private function getWhereColumnClause(TableFieldDto $field, string $column, string $value): string
+    private function getWhereColumnClause(ColumnDto $column, string $name, string $value): string
     {
         $bUseSqlLike = $this->_engine()->sql() && is_numeric($value) && preg_match('~\.~', $value);
-        return $column . match(true) {
+        return $name . match(true) {
             $bUseSqlLike => ' LIKE ' . $this->_engine()->quote($value),
             $this->_engine()->mssql() => // LIKE because of text
                 ' LIKE ' . $this->_engine()->quote(preg_replace('~[_%[]~', '[\0]', $value)),
             //! enum and set
-            default => ' = ' . $this->_statement()->unconvertField($field, $this->_engine()->quote($value)),
+            default => ' = ' . $this->_statement()->unconvertValue($column, $this->_engine()->quote($value)),
         };
     }
 
     /**
-     * @param TableFieldDto $field
-     * @param string $column
+     * @param ColumnDto $column
+     * @param string $name
      * @param string $value
      *
      * @return string
      */
-    private function getWhereCollateClause(TableFieldDto $field, string $column, string $value): string
+    private function getWhereCollateClause(ColumnDto $column, string $name, string $value): string
     {
         $collate = $this->_engine()->sql() &&
-            preg_match('~char|text~', $field->type) &&
+            preg_match('~char|text~', $column->type) &&
             preg_match("~[^ -@]~", $value);
         return !$collate ? '' :
             // not just [a-z] to catch non-ASCII characters
-            "$column = " . $this->_engine()->quote($value) . ' COLLATE ' . $this->_engine()->charset() . '_bin';
+            "$name = " . $this->_engine()->quote($value) . ' COLLATE ' . $this->_engine()->charset() . '_bin';
     }
 
     /**
-     * @param string $column
+     * @param string $name
      * @param string|array $value
      *
      * @return array
      */
-    private function getWhereClauseValues(string $column, string|array $value): array
+    private function getWhereClauseValues(string $name, string|array $value): array
     {
         if (is_string($value)) {
-            return [$this->_statement()->escapeKey($column), $value];
+            return [$this->_statement()->escapeKey($name), $value];
         }
 
         $expr = $this->_statement()->bracketEscape($value['expr'], 1); // 1 - back
@@ -225,26 +225,26 @@ trait QueryTrait
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string
-     * @param array<TableFieldDto> $fields
+     * @param array<ColumnDto> $columns
      *
      * @return string
      */
-    public function where(array $where, array $fields = []): string
+    public function where(array $where, array $columns = []): string
     {
         $clauses = [];
         $wheres = $where['where'] ?? [];
-        foreach ((array) $wheres as $column => $value) {
-            $field = $fields[$column];
-            [$column, $value] = $this->getWhereClauseValues($column, $value);
+        foreach ((array) $wheres as $name => $value) {
+            $column = $columns[$name];
+            [$name, $value] = $this->getWhereClauseValues($name, $value);
 
-            $clauses[] = $this->getWhereColumnClause($field, $column, $value);
-            if (($clause = $this->getWhereCollateClause($field, $column, $value))) {
+            $clauses[] = $this->getWhereColumnClause($column, $name, $value);
+            if (($clause = $this->getWhereCollateClause($column, $name, $value))) {
                 $clauses[] = $clause;
             }
         }
         $nulls = $where['null'] ?? [];
-        foreach ((array) $nulls as $column) {
-            $clauses[] = $this->_statement()->escapeKey($column) . ' IS NULL';
+        foreach ((array) $nulls as $name) {
+            $clauses[] = $this->_statement()->escapeKey($name) . ' IS NULL';
         }
         return implode(' AND ', $clauses);
     }

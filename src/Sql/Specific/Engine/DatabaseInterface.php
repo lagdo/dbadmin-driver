@@ -2,9 +2,9 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\RoutineDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\RoutineInfoDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\UserTypeDto;
 
 interface DatabaseInterface
@@ -116,11 +116,11 @@ interface DatabaseInterface
     public function userTypes(bool $withValues): array;
 
     /**
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return array
      */
-    public function enumValues(TableFieldDto $field): array;
+    public function enumValues(ColumnDto $column): array;
 
     /**
      * Get existing schemas

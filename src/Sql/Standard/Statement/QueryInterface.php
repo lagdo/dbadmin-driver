@@ -66,13 +66,13 @@ interface QueryInterface
     public function getRowDeleteQuery(string $table, string $queryWhere, int $limit = 0): string;
 
     /**
-     * Get select clause for convertible fields
+     * Get select clause for convertible columns
      *
+     * @param array $names
      * @param array $columns
-     * @param array $fields
      * @param array $select
      *
      * @return string
      */
-    public function convertFields(array $columns, array $fields, array $select = []): string;
+    public function convertValues(array $names, array $columns, array $select = []): string;
 }

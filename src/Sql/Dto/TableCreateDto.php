@@ -7,9 +7,9 @@ class TableCreateDto extends AbstractTableDto
     /**
      * Columns to add.
      *
-     * @var array<ColumnDto>
+     * @var array<string, array<ColumnInputDto>>
      */
-    public array $columns = [];
+    public array $inputs = [];
 
     /**
      * @var string|null
@@ -21,6 +21,6 @@ class TableCreateDto extends AbstractTableDto
      */
     public function clearColumns(): void
     {
-        $this->columns = [];
+        $this->inputs = [];
     }
 }

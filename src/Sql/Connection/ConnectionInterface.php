@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Connection;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 
 interface ConnectionInterface
 {
@@ -61,15 +61,15 @@ interface ConnectionInterface
     public function affectedRows(): int;
 
     /**
-     * Execute a query on the current database and fetch the specified field
+     * Execute a query on the current database and fetch the specified column
      * This is the get_val() function in Adminer.
      *
      * @param string $query
-     * @param int $field
+     * @param int $column
      *
      * @return mixed
      */
-    public function result(string $query, int $field = -1): mixed;
+    public function result(string $query, int $column = -1): mixed;
 
     /**
      * Execute a query on the current database and store the result
@@ -118,11 +118,11 @@ interface ConnectionInterface
      * Convert value returned by database to actual value
      *
      * @param string|resource|null $value
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return mixed
      */
-    public function value(mixed $value, TableFieldDto $field): mixed;
+    public function value(mixed $value, ColumnDto $column): mixed;
 
     /**
      * Explain select

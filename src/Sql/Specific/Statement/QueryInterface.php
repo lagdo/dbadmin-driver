@@ -2,36 +2,36 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableSelectDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
 
 interface QueryInterface
 {
     /**
      * Select data from table
      *
-     * @param TableSelectDto $select
+     * @param SelectInputDto $input
      *
      * @return string
      */
-    public function getTableSelectQuery(TableSelectDto $select): string;
+    public function getTableSelectQuery(SelectInputDto $input): string;
 
     /**
-     * Convert field in select and edit
+     * Convert column in select and edit
      *
-     * @param TableFieldDto $field one element from $this->fields()
+     * @param ColumnDto $column one element from $this->columns()
      *
      * @return string
      */
-    public function convertField(TableFieldDto $field): string;
+    public function convertValue(ColumnDto $column): string;
 
     /**
      * Convert value in edit after applying functions back
      *
-     * @param TableFieldDto $field One element from $this->fields()
+     * @param ColumnDto $column One element from $this->columns()
      * @param string $value
      *
      * @return string
      */
-    public function unconvertField(TableFieldDto $field, string $value): string;
+    public function unconvertValue(ColumnDto $column, string $value): string;
 }

@@ -3,8 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
-use Lagdo\DbAdmin\Driver\Sql\Dto\QueryDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\QueryInputDto;
 
 use function array_flip;
 use function implode;
@@ -64,9 +64,10 @@ trait SyntaxTrait
         if (preg_match('(^([\w(]+)(' . str_replace('_', '.*',
             preg_quote($this->_statement()->escapeId('_'))) . ')([ \w)]+)$)', $key, $match)) {
             //! columns looking like functions
-            return $match[1] . $this->_statement()->escapeId($this->_statement()->unescapeId($match[2])) .
-                $match[3]; //! SQL injection
+            $expr = $this->_statement()->escapeId($this->_statement()->unescapeId($match[2]));
+            return "{$match[1]}{$expr}{$match[3]}"; //! SQL injection
         }
+
         return $this->_statement()->escapeId($key);
     }
 
@@ -107,50 +108,51 @@ trait SyntaxTrait
     }
 
     /**
-     * @param QueryDto $queryDto
+     * @param QueryInputDto $input
      *
      * @return bool
      */
-    private function setDelimiter(QueryDto $queryDto)
+    private function setDelimiter(QueryInputDto $input)
     {
         $space = "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
-        if ($queryDto->offset !== 0 ||
-            !preg_match("~^$space*+DELIMITER\\s+(\\S+)~i", $queryDto->queries, $match)) {
+        if ($input->offset !== 0 ||
+            !preg_match("~^$space*+DELIMITER\\s+(\\S+)~i", $input->queries, $match)) {
             return false;
         }
-        $queryDto->delimiter = $match[1];
-        $queryDto->queries = substr($queryDto->queries, strlen($match[0]));
+
+        $input->delimiter = $match[1];
+        $input->queries = substr($input->queries, strlen($match[0]));
         return true;
     }
 
     /**
-     * @param QueryDto $queryDto
+     * @param QueryInputDto $input
      * @param string $found
      * @param array $match
      *
      * @return bool
      */
-    private function notQuery(QueryDto $queryDto, string $found, array &$match)
+    private function notQuery(QueryInputDto $input, string $found, array &$match)
     {
         return preg_match('(' . ($found == '/*' ? '\*/' : ($found == '[' ? ']' :
             (preg_match('~^-- |^#~', $found) ? "\n" : preg_quote($found) . "|\\\\."))) . '|$)s',
-            $queryDto->queries, $match, PREG_OFFSET_CAPTURE, $queryDto->offset) > 0;
+            $input->queries, $match, PREG_OFFSET_CAPTURE, $input->offset) > 0;
     }
 
     /**
-     * @param QueryDto $queryDto
+     * @param QueryInputDto $input
      * @param string $found
      *
      * @return void
      */
-    private function skipComments(QueryDto $queryDto, string $found)
+    private function skipComments(QueryInputDto $input, string $found)
     {
         // Find matching quote or comment end
         $match = [];
-        while ($this->notQuery($queryDto, $found, $match)) {
+        while ($this->notQuery($input, $found, $match)) {
             //! Respect sql_mode NO_BACKSLASH_ESCAPES
             $s = $match[0][0];
-            $queryDto->offset = $match[0][1] + strlen($s);
+            $input->offset = $match[0][1] + strlen($s);
             if (($s[0] ?? '') != "\\") {
                 break;
             }
@@ -158,112 +160,105 @@ trait SyntaxTrait
     }
 
     /**
-     * @param QueryDto $queryDto
+     * @param QueryInputDto $input
      *
      * @return int
      */
-    private function nextQueryPos(QueryDto $queryDto)
+    private function nextQueryPos(QueryInputDto $input)
     {
         // TODO: Move this to driver implementations
         $parse = $this->_engine()->sqlStatementRegex();
-        $delimiter = preg_quote($queryDto->delimiter);
+        $delimiter = preg_quote($input->delimiter);
         // Should always match
-        preg_match("($delimiter$parse)", $queryDto->queries, $match,
-            PREG_OFFSET_CAPTURE, $queryDto->offset);
+        preg_match("($delimiter$parse)", $input->queries, $match,
+            PREG_OFFSET_CAPTURE, $input->offset);
         [$found, $pos] = $match[0];
-        if (!is_string($found) && $queryDto->queries == '') {
+        if (!is_string($found) && $input->queries == '') {
             return -1;
         }
-        $queryDto->offset = $pos + strlen($found);
-        if (empty($found) || rtrim($found) == $queryDto->delimiter) {
+        $input->offset = $pos + strlen($found);
+        if (empty($found) || rtrim($found) == $input->delimiter) {
             return intval($pos);
         }
+
         // Find matching quote or comment end
-        $this->skipComments($queryDto, $found);
+        $this->skipComments($input, $found);
         return 0;
     }
 
     /**
      * Parse a string containing SQL queries
      *
-     * @param QueryDto $queryDto
+     * @param QueryInputDto $input
      *
      * @return bool
      */
-    public function parseQueries(QueryDto $queryDto): bool
+    public function parseQueries(QueryInputDto $input): bool
     {
-        $queryDto->queries = trim($queryDto->queries);
-        while ($queryDto->queries !== '') {
-            if ($this->setDelimiter($queryDto)) {
+        $input->queries = trim($input->queries);
+        while ($input->queries !== '') {
+            if ($this->setDelimiter($input)) {
                 continue;
             }
-            $pos = $this->nextQueryPos($queryDto);
+            $pos = $this->nextQueryPos($input);
             if ($pos < 0) {
                 return false;
             }
             if ($pos === 0) {
                 continue;
             }
+
             // End of a query
-            $queryDto->query = substr($queryDto->queries, 0, $pos);
-            $queryDto->queries = substr($queryDto->queries, $queryDto->offset);
-            $queryDto->offset = 0;
+            $input->query = substr($input->queries, 0, $pos);
+            $input->queries = substr($input->queries, $input->offset);
+            $input->offset = 0;
             return true;
         }
         return false;
     }
 
     /**
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      * @param string $value
      * @param string $function
      *
      * @return string
      */
-    private function getInputFieldExpression(TableFieldDto $field,
+    private function getInputFieldExpression(ColumnDto $column,
         string $value, string $function): string
     {
-        $fieldName = $this->_statement()->escapeId($field->name);
+        $columnName = $this->_statement()->escapeId($column->name);
         $expression = $this->_engine()->quote($value);
 
-        if (preg_match('~^(now|getdate|uuid)$~', $function)) {
-            return "$function()";
-        }
-        if (preg_match('~^current_(date|timestamp)$~', $function)) {
-            return $function;
-        }
-        if (preg_match('~^([+-]|\|\|)$~', $function)) {
-            return "$fieldName $function $expression";
-        }
-        if (preg_match('~^[+-] interval$~', $function)) {
-            return "$fieldName $function " .
+        return match(true) {
+            preg_match('~^(now|getdate|uuid)$~', $function) => "$function()",
+            preg_match('~^current_(date|timestamp)$~', $function) => $function,
+            preg_match('~^([+-]|\|\|)$~', $function) => "$columnName $function $expression",
+            preg_match('~^[+-] interval$~', $function) => "$columnName $function " .
                 (preg_match("~^(\\d+|'[0-9.: -]') [A-Z_]+\$~i", $value) &&
-                    !$this->_engine()->pgsql() ? $value : $expression);
-        }
-        if (preg_match('~^(addtime|subtime|concat)$~', $function)) {
-            return "$function($fieldName, $expression)";
-        }
-        if (preg_match('~^(md5|sha1|password|encrypt)$~', $function)) {
-            return "$function($expression)";
-        }
-        return $expression;
+                    !$this->_engine()->pgsql() ? $value : $expression),
+            preg_match('~^(addtime|subtime|concat)$~', $function) =>
+                "$function($columnName, $expression)",
+            preg_match('~^(md5|sha1|password|encrypt)$~', $function) => "$function($expression)",
+            default => $expression,
+        };
     }
 
     /**
-     * @param TableFieldDto $field Single field from fields()
+     * @param ColumnDto $column Single column from columns()
      * @param string $value
      * @param string $function
      *
      * @return string
      */
-    public function getUnconvertedFieldValue(TableFieldDto $field,
+    public function getUnconvertedFieldValue(ColumnDto $column,
         string $value, string $function = ''): string
     {
         if ($function === 'SQL') {
             return $value; // SQL injection
         }
 
-        $expression = $this->getInputFieldExpression($field, $value, $function);
-        return $this->_statement()->unconvertField($field, $expression);
+        $expression = $this->getInputFieldExpression($column, $value, $function);
+        return $this->_statement()->unconvertValue($column, $expression);
     }
 }

@@ -5,7 +5,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Connection;
 use Lagdo\DbAdmin\Driver\AbstractEngine;
 use Lagdo\DbAdmin\Driver\AbstractStatement;
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Utils\Utils;
 use Closure;
 
@@ -171,7 +171,7 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
     /**
      * @inheritDoc
      */
-    public function value(mixed $value, TableFieldDto $field): mixed
+    public function value(mixed $value, ColumnDto $column): mixed
     {
         return is_resource($value) ? stream_get_contents($value) : $value;
     }
@@ -179,7 +179,7 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
     /**
      * @inheritDoc
      */
-    protected function defaultField(): int
+    protected function defaultColumn(): int
     {
         return 0;
     }
@@ -187,10 +187,10 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $field = -1): mixed
+    public function result(string $query, int $column = -1): mixed
     {
-        if ($field < 0) {
-            $field = $this->defaultField();
+        if ($column < 0) {
+            $column = $this->defaultColumn();
         }
         $result = $this->query($query);
         if (!$result || $result === true || $result->rowCount() === 0) {
@@ -198,7 +198,7 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
         }
 
         $row = $result->fetchRow();
-        return is_array($row) && count($row) > $field ? $row[$field] : null;
+        return is_array($row) && count($row) > $column ? $row[$column] : null;
     }
 
     /**

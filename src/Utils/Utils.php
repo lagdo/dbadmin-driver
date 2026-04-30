@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Utils;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 
 use function array_key_exists;
 use function in_array;
@@ -161,29 +161,29 @@ class Utils
     }
 
     /**
-     * Check if the field is a blob
+     * Check if the column is a blob
      *
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      * @param array $userTypes
      *
      * @return bool
      */
-    public function isBlob(TableFieldDto $field, array $userTypes = []): bool
+    public function isBlob(ColumnDto $column, array $userTypes = []): bool
     {
-        return preg_match('~blob|bytea|raw|file~', $field->type) &&
-            !in_array($field->type, $userTypes);
+        return preg_match('~blob|bytea|raw|file~', $column->type) &&
+            !in_array($column->type, $userTypes);
     }
 
     /**
-     * Check if field should be shortened
+     * Check if column should be shortened
      *
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return bool
      */
-    public function isShortable(TableFieldDto $field): bool
+    public function isShortable(ColumnDto $column): bool
     {
         $pattern = '~char|text|json|lob|geometry|point|linestring|polygon|string|bytea~';
-        return preg_match($pattern, $field->type) > 0;
+        return preg_match($pattern, $column->type) > 0;
     }
 }

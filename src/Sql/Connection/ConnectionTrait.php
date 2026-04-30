@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Connection;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 
 trait ConnectionTrait
 {
@@ -70,9 +70,9 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $field = -1): mixed
+    public function result(string $query, int $column = -1): mixed
     {
-        return $this->connection()->result($query, $field);
+        return $this->connection()->result($query, $column);
     }
 
     /**
@@ -128,9 +128,9 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function value(mixed $value, TableFieldDto $field): mixed
+    public function value(mixed $value, ColumnDto $column): mixed
     {
-        return $this->connection()->value($value, $field);
+        return $this->connection()->value($value, $column);
     }
 
     /**

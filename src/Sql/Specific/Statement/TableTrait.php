@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
+use Lagdo\DbAdmin\Driver\Sql\Dto\IndexDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableAlterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableCreateDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
@@ -87,8 +88,8 @@ trait TableTrait
      * Command to alter indexes
      *
      * @param string $table Escaped table name
-     * @param array $alter<IndexDto>  Indexes to alter
-     * @param array $drop<IndexDto>   Indexes to drop
+     * @param array<IndexDto> $alter  Indexes to alter
+     * @param array<IndexDto> $drop   Indexes to drop
      *
      * @return array<string>
      */

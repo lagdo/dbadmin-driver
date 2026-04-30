@@ -3,8 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 
 abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
 {
@@ -27,7 +27,7 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function convertSearch(string $idf, array $value, TableFieldDto $field): string
+    public function convertSearch(string $idf, array $value, ColumnDto $column): string
     {
         return $idf;
     }

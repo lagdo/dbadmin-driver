@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Config;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 
 use function array_map;
 use function array_merge;
@@ -200,15 +200,15 @@ trait ConfigTrait
     }
 
     /**
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return int
      */
-    public function typeLength(TableFieldDto $field): int
+    public function typeLength(ColumnDto $column): int
     {
         foreach ($this->config()->types as $types) {
-            if (isset($types[$field->type])) {
-                return $types[$field->type] + ($field->unsigned ? 0 : 1);
+            if (isset($types[$column->type])) {
+                return $types[$column->type] + ($column->unsigned ? 0 : 1);
             }
         }
         return 0;
@@ -297,7 +297,7 @@ trait ConfigTrait
     /**
      * @return array
      */
-    public function fieldDefaults(): array
+    public function columnDefaults(): array
     {
         return ['', 'DEFAULT', ...$this->config()->generated];
     }

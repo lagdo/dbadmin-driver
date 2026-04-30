@@ -35,10 +35,7 @@ class Input
      */
     public function getSelect(): array
     {
-        if (!isset($this->values['select'])) {
-            return [];
-        }
-        return $this->values['select'];
+        return $this->values['select'] ?? [];
     }
 
     /**
@@ -46,10 +43,7 @@ class Input
      */
     public function getWhere(): array
     {
-        if (!isset($this->values['where'])) {
-            return [];
-        }
-        return $this->values['where'];
+        return $this->values['where'] ?? [];
     }
 
     /**
@@ -57,21 +51,15 @@ class Input
      */
     public function getLimit(): int
     {
-        if (!isset($this->values['limit'])) {
-            return 0;
-        }
-        return $this->values['limit'];
+        return $this->values['limit'] ?? 0;
     }
 
     /**
      * @inheritDoc
      */
-    public function getFields(): array
+    public function getColumns(): array
     {
-        if (!isset($this->values['fields'])) {
-            return [];
-        }
-        return $this->values['fields'];
+        return $this->values['columns'] ?? [];
     }
 
     /**
@@ -79,21 +67,15 @@ class Input
      */
     public function getAutoIncrementStep(): string
     {
-        if (!isset($this->values['autoIncrementStep'])) {
-            return '';
-        }
-        return $this->values['autoIncrementStep'];
+        return $this->values['autoIncrementStep'] ?? '';
     }
 
     /**
      * @inheritDoc
      */
-    public function getAutoIncrementField(): string
+    public function getAutoIncrementColumn(): string
     {
-        if (!isset($this->values['autoIncrementCol'])) {
-            return '0';
-        }
-        return $this->values['autoIncrementCol'];
+        return $this->values['autoIncrementCol'] ?? '0';
     }
 
     /**
@@ -101,10 +83,7 @@ class Input
      */
     public function getChecks(): array
     {
-        if (!isset($this->values['checks'])) {
-            return [];
-        }
-        return $this->values['checks'];
+        return $this->values['checks'] ?? [];
     }
 
     /**
@@ -112,9 +91,6 @@ class Input
      */
     public function getOverwrite(): bool
     {
-        if (!isset($this->values['overwrite'])) {
-            return false;
-        }
-        return $this->values['overwrite'];
+        return $this->values['overwrite'] ?? false;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
-class FieldType
+class ColumnType
 {
     /**
      * The constructor

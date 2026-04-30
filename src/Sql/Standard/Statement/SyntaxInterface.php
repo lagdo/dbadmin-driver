@@ -2,8 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\QueryDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\QueryInputDto;
 
 interface SyntaxInterface
 {
@@ -56,19 +56,19 @@ interface SyntaxInterface
     /**
      * Parse a string containing SQL queries
      *
-     * @param QueryDto $queryDto
+     * @param QueryInputDto $input
      *
      * @return bool
      */
-    public function parseQueries(QueryDto $queryDto): bool;
+    public function parseQueries(QueryInputDto $input): bool;
 
     /**
-     * @param TableFieldDto $field Single field from fields()
+     * @param ColumnDto $column Single column from columns()
      * @param string $value
      * @param string $function
      *
      * @return string
      */
-    public function getUnconvertedFieldValue(TableFieldDto $field,
+    public function getUnconvertedFieldValue(ColumnDto $column,
         string $value, string $function = ''): string;
 }

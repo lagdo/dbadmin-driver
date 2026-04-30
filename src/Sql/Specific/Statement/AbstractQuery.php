@@ -3,8 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableSelectDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
 
 use function implode;
 
@@ -36,20 +36,20 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function getTableSelectQuery(TableSelectDto $select): string
+    public function getTableSelectQuery(SelectInputDto $input): string
     {
-        $query = implode(', ', $select->fields) .
-            ' FROM ' . $this->_statement()->escapeTableName($select->table);
-        $limit = +$select->limit;
-        $offset = $select->page ? $limit * $select->page : 0;
+        $query = implode(', ', $input->columns) .
+            ' FROM ' . $this->_statement()->escapeTableName($input->table);
+        $limit = +$input->limit;
+        $offset = $input->page ? $limit * $input->page : 0;
 
-        return 'SELECT' . $this->getLimitClause($query, $select->clauses, $limit, $offset);
+        return 'SELECT' . $this->getLimitClause($query, $input->clauses, $limit, $offset);
     }
 
     /**
      * @inheritDoc
      */
-    public function convertField(TableFieldDto $field): string
+    public function convertValue(ColumnDto $column): string
     {
         return '';
     }
@@ -57,7 +57,7 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function unconvertField(TableFieldDto $field, string $value): string
+    public function unconvertValue(ColumnDto $column, string $value): string
     {
         return $value;
     }

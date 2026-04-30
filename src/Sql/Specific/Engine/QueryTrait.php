@@ -2,8 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 
 trait QueryTrait
 {
@@ -67,13 +67,13 @@ trait QueryTrait
      *
      * @param string $idf Escaped column name
      * @param array $value ["op" => , "val" => ]
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $value, TableFieldDto $field): string
+    public function convertSearch(string $idf, array $value, ColumnDto $column): string
     {
-        return $this->_query()->convertSearch($idf, $value, $field);
+        return $this->_query()->convertSearch($idf, $value, $column);
     }
 
     /**

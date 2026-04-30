@@ -13,7 +13,7 @@ trait TableTrait
      * Get status of a single table and fall back to name on error
      *
      * @param string $table
-     * @param bool $fast Return only "Name", "Engine" and "Comment" fields
+     * @param bool $fast Return only "Name", "Engine" and "Comment" columns
      *
      * @return TableDto
      */

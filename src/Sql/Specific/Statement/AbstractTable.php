@@ -18,7 +18,7 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      *
      * @return array
      */
-    private function fkFields(ForeignKeyDto $foreignKey)
+    private function fkColumns(ForeignKeyDto $foreignKey)
     {
         $escape = $this->_statement()->escapeId(...);
         return [
@@ -51,7 +51,7 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      */
     protected function formatForeignKey(ForeignKeyDto $foreignKey): string
     {
-        [$sources, $targets] = $this->fkFields($foreignKey);
+        [$sources, $targets] = $this->fkColumns($foreignKey);
         $onActions = $this->_engine()->actions();
         $query = "FOREIGN KEY ($sources) REFERENCES " . $this->fkTablePrefix($foreignKey) .
             $this->_statement()->escapeTableName($foreignKey->table) . " ($targets)";
@@ -73,8 +73,8 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      */
     protected function getForeignKeyClauses(AbstractTableDto $table, string $prefix = ''): array
     {
-        return array_map(fn(ForeignKeyDto $fkField) =>
-            $prefix . $this->formatForeignKey($fkField), $table->foreignKeys);
+        return array_map(fn(ForeignKeyDto $fkColumn) =>
+            $prefix . $this->formatForeignKey($fkColumn), $table->foreignKeys);
     }
 
     /**

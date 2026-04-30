@@ -10,18 +10,11 @@ class TableAlterDto extends AbstractTableDto
     public ?TableDto $current = null;
 
     /**
-     * Columns to add.
+     * Columns to add or edit.
      *
-     * @var array<ColumnDto>
+     * @var array<string, array<ColumnInputDto>>
      */
-    public array $addedColumns = [];
-
-    /**
-     * Columns to change.
-     *
-     * @var array<ColumnDto>
-     */
-    public array $changedColumns = [];
+    public array $inputs = [];
 
     /**
      * Columns to drop.
@@ -40,8 +33,7 @@ class TableAlterDto extends AbstractTableDto
      */
     public function clearColumns(): void
     {
-        $this->addedColumns = [];
-        $this->changedColumns = [];
+        $this->inputs = [];
         $this->droppedColumns = [];
     }
 }

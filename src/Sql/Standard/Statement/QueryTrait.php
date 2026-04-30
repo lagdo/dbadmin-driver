@@ -3,8 +3,9 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableSelectDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
 
+use function array_map;
 use function array_keys;
 use function count;
 use function implode;
@@ -41,7 +42,7 @@ trait QueryTrait
      * Build a query to select data from table
      *
      * @param string $table
-     * @param array $select Result of processSelectColumns()[0]
+     * @param array $columns Result of processSelectColumns()[0]
      * @param array $where Result of processSelectWhere()
      * @param array $group Result of processSelectColumns()[1]
      * @param array $order Result of processSelectOrder()
@@ -50,11 +51,11 @@ trait QueryTrait
      *
      * @return string
      */
-    public function getRowSelectQuery(string $table, array $select, array $where, array $group = [],
+    public function getRowSelectQuery(string $table, array $columns, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): string
     {
-        $entity = new TableSelectDto($table, $select, $where, $group, $order, $limit, $page);
-        return $this->_statement()->getTableSelectQuery($entity);
+        $input = new SelectInputDto($table, $columns, $where, $group, $order, $limit, $page);
+        return $this->_statement()->getTableSelectQuery($input);
     }
 
     /**
@@ -73,9 +74,10 @@ trait QueryTrait
                 "INSERT INTO $table () VALUES ()" :
                 "INSERT INTO $table DEFAULT VALUES";
         }
-        $fields = implode(', ', array_keys($values));
+
+        $columns = implode(', ', array_keys($values));
         $values = implode(', ', $values);
-        return "INSERT INTO $table ($fields) VALUES ($values)";
+        return "INSERT INTO $table ($columns) VALUES ($values)";
     }
 
     /**
@@ -90,13 +92,12 @@ trait QueryTrait
      */
     public function getRowUpdateQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
     {
-        $assignments = [];
-        foreach ($values as $name => $value) {
-            $assignments[] = "$name = $value";
-        }
-        $query = $this->_statement()->escapeTableName($table) . ' SET ' . implode(', ', $assignments);
-        return $limit <= 0 ? "UPDATE $query $queryWhere" :
-            'UPDATE' . $this->_statement()->limitToOne($table, $query, $queryWhere);
+        $callback = fn(string $value, string $name) => "$name = $value";
+        $assignments = implode(', ', array_map($callback, $values, array_keys($values)));
+        $query = $this->_statement()->escapeTableName($table) . " SET $assignments";
+
+        return $limit <= 0 ? "UPDATE $query $queryWhere" : 'UPDATE' .
+            $this->_statement()->limitToOne($table, $query, $queryWhere);
     }
 
     /**
@@ -111,31 +112,33 @@ trait QueryTrait
     public function getRowDeleteQuery(string $table, string $queryWhere, int $limit = 0): string
     {
         $query = 'FROM ' . $this->_statement()->escapeTableName($table);
-        return $limit <= 0 ? "DELETE $query $queryWhere" :
-            'DELETE' . $this->_statement()->limitToOne($table, $query, $queryWhere);
+        return $limit <= 0 ? "DELETE $query $queryWhere" : 'DELETE' .
+            $this->_statement()->limitToOne($table, $query, $queryWhere);
     }
 
     /**
-     * Get select clause for convertible fields
+     * Get select clause for convertible columns
      *
+     * @param array $names
      * @param array $columns
-     * @param array $fields
      * @param array $select
      *
      * @return string
      */
-    public function convertFields(array $columns, array $fields, array $select = []): string
+    public function convertValues(array $names, array $columns, array $select = []): string
     {
-        $clause = '';
-        foreach ($columns as $key => $val) {
-            if (!empty($select) && !in_array($this->_statement()->escapeId($key), $select)) {
-                continue;
+        $hasSelect = count($select) > 0;
+        $clauses = array_map(function(string $name) use($hasSelect, $columns, $select) {
+            $name = $this->_statement()->escapeId($name);
+            if ($hasSelect && !in_array($name, $select)) {
+                return null;
             }
-            $as = $this->_statement()->convertField($fields[$key]);
-            if ($as) {
-                $clause .= ", $as AS " . $this->_statement()->escapeId($key);
-            }
-        }
-        return $clause;
+
+            $columnName = $this->_statement()->convertValue($columns[$name]);
+            return $columnName === '' ? null : ", $columnName AS $name";
+        }, $names);
+
+        $callback = fn(string|null $clause) => $clause !== null;
+        return implode('', array_filter($clauses, $callback));
     }
 }

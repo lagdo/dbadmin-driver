@@ -18,10 +18,10 @@ class PartitionDto
      * The constructor
      *
      * @param string $strategy
-     * @param string $fields
+     * @param string $columns
      * @param string $partitions
      */
-    public function __construct(public string $strategy, public string $fields,
+    public function __construct(public string $strategy, public string $columns,
         public string $partitions = '')
     {}
 }

@@ -2,66 +2,121 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
-/**
- * Formatted inputs for a table column.
- */
-class ColumnDto
+use function stripos;
+
+class ColumnDto extends ColumnType
 {
     /**
-     * @var string
+     * The column default value
+     *
+     * @var mixed
      */
-    public string $name = '';
+    public $default = null;
 
     /**
-     * @var string
+     * If the column is auto increment
+     *
+     * @var boolean
      */
-    public string $type = '';
+    public bool $autoIncrement = false;
 
     /**
-     * @var string|null
-     */
-    public string|null $autoIncrement = null;
-
-    /**
-     * @var string
-     */
-    public string $defaultValue = '';
-
-    /**
-     * @var string
-     */
-    public string $nullValue = '';
-
-    /**
+     * The action on update
+     *
      * @var string
      */
     public string $onUpdate = '';
 
     /**
+     * The action on delete
+     *
+     * @var string
+     */
+    public string $onDelete = '';
+
+    /**
+     * The column privileges
+     *
+     * @var array
+     */
+    public array $privileges = [];
+
+    /**
+     * The column comment
+     *
      * @var string|null
      */
     public string|null $comment = null;
 
     /**
-     * @var string
+     * If the column is primary key
+     *
+     * @var boolean
      */
-    public string $after = '';
+    public bool $primary = false;
 
     /**
-     * @return string
+     * How the column is generated
+     *
+     * @var string
      */
-    public function clause(): string
+    public string $generated = '';
+
+    /**
+     * The column types
+     *
+     * @var array
+     */
+    public array $types = [];
+
+    /**
+     * If the column length is required
+     *
+     * @var boolean
+     */
+    public bool $lengthRequired = false;
+
+    /**
+     * If the column collation is hidden
+     *
+     * @var boolean
+     */
+    public bool $collationHidden = true;
+
+    /**
+     * If the column sign id hidden
+     *
+     * @var boolean
+     */
+    public bool $unsignedHidden = false;
+
+    /**
+     * If the column on update trigger is hidden
+     *
+     * @var boolean
+     */
+    public bool $onUpdateHidden = true;
+
+    /**
+     * If the column on delete trigger is hidden
+     *
+     * @var boolean
+     */
+    public bool $onDeleteHidden = true;
+
+    /**
+     * @return boolean
+     */
+    public function hasDefault(): bool
     {
-        $comment = $this->comment ?? '';
-        return "{$this->name}{$this->type}{$this->nullValue}{$this->defaultValue}" .
-            "{$this->onUpdate}{$comment}{$this->autoIncrement}";
+        return $this->default !== null;
     }
 
     /**
-     * The constructor
-     *
-     * @param TableFieldDto $field
+     * @return boolean
      */
-    public function __construct(public readonly TableFieldDto $field)
-    {}
+    public function isDisabled(): bool
+    {
+        return stripos($this->default ?? '', "GENERATED ALWAYS AS ") === 0;
+    }
 }

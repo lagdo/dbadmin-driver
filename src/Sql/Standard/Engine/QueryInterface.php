@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Exception;
 
 interface QueryInterface
@@ -104,11 +104,11 @@ interface QueryInterface
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string
-     * @param array<TableFieldDto> $fields
+     * @param array<ColumnDto> $columns
      *
      * @return string
      */
-    public function where(array $where, array $fields = []): string;
+    public function where(array $where, array $columns = []): string;
 
     /**
      * Get all rows of result

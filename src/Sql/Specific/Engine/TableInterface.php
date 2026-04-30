@@ -2,9 +2,9 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\PartitionDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TriggerDto;
 
 interface TableInterface
@@ -13,7 +13,7 @@ interface TableInterface
      * Get table status
      *
      * @param string $table
-     * @param bool $fast Return only "Name", "Engine" and "Comment" fields
+     * @param bool $fast Return only "Name", "Engine" and "Comment" columns
      *
      * @return TableDto|null
      */
@@ -22,7 +22,7 @@ interface TableInterface
     /**
      * Get all tables statuses
      *
-     * @param bool $fast Return only "Name", "Engine" and "Comment" fields
+     * @param bool $fast Return only "Name", "Engine" and "Comment" columns
      *
      * @return TableDto[]
      */
@@ -63,13 +63,13 @@ interface TableInterface
     public function supportForeignKeys(TableDto $tableStatus): bool;
 
     /**
-     * Get information about fields
+     * Get information about columns
      *
      * @param string $table
      *
-     * @return array<TableFieldDto>
+     * @return array<ColumnDto>
      */
-    public function fields(string $table): array;
+    public function columns(string $table): array;
 
     /**
      * Get table indexes

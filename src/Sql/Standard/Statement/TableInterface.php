@@ -3,37 +3,37 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\FieldType;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnInputDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnType;
 
 interface TableInterface
 {
     /**
      * Get default value clause
      *
-     * @param TableFieldDto $field
+     * @param ColumnDto $column
      *
      * @return string
      */
-    public function getDefaultValueClause(TableFieldDto $field): string;
+    public function getDefaultValueClause(ColumnDto $column): string;
 
     /**
-     * Create SQL string from field type
+     * Create SQL string from column type
      *
-     * @param FieldType $field
+     * @param ColumnType $column
      *
      * @return string
      */
-    public function getFieldType(FieldType $field, string $collate = "COLLATE"): string;
+    public function getColumnType(ColumnType $column, string $collate = "COLLATE"): string;
 
     /**
-     * Create SQL string from field
+     * Create SQL string from column
      * This is the process_field() function in Adminer.
      *
-     * @param TableFieldDto $field Basic field information
-     * @param TableFieldDto $typeField Information about field type
+     * @param ColumnDto $column Basic column information
+     * @param ColumnDto $typeColumn Information about column type
      *
-     * @return ColumnDto
+     * @return ColumnInputDto
      */
-    public function getFieldClauses(TableFieldDto $field, TableFieldDto $typeField): ColumnDto;
+    public function makeColumnInput(ColumnDto $column, ColumnDto $typeColumn): ColumnInputDto;
 }
