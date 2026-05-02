@@ -2,9 +2,9 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Engine;
 
-use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
+use Lagdo\DbAdmin\Driver\Sql\Connection\QueryResultInterface;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
-use Exception;
+use Closure;
 
 interface QueryInterface
 {
@@ -13,9 +13,9 @@ interface QueryInterface
      *
      * @param string $query
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
-    public function execute(string $query): StatementInterface|bool;
+    public function execute(string $query): bool;
 
     /**
      * Begin transaction
@@ -49,10 +49,10 @@ interface QueryInterface
      * @param int $limit Result of processSelectLimit()
      * @param int $page Index of page starting at zero
      *
-     * @return StatementInterface|bool
+     * @return QueryResultInterface
      */
     public function select(string $table, array $select, array $where, array $group = [],
-        array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool;
+        array $order = [], int $limit = 1, int $page = 0): QueryResultInterface;
 
     /**
      * Insert data into table
@@ -88,19 +88,6 @@ interface QueryInterface
     public function delete(string $table, string $queryWhere, int $limit = 0): bool;
 
     /**
-     * Execute query
-     *
-     * @param string $query
-     * @param bool $execute
-     * @param bool $failed
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function executeQuery(string $query, bool $execute = true,
-        bool $failed = false/*, string $time = ''*/): bool;
-
-    /**
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string
@@ -124,11 +111,11 @@ interface QueryInterface
      *
      * @param string $query
      * @param array $tables
-     * @param callback|null $escape
+     * @param Closure|null $escape
      *
      * @return bool
      */
-    public function applyQueries(string $query, array $tables, $escape = null): bool;
+    public function applyQueries(string $query, array $tables, Closure|null $escape = null): bool;
 
     /**
      * Get list of values from database
@@ -138,17 +125,18 @@ interface QueryInterface
      *
      * @return array
      */
-    public function columnValues(string $query, string|int $column = 0): array;
+    public function columnValues(string $query, string|int $column = -1): array;
 
     /**
      * Get a value from database
+     * This is the get_val() function in Adminer.
      *
      * @param string $query
      * @param string|int $column
      *
      * @return mixed
      */
-    public function columnValue(string $query, string|int $column = 0): mixed;
+    public function columnValue(string $query, string|int $column = -1): mixed;
 
     /**
      * Get keys from first column and values from second

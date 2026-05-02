@@ -99,7 +99,7 @@ trait DatabaseTrait
         $name = $this->_statement()->escapeTableName(trim($values['name']));
 
         $sql = "$command $type $name AS\n" . $values['select'];
-        return $this->_engine()->executeQuery($sql);
+        return $this->_engine()->execute($sql);
     }
 
     /**
@@ -171,6 +171,6 @@ trait DatabaseTrait
      */
     public function dropView(string $view): bool
     {
-        return $this->_engine()->executeQuery($this->_statement()->getDropViewQuery($view));
+        return $this->_engine()->execute($this->_statement()->getDropViewQuery($view));
     }
 }

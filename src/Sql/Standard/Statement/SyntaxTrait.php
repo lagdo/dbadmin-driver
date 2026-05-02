@@ -259,6 +259,6 @@ trait SyntaxTrait
         }
 
         $expression = $this->getInputFieldExpression($column, $value, $function);
-        return $this->_statement()->unconvertValue($column, $expression);
+        return $this->_statement()->unconvertColumn($column, $expression);
     }
 }

@@ -26,30 +26,23 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
     use ConnectionErrorTrait;
 
     /**
-     * The client object used to query the database driver
-     *
-     * @var mixed
+     * @var string
      */
-    protected $client;
-
-    /**
-     * @var mixed
-     */
-    public $statement;
+    protected string $statementNotPrepared = 'Tried to execute a statement not properly prepared.';
 
     /**
      * The number of rows affected by the last query
      *
      * @var int
      */
-    protected $affectedRows;
+    protected int $affectedRows = 0;
 
     /**
      * @param AbstractEngine $engine
      * @param AbstractStatement $statement
      * @param Utils $utils
      * @param array $options
-     * @param string $extension The extension name
+     * @param string $extension
      */
     public function __construct(AbstractEngine $engine, AbstractStatement $statement,
         Utils $utils, protected array $options, protected string $extension)
@@ -96,7 +89,7 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
         if ($name === 'server') {
             $server = $this->options['host'] ?? '';
             return key_exists('port', $this->options) ?
-                $server . ":" . $this->options['port'] : $server;
+                "$server:{$this->options['port']}" : $server;
         }
         // if ($name === 'ssl') {
         //     return false; // No SSL options yet
@@ -113,7 +106,7 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
      *
      * @return void
      */
-    protected function setAffectedRows($affectedRows): void
+    protected function setAffectedRows(int $affectedRows): void
     {
         $this->affectedRows = $affectedRows;
     }
@@ -171,34 +164,9 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
     /**
      * @inheritDoc
      */
-    public function value(mixed $value, ColumnDto $column): mixed
+    public function convertValue(mixed $value, ColumnDto $column): mixed
     {
         return is_resource($value) ? stream_get_contents($value) : $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function defaultColumn(): int
-    {
-        return 0;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function result(string $query, int $column = -1): mixed
-    {
-        if ($column < 0) {
-            $column = $this->defaultColumn();
-        }
-        $result = $this->query($query);
-        if (!$result || $result === true || $result->rowCount() === 0) {
-            return null;
-        }
-
-        $row = $result->fetchRow();
-        return is_array($row) && count($row) > $column ? $row[$column] : null;
     }
 
     /**
@@ -215,6 +183,7 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
             !$replace ? 0 : PREG_OFFSET_CAPTURE)) {
             return [[], $query];
         }
+
         $params = $matches[0];
         if (!$replace) {
             return [$params, $query];
@@ -234,14 +203,13 @@ abstract class AbstractConnection extends AbstractDbProxy implements ConnectionI
             // The suffix after the replacement value.
             $param[] = substr($query, $offset, $length);
         }
+        $queries = array_map(fn(array $param) => "{$param[2]}{$param[3]}", $params);
 
         return [
             // The final value of the params.
             array_map(fn(array $param) => $param[0], $params),
             // The final value of the query.
-            substr($query, 0, $params[0][1]) .
-                implode('', array_map(fn(array $param) =>
-                    "{$param[2]}{$param[3]}", $params)),
+            substr($query, 0, $params[0][1]) . implode('', $queries),
         ];
     }
 

@@ -2,8 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Tests\Db\Fake;
 
-use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
 use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection;
+use Lagdo\DbAdmin\Driver\Sql\Connection\QueryResultInterface;
 
 /**
  * Fake Connection class for testing
@@ -65,7 +65,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function query(string $query, bool $unbuffered = false): StatementInterface|bool
+    public function executeQuery(string $query, bool $unbuffered = false): QueryResultInterface
     {
         return $this->statement;
     }
@@ -86,7 +86,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function multiQuery(string $query): bool
+    public function executeMultiQuery(string $query): QueryResultInterface
     {
         // TODO: Implement multiQuery() method.
     }
@@ -94,7 +94,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function storedResult(): StatementInterface|bool
+    public function readRowset(QueryResultInterface $result): QueryResultInterface
     {
         // TODO: Implement storedResult() method.
     }
@@ -102,7 +102,7 @@ class Connection extends AbstractConnection
     /**
      * @inheritDoc
      */
-    public function nextResult(): mixed
+    public function nextRowset(QueryResultInterface $result): bool
     {
         // TODO: Implement nextResult() method.
     }

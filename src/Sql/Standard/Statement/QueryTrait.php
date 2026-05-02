@@ -134,7 +134,7 @@ trait QueryTrait
                 return null;
             }
 
-            $columnName = $this->_statement()->convertValue($columns[$name]);
+            $columnName = $this->_statement()->convertColumn($columns[$name]);
             return $columnName === '' ? null : ", $columnName AS $name";
         }, $names);
 

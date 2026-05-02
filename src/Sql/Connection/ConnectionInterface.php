@@ -49,9 +49,9 @@ interface ConnectionInterface
      * @param string $query
      * @param bool $unbuffered
      *
-     * @return StatementInterface|bool
+     * @return QueryResultInterface
      */
-    public function query(string $query, bool $unbuffered = false): StatementInterface|bool;
+    public function executeQuery(string $query, bool $unbuffered = false): QueryResultInterface;
 
     /**
      * Get the number of rows affected by the last query
@@ -61,24 +61,14 @@ interface ConnectionInterface
     public function affectedRows(): int;
 
     /**
-     * Execute a query on the current database and fetch the specified column
-     * This is the get_val() function in Adminer.
+     * Convert value returned by database to actual value
      *
-     * @param string $query
-     * @param int $column
+     * @param string|resource|null $value
+     * @param ColumnDto $column
      *
      * @return mixed
      */
-    public function result(string $query, int $column = -1): mixed;
-
-    /**
-     * Execute a query on the current database and store the result
-     *
-     * @param string $query
-     *
-     * @return bool
-     */
-    public function multiQuery(string $query): bool;
+    public function convertValue(mixed $value, ColumnDto $column): mixed;
 
     /**
      * Create a prepared statement
@@ -92,46 +82,49 @@ interface ConnectionInterface
     /**
      * Execute a prepared statement
      *
-     * @param PreparedStatement $statement
+     * @param PreparedStatement $preparedStatement
      * @param array $values
      *
-     * @return StatementInterface|bool
+     * @return QueryResultInterface
      */
-    public function executeStatement(PreparedStatement $statement,
-        array $values): ?StatementInterface;
+    public function executeStatement(PreparedStatement $preparedStatement,
+        array $values): QueryResultInterface;
 
     /**
-     * Get the result saved by the multiQuery() method
+     * Execute a query on the current database and store the result
      *
-     * @return StatementInterface|bool
+     * @param string $query
+     *
+     * @return QueryResultInterface
      */
-    public function storedResult(): StatementInterface|bool;
+    public function executeMultiQuery(string $query): QueryResultInterface;
 
     /**
-     * Get the next row set of the last query
+     * Get the current rowset in the multiQuery() result
      *
-     * @return mixed
+     * @param QueryResultInterface $result
+     *
+     * @return QueryResultInterface
      */
-    public function nextResult(): mixed;
+    public function readRowset(QueryResultInterface $result): QueryResultInterface;
 
     /**
-     * Convert value returned by database to actual value
+     * Move to the next rowset of the last multiQuery() result
      *
-     * @param string|resource|null $value
-     * @param ColumnDto $column
+     * @param QueryResultInterface $result
      *
-     * @return mixed
+     * @return bool
      */
-    public function value(mixed $value, ColumnDto $column): mixed;
+    public function nextRowset(QueryResultInterface $result): bool;
 
     /**
      * Explain select
      *
      * @param string $query
      *
-     * @return StatementInterface|bool
+     * @return QueryResultInterface|bool
      */
-    public function explain(string $query): StatementInterface|bool;
+    public function explain(string $query): QueryResultInterface|bool;
 
     /**
      * Get the raw error message

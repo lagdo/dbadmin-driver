@@ -45,9 +45,9 @@ trait QueryTrait
      *
      * @return string
      */
-    public function convertValue(ColumnDto $column): string
+    public function convertColumn(ColumnDto $column): string
     {
-        return $this->_query()->convertValue($column);
+        return $this->_query()->convertColumn($column);
     }
 
     /**
@@ -58,8 +58,8 @@ trait QueryTrait
      *
      * @return string
      */
-    public function unconvertValue(ColumnDto $column, string $value): string
+    public function unconvertColumn(ColumnDto $column, string $value): string
     {
-        return $this->_query()->unconvertValue($column, $value);
+        return $this->_query()->unconvertColumn($column, $value);
     }
 }

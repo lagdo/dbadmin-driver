@@ -2,10 +2,24 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Connection;
 
-use Lagdo\DbAdmin\Driver\Sql\Dto\StatementFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ResultColumnDto;
 
-interface StatementInterface
+interface QueryResultInterface
 {
+    /**
+     * Check if the query returned an error
+     *
+     * @return bool
+     */
+    public function hasError(): bool;
+
+    /**
+     * Check if the query returned rows
+     *
+     * @return bool
+     */
+    public function hasRowset(): bool;
+
     /**
      * Get the number of rows returned by the query
      *
@@ -30,7 +44,7 @@ interface StatementInterface
     /**
      * Fetch the next column
      *
-     * @return StatementFieldDto|null
+     * @return ResultColumnDto|null
      */
-    public function fetchField(): StatementFieldDto|null;
+    public function fetchColumn(): ResultColumnDto|null;
 }

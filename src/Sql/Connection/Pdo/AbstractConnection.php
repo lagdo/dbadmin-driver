@@ -3,14 +3,22 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Connection\Pdo;
 
 use Lagdo\DbAdmin\Driver\Sql\Connection\PreparedStatement;
-use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
+use Lagdo\DbAdmin\Driver\Sql\Connection\QueryResultInterface;
 use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection as BaseConnection;
 use Lagdo\Facades\Logger;
 use Exception;
 use PDO;
+use PDOStatement;
 
 abstract class AbstractConnection extends BaseConnection
 {
+    /**
+     * The client object used to query the database driver
+     *
+     * @var PDO|null
+     */
+    protected PDO|null $client;
+
     /**
      * Create a PDO connection
      *
@@ -26,7 +34,7 @@ abstract class AbstractConnection extends BaseConnection
         try {
             $this->client = new PDO($dsn, $username, $password, $options);
             $this->client->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-            $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
+            // $this->client->setAttribute(PDO::ATTR_STATEMENT_CLASS, [Statement::class]);
             $this->client->setAttribute(PDO::ATTR_TIMEOUT, 2);
         } catch (Exception $ex) {
             $this->client = null;
@@ -60,7 +68,7 @@ abstract class AbstractConnection extends BaseConnection
     /**
      * @inheritDoc
      */
-    public function query(string $query, bool $unbuffered = false): StatementInterface|bool
+    public function executeQuery(string $query, bool $unbuffered = false): QueryResultInterface
     {
         $statement = $this->client->query($query);
         $this->setError();
@@ -68,49 +76,14 @@ abstract class AbstractConnection extends BaseConnection
             [, $errno, $error] = $this->client->errorInfo();
             $this->setErrno($errno);
             $this->setError(($error) ? $error : $this->_utils()->lang('Unknown error.'));
-            return false;
+            return new QueryResult(false);
         }
+
         // rowCount() is not guaranteed to work with all drivers
-        if (($statement->numRows = $statement->rowCount()) > 0) {
-            $this->setAffectedRows($statement->numRows);
+        if (($numRows = $statement->rowCount()) > 0) {
+            $this->setAffectedRows($numRows);
         }
-        return $statement;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function multiQuery(string $query): bool
-    {
-        $this->statement = $this->query($query);
-        return $this->statement !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function storedResult(): StatementInterface|bool
-    {
-        if (!$this->statement) {
-            return false;
-        }
-        // rowCount() is not guaranteed to work with all drivers
-        if ($this->statement->rowCount() > 0) {
-            $this->setAffectedRows($this->statement->rowCount());
-        }
-        return $this->statement;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function nextResult(): mixed
-    {
-        if (!$this->statement) {
-            return false;
-        }
-        $this->statement->offset = 0;
-        return $this->statement->nextRowset(); // @ - PDO_PgSQL doesn't support it
+        return new QueryResult($statement);
     }
 
     /**
@@ -120,21 +93,55 @@ abstract class AbstractConnection extends BaseConnection
     {
         [$params] = $this->getPreparedParams($query);
         $statement = $this->client->prepare($query);
-        return new PreparedStatement($query, $statement, $params);
+        return new PreparedStatement($statement, $query, $params);
     }
 
     /**
      * @inheritDoc
      */
-    public function executeStatement(PreparedStatement $statement,
-        array $values): ?StatementInterface
+    public function executeStatement(PreparedStatement $preparedStatement,
+        array $values): QueryResultInterface
     {
-        if (!$statement->prepared()) {
-            return null;
+        /** @var PDOStatement|bool */
+        $statement = $preparedStatement->statement();
+        if (!$statement) {
+            $this->setError($this->_utils()->lang($this->statementNotPrepared));
+            return new QueryResult(false);
         }
 
-        $values = $statement->paramValues($values, true);
-        return !$statement->statement()->execute($values) ? null : $statement->statement();
+        $values = $preparedStatement->paramValues($values, true);
+        return new QueryResult(!$statement->execute($values) ? false : $statement);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeMultiQuery(string $query): QueryResultInterface
+    {
+        return $this->executeQuery($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function readRowset(QueryResultInterface $result): QueryResultInterface
+    {
+        // rowCount() is not guaranteed to work with all drivers
+        if ($result->rowCount() > 0) {
+            $this->setAffectedRows($result->rowCount());
+        }
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function nextRowset(QueryResultInterface $result): bool
+    {
+        /** @var QueryResult */
+        $pdoResult = $result;
+        // @ - PDO_PgSQL doesn't support it
+        return $pdoResult->statement()?->nextRowset() ?? false;
     }
 
     /**

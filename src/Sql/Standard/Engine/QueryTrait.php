@@ -3,32 +3,30 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
-use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
+use Lagdo\DbAdmin\Driver\Sql\Connection\QueryResultInterface;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
-use Exception;
+use Closure;
 
 use function implode;
-use function is_object;
+use function is_int;
 use function is_string;
 use function preg_match;
 use function preg_replace;
-use function strlen;
-use function substr;
 
 trait QueryTrait
 {
     use DbProxyTrait;
 
     /**
-     * Execute and remember query
+     * Execute a query and return a boolean
      *
      * @param string $query
      *
-     * @return StatementInterface|bool
+     * @return bool
      */
-    public function execute(string $query): StatementInterface|bool
+    public function execute(string $query): bool
     {
-        return $this->_engine()->connection()->query($query);
+        return !$this->_engine()->connection()->executeQuery($query)->hasError();
     }
 
     /**
@@ -72,13 +70,13 @@ trait QueryTrait
      * @param int $limit Result of processSelectLimit()
      * @param int $page Index of page starting at zero
      *
-     * @return StatementInterface|bool
+     * @return QueryResultInterface
      */
     public function select(string $table, array $select, array $where, array $group = [],
-        array $order = [], int $limit = 1, int $page = 0): StatementInterface|bool
+        array $order = [], int $limit = 1, int $page = 0): QueryResultInterface
     {
-        return $this->execute($this->_statement()->getRowSelectQuery($table, $select,
-            $where, $group, $order, $limit, $page));
+        return $this->executeQuery($this->_statement()->getRowSelectQuery($table,
+            $select, $where, $group, $order, $limit, $page));
     }
 
     /**
@@ -126,50 +124,6 @@ trait QueryTrait
     }
 
     /**
-     * Query printed after execution in the message
-     *
-     * @param string $query Executed query
-     *
-     * @return string
-     */
-    private function queryToLog(string $query/*, string $time*/): string
-    {
-        if (strlen($query) > 1e6) {
-            // [\x80-\xFF] - valid UTF-8, \n - can end by one-line comment
-            $query = preg_replace('~[\x80-\xFF]+$~', '', substr($query, 0, 1e6)) . "\n…";
-        }
-        return $query;
-    }
-
-    /**
-     * Execute query
-     *
-     * @param string $query
-     * @param bool $execute
-     * @param bool $failed
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function executeQuery(string $query, bool $execute = true,
-        bool $failed = false/*, string $time = ''*/): bool
-    {
-        if ($execute) {
-            // $start = microtime(true);
-            $failed = !$this->execute($query);
-            // $time = $this->trans->formatTime($start);
-        }
-        if ($failed) {
-            $sql = '';
-            if ($query) {
-                $sql = $this->queryToLog($query/*, $time*/);
-            }
-            throw new Exception($this->_engine()->error() . $sql);
-        }
-        return true;
-    }
-
-    /**
      * @param ColumnDto $column
      * @param string $name
      * @param string $value
@@ -184,7 +138,7 @@ trait QueryTrait
             $this->_engine()->mssql() => // LIKE because of text
                 ' LIKE ' . $this->_engine()->quote(preg_replace('~[_%[]~', '[\0]', $value)),
             //! enum and set
-            default => ' = ' . $this->_statement()->unconvertValue($column, $this->_engine()->quote($value)),
+            default => ' = ' . $this->_statement()->unconvertColumn($column, $this->_engine()->quote($value)),
         };
     }
 
@@ -258,12 +212,13 @@ trait QueryTrait
      */
     public function rows(string $query): array
     {
-        $statement = $this->execute($query);
-        if (!is_object($statement)) { // can return true
+        $result = $this->executeQuery($query);
+        if (!$result->hasRowset()) { // can return true
             return [];
         }
+
         $rows = [];
-        while ($row = $statement->fetchAssoc()) {
+        while ($row = $result->fetchAssoc()) {
             $rows[] = $row;
         }
         return $rows;
@@ -274,11 +229,11 @@ trait QueryTrait
      *
      * @param string $query
      * @param array $tables
-     * @param callback|null $escape
+     * @param Closure|null $escape
      *
      * @return bool
      */
-    public function applyQueries(string $query, array $tables, $escape = null): bool
+    public function applyQueries(string $query, array $tables, Closure|null $escape = null): bool
     {
         if (!$escape) {
             $escape = $this->_statement()->escapeTableName(...);
@@ -299,15 +254,18 @@ trait QueryTrait
      *
      * @return array
      */
-    public function columnValues(string $query, string|int $column = 0): array
+    public function columnValues(string $query, string|int $column = -1): array
     {
-        $statement = $this->execute($query);
-        if (!is_object($statement)) {
+        $colIsInt = is_int($column);
+        if ($colIsInt && $column < 0) {
+            $column = 0;
+        }
+        $result = $this->executeQuery($query);
+        if (!$result->hasRowset()) {
             return [];
         }
 
-        $fetchRow = is_string($column) ?
-            $statement->fetchAssoc(...) : $statement->fetchRow(...);
+        $fetchRow = $colIsInt ? $result->fetchRow(...) : $result->fetchAssoc(...);
         $values = [];
         while ($row = $fetchRow()) {
             $values[] = $row[$column];
@@ -323,16 +281,19 @@ trait QueryTrait
      *
      * @return mixed
      */
-    public function columnValue(string $query, string|int $column = 0): mixed
+    public function columnValue(string $query, string|int $column = -1): mixed
     {
-        $statement = $this->execute($query);
-        if (!is_object($statement)) {
+        $colIsInt = is_int($column);
+        if ($colIsInt && $column < 0) {
+            $column = 0;
+        }
+        $result = $this->executeQuery($query);
+        if (!$result->hasRowset()) {
             return null;
         }
 
-        $row = is_string($column) ?
-            $statement->fetchAssoc() : $statement->fetchRow();
-        return !$row ? null : $row[$column];
+        $row = $colIsInt ? $result->fetchRow() : $result->fetchAssoc();
+        return $row[$column] ?? null;
     }
 
     /**
@@ -345,12 +306,13 @@ trait QueryTrait
      */
     public function keyValues(string $query, bool $setKeys = true): array
     {
-        $statement = $this->execute($query);
-        if (!is_object($statement)) {
+        $result = $this->executeQuery($query);
+        if (!$result->hasRowset()) {
             return [];
         }
+
         $values = [];
-        while ($row = $statement->fetchRow()) {
+        while ($row = $result->fetchRow()) {
             if ($setKeys) {
                 $values[$row[0]] = $row[1];
             } else {

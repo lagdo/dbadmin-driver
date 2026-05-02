@@ -49,7 +49,7 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function convertValue(ColumnDto $column): string
+    public function convertColumn(ColumnDto $column): string
     {
         return '';
     }
@@ -57,7 +57,7 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     /**
      * @inheritDoc
      */
-    public function unconvertValue(ColumnDto $column, string $value): string
+    public function unconvertColumn(ColumnDto $column, string $value): string
     {
         return $value;
     }

@@ -23,7 +23,7 @@ interface QueryInterface
      *
      * @return string
      */
-    public function convertValue(ColumnDto $column): string;
+    public function convertColumn(ColumnDto $column): string;
 
     /**
      * Convert value in edit after applying functions back
@@ -33,5 +33,5 @@ interface QueryInterface
      *
      * @return string
      */
-    public function unconvertValue(ColumnDto $column, string $value): string;
+    public function unconvertColumn(ColumnDto $column, string $value): string;
 }

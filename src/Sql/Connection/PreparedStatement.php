@@ -9,15 +9,13 @@ use function substr;
 class PreparedStatement
 {
     /**
-     * The constructor
-     *
-     * @param string $query
      * @param mixed $statement
+     * @param string $query
      * @param array $params
      * @param string $name
      */
-    public function __construct(private string $query,
-        private mixed $statement, private array $params, private string $name = '')
+    public function __construct(private mixed $statement,
+        private string $query, private array $params, private string $name = '')
     {}
 
     /**
@@ -26,14 +24,6 @@ class PreparedStatement
     public function query(): string
     {
         return $this->query;
-    }
-
-    /**
-     * @return bool
-     */
-    public function prepared(): bool
-    {
-        return $this->statement !== null && $this->statement !== false;
     }
 
     /**
@@ -70,7 +60,6 @@ class PreparedStatement
     {
         $paramNames = $this->paramNames();
         $paramValues = array_map(fn($param) => $values[$param], $paramNames);
-        return !$withKeys ? $paramValues :
-            array_combine($paramNames, $paramValues);
+        return !$withKeys ? $paramValues : array_combine($paramNames, $paramValues);
     }
 }

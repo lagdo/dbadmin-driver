@@ -54,9 +54,9 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function query(string $query, bool $unbuffered = false): StatementInterface|bool
+    public function executeQuery(string $query, bool $unbuffered = false): QueryResultInterface
     {
-        return $this->connection()->query($query, $unbuffered);
+        return $this->connection()->executeQuery($query, $unbuffered);
     }
 
     /**
@@ -70,17 +70,9 @@ trait ConnectionTrait
     /**
      * @inheritDoc
      */
-    public function result(string $query, int $column = -1): mixed
+    public function convertValue(mixed $value, ColumnDto $column): mixed
     {
-        return $this->connection()->result($query, $column);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function multiQuery(string $query): bool
-    {
-        return $this->connection()->multiQuery($query);
+        return $this->connection()->convertValue($value, $column);
     }
 
     /**
@@ -98,45 +90,45 @@ trait ConnectionTrait
     /**
      * Execute a prepared statement
      *
-     * @param PreparedStatement $statement
+     * @param PreparedStatement $preparedStatement
      * @param array $values
      *
-     * @return StatementInterface|bool
+     * @return QueryResultInterface
      */
-    public function executeStatement(PreparedStatement $statement,
-        array $values): ?StatementInterface
+    public function executeStatement(PreparedStatement $preparedStatement,
+        array $values): QueryResultInterface
     {
-        return $this->connection()->executeStatement($statement, $values);
+        return $this->connection()->executeStatement($preparedStatement, $values);
     }
 
     /**
      * @inheritDoc
      */
-    public function storedResult(): StatementInterface|bool
+    public function executeMultiQuery(string $query): QueryResultInterface
     {
-        return $this->connection()->storedResult();
+        return $this->connection()->executeMultiQuery($query);
     }
 
     /**
      * @inheritDoc
      */
-    public function nextResult(): mixed
+    public function readRowset(QueryResultInterface $result): QueryResultInterface
     {
-        return $this->connection()->nextResult();
+        return $this->connection()->readRowset($result);
     }
 
     /**
      * @inheritDoc
      */
-    public function value(mixed $value, ColumnDto $column): mixed
+    public function nextRowset(QueryResultInterface $result): bool
     {
-        return $this->connection()->value($value, $column);
+        return $this->connection()->nextRowset($result);
     }
 
     /**
      * @inheritDoc
      */
-    public function explain(string $query): StatementInterface|bool
+    public function explain(string $query): QueryResultInterface|bool
     {
         return $this->connection()->explain($query);
     }

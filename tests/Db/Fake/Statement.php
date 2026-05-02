@@ -2,8 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Tests\Db\Fake;
 
-use Lagdo\DbAdmin\Driver\Sql\Connection\StatementInterface;
-use Lagdo\DbAdmin\Driver\Sql\Dto\StatementFieldDto;
+use Lagdo\DbAdmin\Driver\Sql\Connection\QueryResultInterface;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ResultColumnDto;
 
 use function count;
 use function array_values;
@@ -12,7 +12,7 @@ use function array_pop;
 /**
  * Fake Statement class for testing
  */
-class Statement implements StatementInterface
+class Statement implements QueryResultInterface
 {
     /**
      * The query result
@@ -66,9 +66,9 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchField(): StatementFieldDto|null
+    public function fetchColumn(): ResultColumnDto|null
     {
         return null;
-        // return new StatementFieldDto();
+        // return new ResultColumnDto();
     }
 }
