@@ -122,7 +122,7 @@ interface TableInterface
      *
      * @param string $table
      *
-     * @return array
+     * @return array<TriggerDto>
      */
     public function triggers(string $table): array;
 
