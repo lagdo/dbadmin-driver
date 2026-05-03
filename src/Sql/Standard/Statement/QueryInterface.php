@@ -74,5 +74,5 @@ interface QueryInterface
      *
      * @return string
      */
-    public function convertValues(array $names, array $columns, array $select = []): string;
+    public function convertColumns(array $names, array $columns, array $select = []): string;
 }

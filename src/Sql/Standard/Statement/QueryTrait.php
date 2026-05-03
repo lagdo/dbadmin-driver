@@ -5,8 +5,9 @@ namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
 use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
 
-use function array_map;
+use function array_filter;
 use function array_keys;
+use function array_map;
 use function count;
 use function implode;
 use function in_array;
@@ -125,17 +126,17 @@ trait QueryTrait
      *
      * @return string
      */
-    public function convertValues(array $names, array $columns, array $select = []): string
+    public function convertColumns(array $names, array $columns, array $select = []): string
     {
         $hasSelect = count($select) > 0;
         $clauses = array_map(function(string $name) use($hasSelect, $columns, $select) {
-            $name = $this->_statement()->escapeId($name);
-            if ($hasSelect && !in_array($name, $select)) {
+            $escapedName = $this->_statement()->escapeId($name);
+            if ($hasSelect && !in_array($escapedName, $select)) {
                 return null;
             }
 
-            $columnName = $this->_statement()->convertColumn($columns[$name]);
-            return $columnName === '' ? null : ", $columnName AS $name";
+            $columnClause = $this->_statement()->convertColumn($columns[$name]);
+            return $columnClause === '' ? null : ", $columnClause AS $escapedName";
         }, $names);
 
         $callback = fn(string|null $clause) => $clause !== null;

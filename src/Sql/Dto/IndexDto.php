@@ -30,7 +30,7 @@ class IndexDto
     public string $partial = '';
 
     /**
-     * @var array
+     * @var array<string>
      */
     public array $columns = [];
 
