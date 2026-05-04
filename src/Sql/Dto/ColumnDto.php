@@ -63,48 +63,6 @@ class ColumnDto extends ColumnType
     public string $generated = '';
 
     /**
-     * The column types
-     *
-     * @var array
-     */
-    public array $types = [];
-
-    /**
-     * If the column length is required
-     *
-     * @var boolean
-     */
-    public bool $lengthRequired = false;
-
-    /**
-     * If the column collation is hidden
-     *
-     * @var boolean
-     */
-    public bool $collationHidden = true;
-
-    /**
-     * If the column sign id hidden
-     *
-     * @var boolean
-     */
-    public bool $unsignedHidden = false;
-
-    /**
-     * If the column on update trigger is hidden
-     *
-     * @var boolean
-     */
-    public bool $onUpdateHidden = true;
-
-    /**
-     * If the column on delete trigger is hidden
-     *
-     * @var boolean
-     */
-    public bool $onDeleteHidden = true;
-
-    /**
      * @return boolean
      */
     public function hasDefault(): bool
