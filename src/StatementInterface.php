@@ -7,7 +7,6 @@ use Lagdo\DbAdmin\Driver\Sql\Specific;
 
 interface StatementInterface extends Standard\Statement\DatabaseInterface,
     Specific\Statement\DatabaseInterface, Standard\Statement\SyntaxInterface,
-    Specific\Statement\SyntaxInterface, Standard\Statement\TableInterface,
-    Specific\Statement\TableInterface, Standard\Statement\QueryInterface,
-    Specific\Statement\QueryInterface
+    Specific\Statement\SyntaxInterface, Standard\Statement\QueryInterface,
+    Specific\Statement\QueryInterface, Specific\Statement\TableInterface
 {}

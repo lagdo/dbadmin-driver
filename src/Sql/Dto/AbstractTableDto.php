@@ -4,8 +4,6 @@ namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
 use Closure;
 
-use function implode;
-
 abstract class AbstractTableDto
 {
     /**
@@ -34,6 +32,11 @@ abstract class AbstractTableDto
     public int $autoIncrement = 0;
 
     /**
+     * @var bool
+     */
+    public bool $setComment = false;
+
+    /**
      * @var string|null
      */
     public string|null $comment = null;
@@ -49,51 +52,35 @@ abstract class AbstractTableDto
     public array $foreignKeys = [];
 
     /**
-     * @param array $properties
+     * @var array<ColumnDto>
      */
-    public function __construct(array $properties = [])
-    {
-        $this->properties($properties);
-    }
+    private array $referencableColumns;
 
     /**
-     * @param Closure $quote
-     *
-     * @return string
+     * @param array $inputs
+     * @param Closure $getColumns
      */
-    public function options(Closure $quote): string
+    public function __construct(array $inputs, private Closure $getColumns)
     {
-        $options = [];
-        if ($this->comment !== null) {
-            $options[] = 'COMMENT=' . $quote($this->comment);
-        }
-        if ($this->engine) {
-            $options[] = 'ENGINE=' . $quote($this->engine);
-        }
-        if ($this->collation) {
-            $options[] = 'COLLATE ' . $quote($this->collation);
-        }
-        if ($this->autoIncrement !== 0) {
-            $options[] = "AUTO_INCREMENT=$this->autoIncrement";
-        }
-        return implode(' ', $options);
-    }
-
-    /**
-     * @param array $properties
-     *
-     * @return void
-     */
-    public function properties(array $properties): void
-    {
-        $this->name = $properties['name'] ?? '';
-        $this->engine = $properties['engine'] ?? '';
-        $this->collation = $properties['collation'] ?? '';
-        $this->comment = $properties['comment'] ?? null;
-        $this->hasAutoIncrement = $properties['hasAutoIncrement'] ?? false;
+        $this->name = $inputs['name'] ?? '';
+        $this->engine = $inputs['engine'] ?? '';
+        $this->collation = $inputs['collation'] ?? '';
+        $this->setComment = $inputs['setComment'] ?? false;
+        $this->hasAutoIncrement = $inputs['hasAutoIncrement'] ?? false;
         if ($this->hasAutoIncrement) {
-            $this->autoIncrement = (int)($properties['autoIncrement'] ?? 0);
+            $this->autoIncrement = (int)($inputs['autoIncrement'] ?? 0);
         }
-        // $this->partitioning = $properties['partitioning'] ?? '';
+        if ($this->setComment) {
+            $this->comment = $inputs['comment'] ?? null;
+        }
+        // $this->partitioning = $inputs['partitioning'] ?? '';
+    }
+
+    /**
+     * @return array<ColumnDto>
+     */
+    public function getReferencableColumns(): array
+    {
+        return $this->referencableColumns ??= ($this->getColumns)($this->name);
     }
 }

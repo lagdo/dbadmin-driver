@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnType;
 use Lagdo\DbAdmin\Driver\Sql\Dto\QueryInputDto;
 
 interface SyntaxInterface
@@ -71,4 +72,13 @@ interface SyntaxInterface
      */
     public function getUnconvertedFieldValue(ColumnDto $column,
         string $value, string $function = ''): string;
+
+    /**
+     * Create SQL string from column type
+     *
+     * @param ColumnType $column
+     *
+     * @return string
+     */
+    public function getColumnType(ColumnType $column, string $collate = "COLLATE"): string;
 }

@@ -12,7 +12,6 @@ abstract class AbstractStatement implements StatementInterface
     use Specific\Statement\SyntaxTrait;
     use Standard\Statement\DatabaseTrait;
     use Specific\Statement\DatabaseTrait;
-    use Standard\Statement\TableTrait;
     use Specific\Statement\TableTrait;
     use Standard\Statement\QueryTrait;
     use Specific\Statement\QueryTrait;

@@ -4,11 +4,13 @@ namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnType;
 use Lagdo\DbAdmin\Driver\Sql\Dto\QueryInputDto;
 
 use function array_flip;
 use function implode;
 use function intval;
+use function in_array;
 use function is_string;
 use function preg_match;
 use function preg_match_all;
@@ -260,5 +262,24 @@ trait SyntaxTrait
 
         $expression = $this->getInputFieldExpression($column, $value, $function);
         return $this->_statement()->unconvertColumn($column, $expression);
+    }
+
+    /**
+     * Create SQL string from column type
+     *
+     * @param ColumnType $column
+     *
+     * @return string
+     */
+    public function getColumnType(ColumnType $column, string $collate = "COLLATE"): string
+    {
+        $length = $this->_statement()->processLength($column->length);
+        $type = preg_match($this->_engine()->numberRegex(), $column->type) &&
+            in_array($column->unsigned, $this->_engine()->unsigned()) ?
+            " {$column->unsigned}" : "";
+        $collation = preg_match('~char|text|enum|set~', $column->type) && $column->collation ?
+            " $collate " . ($this->_engine()->mssql() ? $column->collation :
+                $this->_engine()->quote($column->collation)) : "";
+        return " {$column->type}{$length}{$type}{$collation}";
     }
 }
