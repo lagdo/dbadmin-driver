@@ -13,20 +13,6 @@ trait QueryTrait
     abstract protected function _query(): AbstractQuery;
 
     /**
-     * Insert or update data in table
-     *
-     * @param string $table
-     * @param array $rows
-     * @param array $primary of arrays with escaped columns in keys and quoted data in values
-     *
-     * @return bool
-     */
-    // public function insertOrUpdate(string $table, array $rows, array $primary): bool
-    // {
-    //     return $this->_query()->insertOrUpdate($table, $rows, $primary);
-    // }
-
-    /**
      * Get last auto increment ID
      *
      * @return string

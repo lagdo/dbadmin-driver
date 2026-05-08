@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\UpsertDto;
 
 trait QueryTrait
 {
@@ -36,6 +37,18 @@ trait QueryTrait
     public function getTableSelectQuery(SelectInputDto $input): string
     {
         return $this->_query()->getTableSelectQuery($input);
+    }
+
+    /**
+     * Upsert multiple rows in a table
+     *
+     * @param UpsertDto $input
+     *
+     * @return array
+     */
+    public function getTableUpsertQueries(UpsertDto $input): array
+    {
+        return $this->_query()->getTableUpsertQueries($input);
     }
 
     /**

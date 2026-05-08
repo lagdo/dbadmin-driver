@@ -8,17 +8,6 @@ use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 interface QueryInterface
 {
     /**
-     * Insert or update data in table
-     *
-     * @param string $table
-     * @param array $rows
-     * @param array $primary of arrays with escaped columns in keys and quoted data in values
-     *
-     * @return bool
-     */
-    // public function insertOrUpdate(string $table, array $rows, array $primary): bool;
-
-    /**
      * Get last auto increment ID
      *
      * @return string
@@ -61,7 +50,7 @@ interface QueryInterface
      *
      * @param string $name
      *
-     * @return array array("select" => )
+     * @return array
      */
     public function view(string $name): array;
 }

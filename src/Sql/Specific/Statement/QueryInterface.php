@@ -4,6 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\UpsertDto;
 
 interface QueryInterface
 {
@@ -15,6 +16,15 @@ interface QueryInterface
      * @return string
      */
     public function getTableSelectQuery(SelectInputDto $input): string;
+
+    /**
+     * Upsert multiple rows in a table
+     *
+     * @param UpsertDto $input
+     *
+     * @return array
+     */
+    public function getTableUpsertQueries(UpsertDto $input): array;
 
     /**
      * Convert column in select and edit

@@ -9,7 +9,7 @@ use Closure;
 interface QueryInterface
 {
     /**
-     * Execute and remember query
+     * Execute a query
      *
      * @param string $query
      *

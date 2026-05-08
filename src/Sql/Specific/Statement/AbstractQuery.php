@@ -6,6 +6,7 @@ use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
 
+use function array_map;
 use function implode;
 
 abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
@@ -60,5 +61,20 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     public function unconvertColumn(ColumnDto $column, string $value): string
     {
         return $value;
+    }
+
+    /**
+     * Make SQL clause for update queries
+     *
+     * @param string $join
+     * @param array $values
+     * @param array $columns
+     *
+     * @return string
+     */
+    protected function getUpdateClause(string $join, array $values, array $columns): string
+    {
+        $updateClause = fn(string $value, string $column) => "$column = $value";
+        return implode($join, array_map($updateClause, $values, $columns));
     }
 }
