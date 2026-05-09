@@ -6,7 +6,7 @@ use Closure;
 
 use function implode;
 
-class TableAlterDto extends AbstractTableDto
+class TableAlterDto extends TableDdlDto
 {
     /**
      * @var TableDto

@@ -3,10 +3,10 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
-use Lagdo\DbAdmin\Driver\Sql\Dto\AbstractTableDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnInputDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdlDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
 use function array_map;
@@ -68,12 +68,12 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     }
 
     /**
-     * @param AbstractTableDto $table
+     * @param TableDdlDto $table
      * @param string $prefix
      *
      * @return array<string>
      */
-    protected function getForeignKeyClauses(AbstractTableDto $table, string $prefix = ''): array
+    protected function getForeignKeyClauses(TableDdlDto $table, string $prefix = ''): array
     {
         $formatter = fn(ForeignKeyDto $fkColumn) => $prefix . $this->formatForeignKey($fkColumn);
         return array_map($formatter, $table->foreignKeys);
@@ -127,6 +127,28 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      * @return string
      */
     protected function getAddColumnClause(ColumnInputDto $input): string
+    {
+        $name = $this->_statement()->escapeId($input->name);
+        $type = $this->_statement()->getColumnType($input->typeColumn ?? $input);
+
+        $nullValue = $input->nullable ? ' NULL' : ' NOT NULL'; // NULL for timestamp
+        $defaultValue = $this->getDefaultValueClause($input);
+        $autoIncrement = $input->autoIncrement ?
+            $this->_statement()->getAutoIncrementModifier() : '';
+
+        // MariaDB exports CURRENT_TIMESTAMP as a function.
+        $onUpdate = $input->onUpdate === '' || !preg_match('~timestamp|datetime~', $type) ?
+            '' : ' ON UPDATE ' . $this->fixOnUpdateTimestamp($input->onUpdate);
+        $comment = $this->_engine()->support('comment') && $input->comment !== null ?
+            ' COMMENT ' . $this->_engine()->quote($input->comment) : '';
+
+        return "$name$type$nullValue$defaultValue$onUpdate$comment$autoIncrement";
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEditColumnClause(ColumnInputDto $input): string
     {
         $name = $this->_statement()->escapeId($input->name);
         $type = $this->_statement()->getColumnType($input->typeColumn ?? $input);

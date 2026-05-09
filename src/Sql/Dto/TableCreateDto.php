@@ -6,7 +6,7 @@ use Closure;
 
 use function implode;
 
-class TableCreateDto extends AbstractTableDto
+class TableCreateDto extends TableDdlDto
 {
     /**
      * Columns to add.

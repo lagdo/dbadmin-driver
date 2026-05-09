@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
 use Closure;
 
-abstract class AbstractTableDto
+abstract class TableDdlDto
 {
     /**
      * @var string
