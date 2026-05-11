@@ -51,4 +51,12 @@ class TableCreateDto extends TableDdlDto
     {
         $this->columns = [];
     }
+
+    /**
+     * @return array<ColumnInputDto>
+     */
+    public function addedColumns(): array
+    {
+        return $this->columns[ColumnAction::ADD->value];
+    }
 }

@@ -6,12 +6,14 @@ use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnInputDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\TableAlterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdlDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
 use function array_map;
 use function implode;
 use function preg_match;
+use function str_ireplace;
 
 abstract class AbstractTable extends AbstractDbProxy implements TableInterface
 {
@@ -75,8 +77,8 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      */
     protected function getForeignKeyClauses(TableDdlDto $table, string $prefix = ''): array
     {
-        $formatter = fn(ForeignKeyDto $fkColumn) => $prefix . $this->formatForeignKey($fkColumn);
-        return array_map($formatter, $table->foreignKeys);
+        return array_map(fn(ForeignKeyDto $fkColumn) => $prefix .
+            $this->formatForeignKey($fkColumn), $table->foreignKeys);
     }
 
     /**
@@ -118,7 +120,7 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      *
      * @return string
      */
-    private function fixOnUpdateTimestamp(string $onUpdate): string
+    protected function fixOnUpdateTimestamp(string $onUpdate): string
     {
         return str_ireplace("current_timestamp()", "CURRENT_TIMESTAMP", $onUpdate);
     }
@@ -146,24 +148,14 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     }
 
     /**
-     * @return string
+     * @param TableAlterDto $table
+     *
+     * @return array<string>
      */
-    protected function getEditColumnClause(ColumnInputDto $input): string
+    protected function getDropColumnClauses(TableAlterDto $table): array
     {
-        $name = $this->_statement()->escapeId($input->name);
-        $type = $this->_statement()->getColumnType($input->typeColumn ?? $input);
-
-        $nullValue = $input->nullable ? ' NULL' : ' NOT NULL'; // NULL for timestamp
-        $defaultValue = $this->getDefaultValueClause($input);
-        $autoIncrement = $input->autoIncrement ?
-            $this->_statement()->getAutoIncrementModifier() : '';
-
-        // MariaDB exports CURRENT_TIMESTAMP as a function.
-        $onUpdate = $input->onUpdate === '' || !preg_match('~timestamp|datetime~', $type) ?
-            '' : ' ON UPDATE ' . $this->fixOnUpdateTimestamp($input->onUpdate);
-        $comment = $this->_engine()->support('comment') && $input->comment !== null ?
-            ' COMMENT ' . $this->_engine()->quote($input->comment) : '';
-
-        return "$name$type$nullValue$defaultValue$onUpdate$comment$autoIncrement";
+        $dropColumnCallback = fn(string $columnName) =>
+            'DROP ' . $this->_statement()->escapeId($columnName);
+        return array_map($dropColumnCallback, $table->droppedColumns());
     }
 }

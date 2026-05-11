@@ -71,7 +71,7 @@ abstract class TableDdlDto
             $this->autoIncrement = (int)($inputs['autoIncrement'] ?? 0);
         }
         if ($this->setComment) {
-            $this->comment = $inputs['comment'] ?? null;
+            $this->comment = $inputs['comment'] ?? '';
         }
         // $this->partitioning = $inputs['partitioning'] ?? '';
     }
@@ -82,5 +82,13 @@ abstract class TableDdlDto
     public function getReferencableColumns(): array
     {
         return $this->referencableColumns ??= ($this->getColumns)($this->name);
+    }
+
+    /**
+     * @return bool
+     */
+    public function commentChanged(): bool
+    {
+        return $this->comment !== null;
     }
 }

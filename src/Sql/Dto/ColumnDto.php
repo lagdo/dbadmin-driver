@@ -2,6 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
+use function is_string;
 use function stripos;
 
 class ColumnDto extends ColumnType
@@ -11,7 +12,7 @@ class ColumnDto extends ColumnType
      *
      * @var mixed
      */
-    public $default = null;
+    public mixed $default = null;
 
     /**
      * If the column is auto increment
@@ -63,11 +64,14 @@ class ColumnDto extends ColumnType
     public string $generated = '';
 
     /**
+     * @param bool $isString Also check if the default value is a string
+     *
      * @return boolean
      */
-    public function hasDefault(): bool
+    public function hasDefault(bool $isString = false): bool
     {
-        return $this->default !== null;
+        return !$isString ? $this->default !== null :
+            $this->default !== null && is_string($this->default);
     }
 
     /**
