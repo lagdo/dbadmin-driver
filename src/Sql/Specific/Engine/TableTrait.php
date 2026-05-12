@@ -88,11 +88,11 @@ trait TableTrait
     /**
      * Get information about columns
      *
-     * @param string $table
+     * @param string|TableDto $table
      *
      * @return array<ColumnDto>
      */
-    public function columns(string $table): array
+    public function columns(string|TableDto $table): array
     {
         return $this->_table()->columns($table);
     }

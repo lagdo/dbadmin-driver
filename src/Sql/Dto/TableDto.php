@@ -35,9 +35,14 @@ class TableDto
     public bool $hasAutoIncrement = false;
 
     /**
-     * @var integer
+     * @var int
      */
-    public int $autoIncrement = 0;
+    public int $autoIncrementValue = 0;
+
+    /**
+     * @var string
+     */
+    public string $autoIncrementColumn = '';
 
     /**
      * @var int|null

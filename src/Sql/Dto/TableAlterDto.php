@@ -58,7 +58,7 @@ class TableAlterDto extends TableDdlDto
      */
     public function nameChanged(): bool
     {
-        return $this->name === $this->current->name;
+        return $this->name !== $this->current->name;
     }
 
     /**
@@ -66,7 +66,7 @@ class TableAlterDto extends TableDdlDto
      */
     public function engineChanged(): bool
     {
-        return $this->engine === $this->current->engine;
+        return $this->engine !== $this->current->engine;
     }
 
     /**
@@ -74,7 +74,7 @@ class TableAlterDto extends TableDdlDto
      */
     public function collationChanged(): bool
     {
-        return $this->collation === $this->current->collation;
+        return $this->collation !== $this->current->collation;
     }
 
     /**
