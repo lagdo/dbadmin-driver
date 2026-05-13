@@ -186,4 +186,24 @@ class Utils
         $pattern = '~char|text|json|lob|geometry|point|linestring|polygon|string|bytea~';
         return preg_match($pattern, $column->type) > 0;
     }
+
+    /**
+     * @param string $table
+     *
+     * @return void
+     */
+    public function setInputTable(string $table): void
+    {
+        $this->input->table = $table;
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return void
+     */
+    public function setInputValues(array $values): void
+    {
+        $this->input->values = $values;
+    }
 }

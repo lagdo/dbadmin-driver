@@ -7,35 +7,7 @@ class TableAlterDto extends TableDdlDto
     /**
      * @var TableDto
      */
-    public TableDto $current;
-
-    /**
-     * Columns to add, edit or drop.
-     *
-     * @var array<string, array<string|ColumnInputDto>>
-     */
-    public array $columns = [];
-
-    /**
-     * @var string|null
-     */
-    public string|null $error = null;
-
-    /**
-     * @return void
-     */
-    public function clearColumns(): void
-    {
-        $this->columns = [];
-    }
-
-    /**
-     * @return array<ColumnInputDto>
-     */
-    public function addedColumns(): array
-    {
-        return $this->columns[ColumnAction::ADD->value];
-    }
+    public TableDto $status;
 
     /**
      * @return array<ColumnInputDto>
@@ -54,11 +26,27 @@ class TableAlterDto extends TableDdlDto
     }
 
     /**
+     * @return string
+     */
+    public function statusName(): string
+    {
+        return $this->status->name;
+    }
+
+    /**
+     * @return array<ColumnDto>
+     */
+    public function statusColumns(): array
+    {
+        return $this->status->columns();
+    }
+
+    /**
      * @return bool
      */
     public function nameChanged(): bool
     {
-        return $this->name !== $this->current->name;
+        return $this->name !== $this->status->name;
     }
 
     /**
@@ -66,7 +54,7 @@ class TableAlterDto extends TableDdlDto
      */
     public function engineChanged(): bool
     {
-        return $this->engine !== $this->current->engine;
+        return $this->engine !== $this->status->engine;
     }
 
     /**
@@ -74,22 +62,6 @@ class TableAlterDto extends TableDdlDto
      */
     public function collationChanged(): bool
     {
-        return $this->collation !== $this->current->collation;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasAutoIncrement(): bool
-    {
-        return $this->autoIncrement > 0;
-    }
-
-    /**
-     * @return bool
-     */
-    public function commentChanged(): bool
-    {
-        return $this->comment !== null;
+        return $this->collation !== $this->status->collation;
     }
 }

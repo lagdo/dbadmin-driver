@@ -2,13 +2,10 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
+use Closure;
+
 class TableDto
 {
-    /**
-     * @var string
-     */
-    public string $name = '';
-
     /**
      * @var string
      */
@@ -75,10 +72,22 @@ class TableDto
     public string $partitioning = '';
 
     /**
-     * @param string $name The table name
+     * @var array<ColumnDto>
      */
-    public function __construct(string $name)
+    private array $columns;
+
+    /**
+     * @param string $name The table name
+     * @param Closure $columnsGetter
+     */
+    public function __construct(public string $name, private Closure $columnsGetter)
+    {}
+
+    /**
+     * @return array<ColumnDto>
+     */
+    public function columns(): array
     {
-        $this->name = $name;
+        return $this->columns ??= ($this->columnsGetter)($this);
     }
 }

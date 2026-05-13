@@ -20,6 +20,6 @@ trait TableTrait
     public function tableStatusOrName(string $table, bool $fast = false): TableDto
     {
         $status = $this->_engine()->tableStatus($table, $fast);
-        return $status === null ? new TableDto($table) : $status;
+        return $status ?? new TableDto($table, $this->_engine()->columns(...));
     }
 }

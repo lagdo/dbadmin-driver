@@ -2,6 +2,8 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
+use function preg_match;
+
 /**
  * Inputs for a table column.
  */
@@ -49,10 +51,26 @@ class ColumnInputDto extends ColumnDto
     /**
      * @return bool
      */
-    public function valueChanged(): bool
+    public function autoIncrementDefined(): bool
     {
-        return $this->autoIncrement !== $this->column->autoIncrement ||
-            $this->default !== $this->column->default;
+        return $this->autoIncrement !== $this->column->autoIncrement;
+    }
+
+    /**
+     * @return bool
+     */
+    public function autoIncrementDisabled(): bool
+    {
+        return $this->autoIncrementDefined() &&
+            $this->column->name !== '' && !$this->autoIncrement;
+    }
+
+    /**
+     * @return bool
+     */
+    public function defaultChanged(): bool
+    {
+        return $this->default !== $this->column->default;
     }
 
     /**
@@ -79,7 +97,7 @@ class ColumnInputDto extends ColumnDto
     /**
      * @return bool
      */
-    public function commentChanged(): bool
+    public function hasComment(): bool
     {
         return $this->comment !== null;
     }
