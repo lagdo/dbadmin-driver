@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
-class TableCreateDto extends TableDdlDto
+class TableCreateDto extends TableDdDto
 {
     /**
      * @return string

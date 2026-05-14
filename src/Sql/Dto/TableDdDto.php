@@ -7,7 +7,7 @@ use Closure;
 use function array_filter;
 use function array_values;
 
-abstract class TableDdlDto
+abstract class TableDdDto
 {
     /**
      * @var string

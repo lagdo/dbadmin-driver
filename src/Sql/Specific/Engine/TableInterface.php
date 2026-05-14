@@ -3,6 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\IndexDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\PartitionDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TriggerDto;
@@ -76,7 +78,7 @@ interface TableInterface
      *
      * @param string $table
      *
-     * @return array
+     * @return array<IndexDto>
      */
     public function indexes(string $table): array;
 
@@ -85,7 +87,7 @@ interface TableInterface
      *
      * @param string $table
      *
-     * @return array
+     * @return array<ForeignKeyDto>
      */
     public function foreignKeys(string $table): array;
 

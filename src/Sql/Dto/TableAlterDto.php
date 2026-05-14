@@ -2,7 +2,7 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
-class TableAlterDto extends TableDdlDto
+class TableAlterDto extends TableDdDto
 {
     /**
      * @var TableDto

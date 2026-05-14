@@ -3,6 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\IndexDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\PartitionDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TriggerDto;
@@ -32,7 +34,7 @@ trait TableTrait
      *
      * @param bool $fast Return only "Name", "Engine" and "Comment" columns
      *
-     * @return TableDto[]
+     * @return array<TableDto>
      */
     public function tableStatuses(bool $fast = false): array
     {
@@ -42,7 +44,7 @@ trait TableTrait
     /**
      * Get all tables names
      *
-     * @return array
+     * @return array<string>
      */
     public function tableNames(): array
     {
@@ -102,7 +104,7 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return array
+     * @return array<IndexDto>
      */
     public function indexes(string $table): array
     {
@@ -114,7 +116,7 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return array
+     * @return array<ForeignKeyDto>
      */
     public function foreignKeys(string $table): array
     {

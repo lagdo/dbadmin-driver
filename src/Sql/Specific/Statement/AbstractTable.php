@@ -7,7 +7,7 @@ use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnInputDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableAlterDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdlDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
 use function array_map;
@@ -70,12 +70,12 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     }
 
     /**
-     * @param TableDdlDto $table
+     * @param TableDdDto $table
      * @param string $prefix
      *
      * @return array<string>
      */
-    protected function getForeignKeyClauses(TableDdlDto $table, string $prefix = ''): array
+    protected function getForeignKeyClauses(TableDdDto $table, string $prefix = ''): array
     {
         return array_map(fn(ForeignKeyDto $fkColumn) => $prefix .
             $this->formatForeignKey($fkColumn), $table->foreignKeys);
