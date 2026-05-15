@@ -133,6 +133,13 @@ interface ConfigInterface
     public function typeLength(ColumnDto $column): int;
 
     /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function typeIsAutoIncrementable(string $type): bool;
+
+    /**
      * Get the driver options
      *
      * @return array

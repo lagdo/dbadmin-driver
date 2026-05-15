@@ -31,6 +31,11 @@ class DriverConfig
     /**
      * @var array
      */
+    public $autoIncrementableTypes = [];
+
+    /**
+     * @var array
+     */
     public $features = [];
 
     /**

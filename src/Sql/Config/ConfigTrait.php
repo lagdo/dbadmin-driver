@@ -215,6 +215,16 @@ trait ConfigTrait
     }
 
     /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function typeIsAutoIncrementable(string $type): bool
+    {
+        return in_array($type, $this->config()->autoIncrementableTypes);
+    }
+
+    /**
      * Get the driver options
      *
      * @return array
