@@ -51,7 +51,7 @@ class ColumnInputDto extends ColumnDto
     /**
      * @return bool
      */
-    public function autoIncrementDefined(): bool
+    public function autoIncrementChanged(): bool
     {
         return $this->autoIncrement !== $this->column->autoIncrement;
     }
@@ -61,7 +61,7 @@ class ColumnInputDto extends ColumnDto
      */
     public function autoIncrementDisabled(): bool
     {
-        return $this->autoIncrementDefined() &&
+        return $this->autoIncrementChanged() &&
             $this->column->name !== '' && !$this->autoIncrement;
     }
 

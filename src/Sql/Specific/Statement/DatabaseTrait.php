@@ -48,16 +48,6 @@ trait DatabaseTrait
     }
 
     /**
-     * Generate modifier for auto increment column
-     *
-     * @return string
-     */
-    public function getAutoIncrementModifier(): string
-    {
-        return $this->_database()->getAutoIncrementModifier();
-    }
-
-    /**
      * Command to drop views
      *
      * @param array $views

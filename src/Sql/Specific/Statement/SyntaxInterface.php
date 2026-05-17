@@ -23,6 +23,15 @@ interface SyntaxInterface
     public function unescapeId(string $idf): string;
 
     /**
+     * Get the real column type depending on the user input
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getAutoIncrementType(string $type): string;
+
+    /**
      * Format a process attribute
      *
      * @param array $process

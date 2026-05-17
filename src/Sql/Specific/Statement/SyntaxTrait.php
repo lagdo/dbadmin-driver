@@ -34,6 +34,18 @@ trait SyntaxTrait
     }
 
     /**
+     * Get the real column type depending on the user input
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getAutoIncrementType(string $type): string
+    {
+        return $this->_syntax()->getAutoIncrementType($type);
+    }
+
+    /**
      * Get a process name
      *
      * @param array $process

@@ -109,8 +109,8 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
         return match(true) {
             $column->default === null => '',
             preg_match('~char|binary|text|enum|set~', $column->type) > 0,
-            preg_match('~^(?![a-z])~i', $column->default) > 0 =>
-                ' DEFAULT ' . $this->_engine()->quote($column->default),
+            preg_match('~^(?![a-z])~i', $column->default) > 0 => ' DEFAULT ' .
+                $this->_engine()->quote($column->default),
             default => " DEFAULT {$column->default}",
         };
     }
@@ -126,25 +126,45 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getPrimaryKeyModifier(ColumnInputDto $input, TableDdDto $table): string
+    {
+        return $input->primary && $table->primaryKeyColumnCount() === 1 ? ' PRIMARY KEY' : '';
+    }
+
+    /**
+     * Generate column modifier for primary key, auto increment and index
+     *
+     * @param ColumnInputDto $input
+     * @param TableDdDto $table
+     *
      * @return string
      */
-    protected function getAddColumnClause(ColumnInputDto $input): string
+    abstract protected function getColumnModifier(ColumnInputDto $input, TableDdDto $table): string;
+
+    /**
+     * @param ColumnInputDto $input
+     * @param TableDdDto $table
+     *
+     * @return string
+     */
+    protected function getAddColumnClause(ColumnInputDto $input, TableDdDto $table): string
     {
         $name = $this->_statement()->escapeId($input->name);
         $type = $this->_statement()->getColumnType($input->typeColumn ?? $input);
 
         $nullValue = $input->nullable ? ' NULL' : ' NOT NULL'; // NULL for timestamp
         $defaultValue = $this->getDefaultValueClause($input);
-        $autoIncrement = $input->autoIncrement ?
-            $this->_statement()->getAutoIncrementModifier() : '';
+        $modifier = $this->getColumnModifier($input, $table);
 
         // MariaDB exports CURRENT_TIMESTAMP as a function.
-        $onUpdate = $input->onUpdate === '' || !preg_match('~timestamp|datetime~', $type) ?
-            '' : ' ON UPDATE ' . $this->fixOnUpdateTimestamp($input->onUpdate);
+        $onUpdate = $input->onUpdate !== '' && preg_match('~timestamp|datetime~', $type) ?
+            ' ON UPDATE ' . $this->fixOnUpdateTimestamp($input->onUpdate) : '';
         $comment = $this->_engine()->support('comment') && $input->comment !== null ?
             ' COMMENT ' . $this->_engine()->quote($input->comment) : '';
 
-        return "$name$type$nullValue$defaultValue$onUpdate$comment$autoIncrement";
+        return "$name$type$nullValue$defaultValue$onUpdate$comment$modifier";
     }
 
     /**
@@ -154,8 +174,8 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      */
     protected function getDropColumnClauses(TableAlterDto $table): array
     {
-        $dropColumnCallback = fn(string $columnName) =>
-            'DROP ' . $this->_statement()->escapeId($columnName);
+        $dropColumnCallback = fn(string $columnName) => 'DROP ' .
+            $this->_statement()->escapeId($columnName);
         return array_map($dropColumnCallback, $table->droppedColumns());
     }
 }

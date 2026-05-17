@@ -5,7 +5,10 @@ namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 use Closure;
 
 use function array_filter;
+use function array_map;
 use function array_values;
+use function count;
+use function implode;
 
 abstract class TableDdDto
 {
@@ -70,6 +73,16 @@ abstract class TableDdDto
      * @var array<string, array<string|ColumnInputDto>>
      */
     public array $columns = [];
+
+    /**
+     * @var array<ColumnInputDto>
+     */
+    private array $autoIncrementInputs;
+
+    /**
+     * @var array<ColumnInputDto>
+     */
+    private array $primaryKeyInputs;
 
     /**
      * @var ColumnDto|null
@@ -167,6 +180,44 @@ abstract class TableDdDto
     abstract public function statusColumns(): array;
 
     /**
+     * @return ColumnDto|null
+     */
+    public function statusAutoIncrementColumn(): ColumnDto|null
+    {
+        $columns = array_values(array_filter($this->statusColumns(),
+            fn(ColumnDto $column) => $column->autoIncrement));
+        return $columns[0] ?? null;
+    }
+
+    /**
+     * @return array<ColumnInputDto>
+     */
+    public function columns(): array
+    {
+        return [
+            ...$this->columns[ColumnAction::ADD->value],
+            ...($this->columns[ColumnAction::EDIT->value] ?? []),
+        ];
+    }
+
+    /**
+     * @return array<ColumnInputDto>
+     */
+    public function autoIncrementInputs(): array
+    {
+        return $this->autoIncrementInputs ??= array_values(array_filter($this->columns(),
+            fn(ColumnInputDto $input) => $input->autoIncrement));
+    }
+
+    /**
+     * @return int
+     */
+    public function autoIncrementColumnCount(): int
+    {
+        return count($this->autoIncrementInputs());
+    }
+
+    /**
      * @return bool
      */
     public function setupAutoIncrement(): bool
@@ -176,24 +227,18 @@ abstract class TableDdDto
             fn(ColumnDto $column) => $column->autoIncrement));
         $this->autoIncrementColumn = $autoIncrementColumns[0] ?? null;
         // Auto increment columns in the inputs.
-        $inputColumns = [
-            ...$this->columns[ColumnAction::ADD->value],
-            ...($this->columns[ColumnAction::EDIT->value] ?? []),
-        ];
-        $enabledAutoIncrementInputs = array_values(array_filter($inputColumns,
-            fn(ColumnInputDto $input) => $input->autoIncrement));
-        $this->enabledAutoIncrementInput = $enabledAutoIncrementInputs[0] ?? null;
-        $disabledAutoIncrementInputs = array_values(array_filter($inputColumns,
+        $this->enabledAutoIncrementInput = $this->autoIncrementInputs()[0] ?? null;
+        $disabledAutoIncrementInputs = array_values(array_filter($this->columns(),
             fn(ColumnInputDto $input) => $input->autoIncrementDisabled()));
         $this->disabledAutoIncrementInput = $disabledAutoIncrementInputs[0] ?? null;
 
-        return $this->autoIncrementDefined();
+        return $this->autoIncrementChanged();
     }
 
     /**
      * @return bool
      */
-    public function autoIncrementDefined(): bool
+    public function autoIncrementChanged(): bool
     {
         return $this->autoIncrementColumn !== null ||
             $this->enabledAutoIncrementInput !== null ||
@@ -225,5 +270,34 @@ abstract class TableDdDto
             !$this->autoIncrementDisabled() &&
             $this->hasAutoIncrement() &&
             $this->autoIncrementColumn !== null;
+    }
+
+    /**
+     * @return array<ColumnInputDto>
+     */
+    public function primaryKeyInputs(): array
+    {
+        return $this->primaryKeyInputs ??= array_values(array_filter($this->columns(),
+            fn(ColumnInputDto $input) => $input->primary));
+    }
+
+    /**
+     * @return int
+     */
+    public function primaryKeyColumnCount(): int
+    {
+        return count($this->primaryKeyInputs());
+    }
+
+    /**
+     * @param Closure $escapeName
+     *
+     * @return string
+     */
+    public function primaryKeyClause(Closure $escapeName): string
+    {
+        $columnNames = implode(', ', array_map(fn(ColumnInputDto $input) =>
+            $escapeName($input->name), $this->primaryKeyInputs()));
+        return "PRIMARY KEY ($columnNames)";
     }
 }

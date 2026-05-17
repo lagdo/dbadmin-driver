@@ -273,13 +273,14 @@ trait SyntaxTrait
      */
     public function getColumnType(ColumnType $column, string $collate = "COLLATE"): string
     {
+        $type = trim($column->type);
         $length = $this->_statement()->processLength($column->length);
-        $type = preg_match($this->_engine()->numberRegex(), $column->type) &&
+        $typeInfo = preg_match($this->_engine()->numberRegex(), $type) &&
             in_array($column->unsigned, $this->_engine()->unsigned()) ?
             " {$column->unsigned}" : "";
-        $collation = preg_match('~char|text|enum|set~', $column->type) && $column->collation ?
+        $collation = preg_match('~char|text|enum|set~', $type) && $column->collation ?
             " $collate " . ($this->_engine()->mssql() ? $column->collation :
                 $this->_engine()->quote($column->collation)) : "";
-        return " {$column->type}{$length}{$type}{$collation}";
+        return " {$type}{$length}{$typeInfo}{$collation}";
     }
 }

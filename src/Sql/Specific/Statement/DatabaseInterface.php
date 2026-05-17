@@ -34,13 +34,6 @@ interface DatabaseInterface
     public function getDropDatabaseQuery(string $database): string;
 
     /**
-     * Generate modifier for auto increment column
-     *
-     * @return string
-     */
-    public function getAutoIncrementModifier(): string;
-
-    /**
      * Command to drop views
      *
      * @param array $views
