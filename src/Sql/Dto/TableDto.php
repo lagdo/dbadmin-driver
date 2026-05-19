@@ -34,12 +34,7 @@ class TableDto
     /**
      * @var int
      */
-    public int $autoIncrementValue = 0;
-
-    /**
-     * @var string
-     */
-    public string $autoIncrementColumn = '';
+    public int $autoIncrement = 0;
 
     /**
      * @var int|null
