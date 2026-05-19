@@ -3,8 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnInputDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableAlterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdDto;
@@ -128,7 +128,7 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     /**
      * @inheritDoc
      */
-    protected function getPrimaryKeyModifier(ColumnInputDto $input, TableDdDto $table): string
+    protected function getPrimaryKeyModifier(ColumnDdDto $input, TableDdDto $table): string
     {
         return $input->primary && $table->primaryKeyColumnCount() === 1 ? ' PRIMARY KEY' : '';
     }
@@ -136,20 +136,20 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     /**
      * Generate column modifier for primary key, auto increment and index
      *
-     * @param ColumnInputDto $input
+     * @param ColumnDdDto $input
      * @param TableDdDto $table
      *
      * @return string
      */
-    abstract protected function getColumnModifier(ColumnInputDto $input, TableDdDto $table): string;
+    abstract protected function getColumnModifier(ColumnDdDto $input, TableDdDto $table): string;
 
     /**
-     * @param ColumnInputDto $input
+     * @param ColumnDdDto $input
      * @param TableDdDto $table
      *
      * @return string
      */
-    protected function getAddColumnClause(ColumnInputDto $input, TableDdDto $table): string
+    protected function getAddColumnClause(ColumnDdDto $input, TableDdDto $table): string
     {
         $name = $this->_statement()->escapeId($input->name);
         $type = $this->_statement()->getColumnType($input->typeColumn ?? $input);

@@ -7,7 +7,7 @@ use function preg_match;
 /**
  * Inputs for a table column.
  */
-class ColumnInputDto extends ColumnDto
+class ColumnDdDto extends ColumnDto
 {
     /**
      * Not yet implemented.

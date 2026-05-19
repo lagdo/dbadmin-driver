@@ -70,17 +70,17 @@ abstract class TableDdDto
     /**
      * Columns to add, edit or drop.
      *
-     * @var array<string, array<string|ColumnInputDto>>
+     * @var array<string, array<string|ColumnDdDto>>
      */
     public array $columns = [];
 
     /**
-     * @var array<ColumnInputDto>
+     * @var array<ColumnDdDto>
      */
     private array $autoIncrementInputs;
 
     /**
-     * @var array<ColumnInputDto>
+     * @var array<ColumnDdDto>
      */
     private array $primaryKeyInputs;
 
@@ -90,14 +90,14 @@ abstract class TableDdDto
     public ColumnDto|null $autoIncrementColumn = null;
 
     /**
-     * @var ColumnInputDto|null
+     * @var ColumnDdDto|null
      */
-    public ColumnInputDto|null $enabledAutoIncrementInput = null;
+    public ColumnDdDto|null $enabledAutoIncrementInput = null;
 
     /**
-     * @var ColumnInputDto|null
+     * @var ColumnDdDto|null
      */
-    public ColumnInputDto|null $disabledAutoIncrementInput = null;
+    public ColumnDdDto|null $disabledAutoIncrementInput = null;
 
     /**
      * @param array $inputs
@@ -128,7 +128,7 @@ abstract class TableDdDto
     }
 
     /**
-     * @return array<ColumnInputDto>
+     * @return array<ColumnDdDto>
      */
     public function addedColumns(): array
     {
@@ -190,7 +190,7 @@ abstract class TableDdDto
     }
 
     /**
-     * @return array<ColumnInputDto>
+     * @return array<ColumnDdDto>
      */
     public function columns(): array
     {
@@ -201,12 +201,12 @@ abstract class TableDdDto
     }
 
     /**
-     * @return array<ColumnInputDto>
+     * @return array<ColumnDdDto>
      */
     public function autoIncrementInputs(): array
     {
         return $this->autoIncrementInputs ??= array_values(array_filter($this->columns(),
-            fn(ColumnInputDto $input) => $input->autoIncrement));
+            fn(ColumnDdDto $input) => $input->autoIncrement));
     }
 
     /**
@@ -229,7 +229,7 @@ abstract class TableDdDto
         // Auto increment columns in the inputs.
         $this->enabledAutoIncrementInput = $this->autoIncrementInputs()[0] ?? null;
         $disabledAutoIncrementInputs = array_values(array_filter($this->columns(),
-            fn(ColumnInputDto $input) => $input->autoIncrementDisabled()));
+            fn(ColumnDdDto $input) => $input->autoIncrementDisabled()));
         $this->disabledAutoIncrementInput = $disabledAutoIncrementInputs[0] ?? null;
 
         return $this->autoIncrementChanged();
@@ -273,12 +273,12 @@ abstract class TableDdDto
     }
 
     /**
-     * @return array<ColumnInputDto>
+     * @return array<ColumnDdDto>
      */
     public function primaryKeyInputs(): array
     {
         return $this->primaryKeyInputs ??= array_values(array_filter($this->columns(),
-            fn(ColumnInputDto $input) => $input->primary));
+            fn(ColumnDdDto $input) => $input->primary));
     }
 
     /**
@@ -296,7 +296,7 @@ abstract class TableDdDto
      */
     public function primaryKeyClause(Closure $escapeName): string
     {
-        $columnNames = implode(', ', array_map(fn(ColumnInputDto $input) =>
+        $columnNames = implode(', ', array_map(fn(ColumnDdDto $input) =>
             $escapeName($input->name), $this->primaryKeyInputs()));
         return "PRIMARY KEY ($columnNames)";
     }

@@ -10,7 +10,7 @@ class TableAlterDto extends TableDdDto
     public TableDto $status;
 
     /**
-     * @return array<ColumnInputDto>
+     * @return array<ColumnDdDto>
      */
     public function editedColumns(): array
     {
