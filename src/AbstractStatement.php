@@ -9,11 +9,10 @@ use Lagdo\DbAdmin\Driver\Utils\Utils;
 abstract class AbstractStatement implements StatementInterface
 {
     use Standard\Statement\SyntaxTrait;
+    use Standard\Statement\QueryTrait;
     use Specific\Statement\SyntaxTrait;
-    use Standard\Statement\DatabaseTrait;
     use Specific\Statement\DatabaseTrait;
     use Specific\Statement\TableTrait;
-    use Standard\Statement\QueryTrait;
     use Specific\Statement\QueryTrait;
 
     /**

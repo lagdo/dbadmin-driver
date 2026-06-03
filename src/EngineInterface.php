@@ -8,10 +8,9 @@ use Lagdo\DbAdmin\Driver\Sql\Specific;
 use Lagdo\DbAdmin\Driver\Sql\Standard;
 
 interface EngineInterface extends ConfigInterface, ConnectionInterface,
-    Standard\Engine\ServerInterface, Specific\Engine\ServerInterface,
-    Standard\Engine\DatabaseInterface, Specific\Engine\DatabaseInterface,
-    Standard\Engine\TableInterface, Specific\Engine\TableInterface,
-    Standard\Engine\QueryInterface, Specific\Engine\QueryInterface
+    Standard\Engine\DatabaseInterface, Standard\Engine\QueryInterface,
+    Specific\Engine\ServerInterface, Specific\Engine\DatabaseInterface,
+    Specific\Engine\TableInterface, Specific\Engine\QueryInterface
 {
     /**
      * Get the driver name

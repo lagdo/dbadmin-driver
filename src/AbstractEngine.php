@@ -13,13 +13,11 @@ abstract class AbstractEngine implements EngineInterface
 {
     use ConfigTrait;
     use ConnectionTrait;
-    use Standard\Engine\ServerTrait;
-    use Specific\Engine\ServerTrait;
     use Standard\Engine\DatabaseTrait;
-    use Specific\Engine\DatabaseTrait;
-    use Standard\Engine\TableTrait;
-    use Specific\Engine\TableTrait;
     use Standard\Engine\QueryTrait;
+    use Specific\Engine\ServerTrait;
+    use Specific\Engine\DatabaseTrait;
+    use Specific\Engine\TableTrait;
     use Specific\Engine\QueryTrait;
 
     /**

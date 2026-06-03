@@ -32,6 +32,28 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     abstract protected function connected(): void;
 
     /**
+     * @inheritDoc
+     */
+    public function minVersion(string $version, string $mariaDb = ''): bool
+    {
+        $info = $this->_engine()->connection()?->serverInfo() ?? '';
+        if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
+            $info = $match[1];
+            $version = $mariaDb;
+        }
+        return $version && version_compare($info, $version) >= 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function charset(): string
+    {
+        // SHOW CHARSET would require an extra query
+        return $this->minVersion('5.5.3') ? 'utf8mb4' : 'utf8';
+    }
+
+    /**
      * @param DriverConfig $config
      */
     final public function setConfig(DriverConfig $config)

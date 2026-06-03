@@ -6,12 +6,38 @@ use Lagdo\DbAdmin\Driver\Sql\Connection\AbstractConnection;
 use Lagdo\DbAdmin\Driver\Sql\Dto\UserDto;
 use Closure;
 
+use function preg_match;
+use function version_compare;
+
 trait ServerTrait
 {
     /**
      * @return AbstractServer
      */
     abstract protected function _server(): AbstractServer;
+
+    /**
+     * Check if connection has at least the given version
+     *
+     * @param string $version required version
+     * @param string $mariaDb required MariaDB version
+     *
+     * @return bool
+     */
+    public function minVersion(string $version, string $mariaDb = ''): bool
+    {
+        return $this->_server()->minVersion($version, $mariaDb);
+    }
+
+    /**
+     * Get connection charset
+     *
+     * @return string
+     */
+    public function charset(): string
+    {
+        return $this->_server()->charset();
+    }
 
     /**
      * Create a connection to a server

@@ -9,6 +9,23 @@ use Closure;
 interface ServerInterface
 {
     /**
+     * Check if connection has at least the given version
+     *
+     * @param string $version required version
+     * @param string $mariaDb required MariaDB version
+     *
+     * @return bool
+     */
+    public function minVersion(string $version, string $mariaDb = ''): bool;
+
+    /**
+     * Get connection charset
+     *
+     * @return string
+     */
+    public function charset(): string;
+
+    /**
      * Create a connection to a server
      *
      * @param array $options
