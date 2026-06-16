@@ -55,39 +55,6 @@ interface QueryInterface
         array $order = [], int $limit = 1, int $page = 0): QueryResultInterface;
 
     /**
-     * Insert data into table
-     *
-     * @param string $table
-     * @param array $values Escaped columns in keys, quoted data in values
-     *
-     * @return bool
-     */
-    public function insert(string $table, array $values): bool;
-
-    /**
-     * Update data in table
-     *
-     * @param string $table
-     * @param array $values Escaped columns in keys, quoted data in values
-     * @param string $queryWhere " WHERE ..."
-     * @param int $limit 0 or 1
-     *
-     * @return bool
-     */
-    public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool;
-
-    /**
-     * Delete data from table
-     *
-     * @param string $table
-     * @param string $queryWhere " WHERE ..."
-     * @param int $limit 0 or 1
-     *
-     * @return bool
-     */
-    public function delete(string $table, string $queryWhere, int $limit = 0): bool;
-
-    /**
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string

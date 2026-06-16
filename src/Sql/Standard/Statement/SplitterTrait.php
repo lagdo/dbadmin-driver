@@ -4,7 +4,6 @@ namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
 use Lagdo\DbAdmin\Driver\Sql\Dto\QueryCodeDto;
-use Lagdo\Facades\Logger;
 use Generator;
 
 use function count;
@@ -74,7 +73,6 @@ trait SplitterTrait
     private function findDelimiterPosition(QueryCodeDto $dto,
         string $delimiter, bool $withLength): int|null
     {
-        // Logger::info("Finding delimiter \"$delimiter\" in {$dto->inputLine}.");
         $regex = "/^{$this->queryRegex}*[^'\"`]*\$/s";
         $offset = 0;
         $delimiterLength = strlen($delimiter);
@@ -83,14 +81,12 @@ trait SplitterTrait
         while (($offset = strpos($dto->inputLine, $delimiter, $offset)) !== false) {
             // Take only the delimiters not enclosed into quotes or double quotes.
             if (preg_match($regex, substr($dto->inputLine, 0, $offset), $matches)) {
-                // Logger::info("Found at $offset + $delimiterLength");
                 return $withLength ? $offset + $delimiterLength : $offset;
             }
 
             $offset += $delimiterLength;
         }
 
-        // Logger::info('Not found');
         return null;
     }
 
@@ -129,12 +125,6 @@ trait SplitterTrait
         $regex = "/('|--|\/\*|#)/s";
         $flags = PREG_OFFSET_CAPTURE;
         $found = preg_match($regex, $dto->inputLine, $matches, $flags);
-        // Logger::info('Find end of string.', [
-        //     'inputLine' => $dto->inputLine,
-        //     'regex' => $regex,
-        //     'matches' => $matches,
-        //     'found' => $found,
-        // ]);
         // Nothing found.
         if (!$found) {
             return;
@@ -183,7 +173,6 @@ trait SplitterTrait
             return false;
         }
 
-        // Logger::info('End of multiline comment found');
         // Last line of a multiline comment. Truncate the start.
         $this->truncateStartOfLine($dto, $offset);
 
@@ -222,12 +211,6 @@ trait SplitterTrait
         $regex = "/('\s*)/s";
         $flags = PREG_OFFSET_CAPTURE;
         $found = preg_match($regex, $dto->inputLine, $matches, $flags);
-        // Logger::info('Find end of multiline string.', [
-        //     'inputLine' => $dto->inputLine,
-        //     'regex' => $regex,
-        //     'matches' => $matches,
-        //     'found' => $found,
-        // ]);
         if (!$found) {
             // Middle of a multiline string. Add the line to the buffer.
             $this->addLineToQueryBuffer($dto, $dto->queryLine, true);
@@ -235,7 +218,6 @@ trait SplitterTrait
         }
 
         $offset = $matches[1][1] + strlen($matches[1][0]);
-        // Logger::info("End of multiline string found at position $offset");
         // Last line of a multiline string.
         // Copy the start of the line to the buffer.
         $this->addLineToQueryBuffer($dto, substr($dto->queryLine, 0, $offset), false);
@@ -257,7 +239,6 @@ trait SplitterTrait
      */
     private function replaceMatchWithSpaces(array $matches): string
     {
-        // Logger::info('Replace match with spaces.', ['matches' => $matches]);
         // Replace the matched string with same length spaces.
         return str_repeat(' ', strlen($matches[0]));
     }
@@ -291,9 +272,6 @@ trait SplitterTrait
         // }
 
         $this->parseEndOfLine($dto);
-        Logger::info('Prepared line', [
-            'query' => $dto->inputLine,
-        ]);
 
         return true;
     }

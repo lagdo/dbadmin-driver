@@ -28,24 +28,6 @@ interface DatabaseInterface
     public function tableStatusOrName(string $table, bool $fast = false): TableDto;
 
     /**
-     * Drop views
-     *
-     * @param array $views
-     *
-     * @return bool
-     */
-    public function dropViews(array $views): bool;
-
-    /**
-     * Drop tables
-     *
-     * @param array $tables
-     *
-     * @return bool
-     */
-    public function dropTables(array $tables): bool;
-
-    /**
      * Truncate tables
      *
      * @param array $tables

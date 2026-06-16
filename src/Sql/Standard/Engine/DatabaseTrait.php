@@ -62,28 +62,6 @@ trait DatabaseTrait
     }
 
     /**
-     * Drop views
-     *
-     * @param array $views
-     *
-     * @return bool
-     */
-    public function dropViews(array $views): bool
-    {
-        $queries = $this->_statement()->getDropViewsQueries($views);
-        return count($queries) > 0 ? $this->executeTransaction($queries) : false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function dropTables(array $tables): bool
-    {
-        $queries = $this->_statement()->getDropTablesQueries($tables);
-        return count($queries) > 0 ? $this->executeTransaction($queries) : false;
-    }
-
-    /**
      * Truncate tables
      *
      * @param array $tables

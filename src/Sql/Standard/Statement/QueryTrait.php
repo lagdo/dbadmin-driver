@@ -138,7 +138,7 @@ trait QueryTrait
      *
      * @return string
      */
-    public function getRowSelectQuery(string $table, array $columns, array $where, array $group = [],
+    public function getSelectRowQuery(string $table, array $columns, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): string
     {
         $input = new SelectInputDto($table, $columns, $where, $group, $order, $limit, $page);
@@ -153,7 +153,7 @@ trait QueryTrait
      *
      * @return string
      */
-    public function getRowInsertQuery(string $table, array $values): string
+    public function getInsertRowQuery(string $table, array $values): string
     {
         $table = $this->_statement()->escapeTableName($table);
         if (empty($values)) {
@@ -177,7 +177,7 @@ trait QueryTrait
      *
      * @return string
      */
-    public function getRowUpdateQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
+    public function getUpdateRowQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
     {
         $callback = fn(string $value, string $name) => "$name = $value";
         $assignments = implode(', ', array_map($callback, $values, array_keys($values)));
@@ -196,7 +196,7 @@ trait QueryTrait
      *
      * @return string
      */
-    public function getRowDeleteQuery(string $table, string $queryWhere, int $limit = 0): string
+    public function getDeleteRowQuery(string $table, string $queryWhere, int $limit = 0): string
     {
         $query = 'FROM ' . $this->_statement()->escapeTableName($table);
         return $limit <= 0 ? "DELETE $query $queryWhere" : 'DELETE' .

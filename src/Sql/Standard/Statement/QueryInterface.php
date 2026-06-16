@@ -64,7 +64,7 @@ interface QueryInterface
      *
      * @return string
      */
-    public function getRowSelectQuery(string $table, array $select, array $where, array $group = [],
+    public function getSelectRowQuery(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): string;
 
     /**
@@ -75,7 +75,7 @@ interface QueryInterface
      *
      * @return string
      */
-    public function getRowInsertQuery(string $table, array $values): string;
+    public function getInsertRowQuery(string $table, array $values): string;
 
     /**
      * Build a query to update data in table
@@ -87,7 +87,7 @@ interface QueryInterface
      *
      * @return string
      */
-    public function getRowUpdateQuery(string $table, array $values, string $queryWhere, int $limit = 0): string;
+    public function getUpdateRowQuery(string $table, array $values, string $queryWhere, int $limit = 0): string;
 
     /**
      * Build a query to delete data from table
@@ -98,7 +98,7 @@ interface QueryInterface
      *
      * @return string
      */
-    public function getRowDeleteQuery(string $table, string $queryWhere, int $limit = 0): string;
+    public function getDeleteRowQuery(string $table, string $queryWhere, int $limit = 0): string;
 
     /**
      * Get select clause for convertible columns

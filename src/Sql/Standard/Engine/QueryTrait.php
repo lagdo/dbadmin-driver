@@ -75,52 +75,8 @@ trait QueryTrait
     public function select(string $table, array $select, array $where, array $group = [],
         array $order = [], int $limit = 1, int $page = 0): QueryResultInterface
     {
-        return $this->executeQuery($this->_statement()->getRowSelectQuery($table,
+        return $this->executeQuery($this->_statement()->getSelectRowQuery($table,
             $select, $where, $group, $order, $limit, $page));
-    }
-
-    /**
-     * Insert data into table
-     *
-     * @param string $table
-     * @param array $values Escaped columns in keys, quoted data in values
-     *
-     * @return bool
-     */
-    public function insert(string $table, array $values): bool
-    {
-        return $this->execute($this->_statement()->getRowInsertQuery($table, $values)) !== false;
-    }
-
-    /**
-     * Update data in table
-     *
-     * @param string $table
-     * @param array $values Escaped columns in keys, quoted data in values
-     * @param string $queryWhere " WHERE ..."
-     * @param int $limit 0 or 1
-     *
-     * @return bool
-     */
-    public function update(string $table, array $values, string $queryWhere, int $limit = 0): bool
-    {
-        return $this->execute($this->_statement()->getRowUpdateQuery($table,
-            $values, $queryWhere, $limit)) !== false;
-    }
-
-    /**
-     * Delete data from table
-     *
-     * @param string $table
-     * @param string $queryWhere " WHERE ..."
-     * @param int $limit 0 or 1
-     *
-     * @return bool
-     */
-    public function delete(string $table, string $queryWhere, int $limit = 0): bool
-    {
-        return $this->execute($this->_statement()->getRowDeleteQuery($table,
-            $queryWhere, $limit)) !== false;
     }
 
     /**
