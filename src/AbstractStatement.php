@@ -10,6 +10,7 @@ abstract class AbstractStatement implements StatementInterface
 {
     use Standard\Statement\SyntaxTrait;
     use Standard\Statement\QueryTrait;
+    use Standard\Statement\SplitterTrait;
     use Specific\Statement\SyntaxTrait;
     use Specific\Statement\DatabaseTrait;
     use Specific\Statement\TableTrait;

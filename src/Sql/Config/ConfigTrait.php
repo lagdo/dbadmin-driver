@@ -311,4 +311,14 @@ trait ConfigTrait
     {
         return ['', 'DEFAULT', ...$this->config()->generated];
     }
+
+    /**
+     * Get the regular expression for spaces
+     *
+     * @return string
+     */
+    public function spaceRegex(): string
+    {
+        return "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
+    }
 }

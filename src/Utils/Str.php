@@ -71,14 +71,4 @@ class Str
         }
         return $this->html($match[1]) . $suffix . (isset($match[2]) ? '' : '<i>…</i>');
     }
-
-    /**
-     * Return the regular expression for spaces
-     *
-     * @return string
-     */
-    public function spaceRegex(): string
-    {
-        return "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
-    }
 }

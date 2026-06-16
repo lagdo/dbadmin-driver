@@ -198,4 +198,11 @@ interface ConfigInterface
      * @return array
      */
     public function columnDefaults(): array;
+
+    /**
+     * Get the regular expression for spaces
+     *
+     * @return string
+     */
+    public function spaceRegex(): string;
 }

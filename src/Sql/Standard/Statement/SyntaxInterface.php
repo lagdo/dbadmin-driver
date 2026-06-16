@@ -4,7 +4,6 @@ namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnType;
-use Lagdo\DbAdmin\Driver\Sql\Dto\QueryInputDto;
 
 interface SyntaxInterface
 {
@@ -53,15 +52,6 @@ interface SyntaxInterface
      * @return string
      */
     public function processLength(string $length): string;
-
-    /**
-     * Parse a string containing SQL queries
-     *
-     * @param QueryInputDto $input
-     *
-     * @return bool
-     */
-    public function parseQueries(QueryInputDto $input): bool;
 
     /**
      * @param ColumnDto $column Single column from columns()
