@@ -39,7 +39,7 @@ class QueryCodeDto
     /**
      * @var string
      */
-    public string $delimiter = ';';
+    public string $queryDelimiter = ';';
 
     /**
      * @var bool
@@ -50,6 +50,16 @@ class QueryCodeDto
      * @var bool
      */
     public bool $inMultilineString = false;
+
+    /**
+     * @var bool
+     */
+    public bool $inMultilineFunction = false;
+
+    /**
+     * @var string
+     */
+    public string $functionDelimiter = '';
 
     /**
      * @param Closure $queryLineReader
