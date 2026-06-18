@@ -6,7 +6,6 @@ use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
 use Lagdo\DbAdmin\Driver\Sql\Dto\QueryCodeDto;
 use Generator;
 
-use function count;
 use function implode;
 use function preg_match;
 use function preg_replace_callback;
@@ -28,26 +27,30 @@ trait SplitterTrait
 
     /**
      * @param QueryCodeDto $dto
-     * @param string $query
      *
-     * @return bool
+     * @return string
      */
-    private function setDelimiter(QueryCodeDto $dto, string $query): bool
+    private function getBufferedQuery(QueryCodeDto $dto): string
     {
+        $query = trim(implode('', $dto->queryLines));
+        $dto->queryLines = [];
+        if ($query === '') {
+            return '';
+        }
+
+        // Delimiter queries are not sent to the server.
         // $copyRegex = "~^(\\s*+COPY\\s+)[^;]+\\s+FROM\\s+stdin;~i";
         // if ($this->_engine()->pgsql() && preg_match($copyRegex, $query, $matches)) {
         //     $dto->delimiters = ['' => "\n\\\\\\.\r?\n"];
-        //     return;
+        //     return '';
         // }
-
         $delimiterRegex = "~^\\s*+DELIMITER\\s+(\\S+)~i";
         if (preg_match($delimiterRegex, $query, $matches)) {
             $dto->delimiter = $matches[1];
-            // $dto->delimiters = [$matches[1] => preg_quote($matches[1])];
-            return true;
+            return '';
         }
 
-        return false;
+        return $query;
     }
 
     /**
@@ -58,7 +61,7 @@ trait SplitterTrait
     private function findEndOfQuery(QueryCodeDto $dto): int
     {
         $offset = strpos($dto->inputLine, $dto->delimiter);
-        return $offset === false ? 0 : $offset + strlen($dto->delimiter);
+        return $offset === false ? 0 : $offset;
     }
 
     /**
@@ -184,17 +187,31 @@ trait SplitterTrait
 
     /**
      * @param QueryCodeDto $dto
-     * @param string $line
-     * @param bool $newLine
      *
      * @return void
      */
-    private function addLineToQueryBuffer(QueryCodeDto $dto, string $line, bool $newLine): void
+    private function bufferEntireLine(QueryCodeDto $dto): void
     {
-        $dto->queryLines[] = $line;
-        if ($newLine) {
-           $dto->queryLines[] = "\n"; 
+        if ($dto->queryLine !== '') {
+            $dto->queryLines[] = $dto->queryLine;
+            $dto->queryLine = '';
         }
+    }
+
+    /**
+     * @param QueryCodeDto $dto
+     * @param int $offset
+     * @param bool $delimiter
+     *
+     * @return void
+     */
+    private function bufferStartOfLine(QueryCodeDto $dto, int $offset, bool $delimiter): void
+    {
+        $delimiterLength = $delimiter ? strlen($dto->delimiter) : 0;
+        // Copy the start of the line to the buffer.
+        $dto->queryLines[] = substr($dto->queryLine, 0, $offset);
+        // Truncate the start of the line.
+        $this->truncateStartOfLine($dto, $offset + $delimiterLength);
     }
 
     /**
@@ -213,16 +230,13 @@ trait SplitterTrait
         $found = preg_match($regex, $dto->inputLine, $matches, $flags);
         if (!$found) {
             // Middle of a multiline string. Add the line to the buffer.
-            $this->addLineToQueryBuffer($dto, $dto->queryLine, true);
+            $this->bufferEntireLine($dto);
             return false;
         }
 
         $offset = $matches[1][1] + strlen($matches[1][0]);
         // Last line of a multiline string.
-        // Copy the start of the line to the buffer.
-        $this->addLineToQueryBuffer($dto, substr($dto->queryLine, 0, $offset), false);
-        // Truncate the start of the line.
-        $this->truncateStartOfLine($dto, $offset);
+        $this->bufferStartOfLine($dto, $offset, false);
 
         // Switch the string mode.
         $dto->inMultilineString = false;
@@ -231,16 +245,22 @@ trait SplitterTrait
     }
 
     /**
-     * Callback for preg_replace_callback.
+     * @param QueryCodeDto $dto
+     * @param array $regexes
      *
-     * @param array $matches
-     *
-     * @return string
+     * @return void
      */
-    private function replaceMatchWithSpaces(array $matches): string
+    private function maskTokens(QueryCodeDto $dto, array $regexes): void
     {
-        // Replace the matched string with same length spaces.
-        return str_repeat(' ', strlen($matches[0]));
+        $callback = function(array $matches): string {
+            // Replace the matched string with same length spaces.
+            return str_repeat(' ', strlen($matches[0]));
+        };
+        $regex = implode('|', $regexes);
+        $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
+        // foreach ($regexes as $regex) {
+        //     $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
+        // }
     }
 
     /**
@@ -259,17 +279,11 @@ trait SplitterTrait
         }
 
         // Mask quoted strings.
-        $callback = $this->replaceMatchWithSpaces(...);
-        $regexes = [
+        $this->maskTokens($dto, [
             "'[^']*'",
             "`[^`]*`",
             "\"[^\"]*\"",
-        ];
-        $regex = implode('|', $regexes);
-        $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
-        // foreach ($regexes as $regex) {
-        //     $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
-        // }
+        ]);
 
         $this->parseEndOfLine($dto);
 
@@ -287,22 +301,16 @@ trait SplitterTrait
             return false;
         }
 
-        $dto->inputLine = $dto->queryLine;
         // Mask comments in "/*  */", and antislashed quotes and double quotes.
-        $callback = $this->replaceMatchWithSpaces(...);
-        $regexes = [
+        $dto->inputLine = $dto->queryLine;
+        $this->maskTokens($dto, [
             "\/\*.*?\*\/",
             "''",
             "\\\\\\\\",
             "\\\\'",
             "\\\\`",
             "\\\\\"",
-        ];
-        $regex = implode('|', $regexes);
-        $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
-        // foreach ($regexes as $regex) {
-        //     $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
-        // }
+        ]);
 
         return true;
     }
@@ -321,34 +329,22 @@ trait SplitterTrait
                 continue;
             }
 
-            // The line might be truncated, so don't process anything without a delimiter after.
             while (($offset = $this->findEndOfQuery($dto)) > 0) {
-                $this->addLineToQueryBuffer($dto, substr($dto->queryLine, 0, $offset), true);
-                $this->truncateStartOfLine($dto, $offset);
+                $this->bufferStartOfLine($dto, $offset, true);
 
                 // Return the query for processing.
-                $query = implode('', $dto->queryLines);
-                $dto->queryLines = [];
-
-                // Yield the query if it is not a delimiter.
-                if (!$this->setDelimiter($dto, $query)) {
+                if (($query = $this->getBufferedQuery($dto)) !== '') {
                     yield $query;
                 }
             }
 
-            // Add the remaining input line to the query buffer, if there is any.
-            if (trim($dto->queryLine) !== '') {
-                $this->addLineToQueryBuffer($dto, $dto->queryLine, true);
-            }
+            // Add the remaining input line to the query buffer.
+            $this->bufferEntireLine($dto);
         }
 
-        if (count($dto->queryLines) > 0) {
-            $query = implode('', $dto->queryLines);
-            $dto->queryLines = [];
-
-            if (!$this->setDelimiter($dto, $query)) {
-                yield $query;
-            }
+        // Return the last query.
+        if (($query = $this->getBufferedQuery($dto)) !== '') {
+            yield $query;
         }
     }
 }
