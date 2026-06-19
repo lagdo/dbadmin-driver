@@ -3,11 +3,13 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
-use Lagdo\DbAdmin\Driver\Sql\Dto\QueryCodeDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\QueryStreamDto;
 use Generator;
 
+use function array_filter;
 use function implode;
 use function preg_match;
+use function preg_quote;
 use function preg_replace_callback;
 use function strlen;
 use function strpos;
@@ -32,39 +34,44 @@ trait SplitterTrait
     private string $functionDelimiterRegex = "\\$[a-z0-9]*?\\$";
 
     /**
-     * @param QueryCodeDto $dto
+     * @var string
+     */
+    private string $delimiterQueryRegex = "~^\\s*+DELIMITER\\s+(\\S+)~i";
+
+    /**
+     * @param QueryStreamDto $stream
      *
      * @return string
      */
-    private function getBufferedQuery(QueryCodeDto $dto): string
+    private function getBufferedQuery(QueryStreamDto $stream): string
     {
-        $query = trim(implode('', $dto->queryLines));
-        $dto->queryLines = [];
+        $query = trim(implode('', $stream->queryBuffer));
+        $stream->queryBuffer = [];
 
         return $query;
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return int|null
      */
-    private function findEndOfQuery(QueryCodeDto $dto): int|null
+    private function findEndOfQuery(QueryStreamDto $stream): int|null
     {
-        $offset = strpos($dto->inputLine, $dto->queryDelimiter);
+        $offset = strpos($stream->inputLine, $stream->queryDelimiter);
         return $offset === false ? null : $offset;
     }
 
     /**
      * Return the delimiter position, or null.
      *
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      * @param string $delimiter
      * @param bool $withLength
      *
      * @return int|null
      */
-    private function findDelimiterPosition(QueryCodeDto $dto,
+    private function findDelimiterPosition(QueryStreamDto $stream,
         string $delimiter, bool $withLength): int|null
     {
         $regex = "/^{$this->queryRegex}*[^'\"`]*\$/s";
@@ -72,9 +79,9 @@ trait SplitterTrait
         $delimiterLength = strlen($delimiter);
 
         // Todo: can this be done with a single regex?
-        while (($offset = strpos($dto->inputLine, $delimiter, $offset)) !== false) {
+        while (($offset = strpos($stream->inputLine, $delimiter, $offset)) !== false) {
             // Take only the delimiters not enclosed into quotes or double quotes.
-            if (preg_match($regex, substr($dto->inputLine, 0, $offset), $matches)) {
+            if (preg_match($regex, substr($stream->inputLine, 0, $offset), $matches)) {
                 return $withLength ? $offset + $delimiterLength : $offset;
             }
 
@@ -85,157 +92,181 @@ trait SplitterTrait
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return bool
      */
-    private function parseMultiLineCommentEnd(QueryCodeDto $dto): bool
+    private function parseMultiLineCommentEnd(QueryStreamDto $stream): bool
     {
-        if (!$dto->inMultilineComment) {
+        if (!$stream->inMultilineComment) {
             return true;
         }
 
         // Find the end of comment delimiter.
-        $offset = $this->findDelimiterPosition($dto, '*/', true);
+        $offset = $this->findDelimiterPosition($stream, '*/', true);
         if ($offset === null) {
             // Middle of a multiline comment. Skip the line.
             return false;
         }
 
-        // Last line of a multiline comment. Mask the start.
-        $this->maskStartOfLine($dto, $offset);
+        // Last line of a multiline comment. Truncate the start.
+        $this->truncateStartOfLine($stream, $offset);
 
         // Switch the comment mode.
-        $dto->inMultilineComment = false;
+        $stream->inMultilineComment = false;
 
         return true;
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return void
      */
-    private function bufferLineContent(QueryCodeDto $dto): void
+    private function bufferLineContent(QueryStreamDto $stream): void
     {
-        if ($dto->queryLine !== '') {
-            $dto->queryLines[] = $dto->queryLine;
-            $dto->queryLine = '';
+        if ($stream->queryLine !== '') {
+            $stream->queryBuffer[] = $stream->queryLine;
+            $stream->queryLine = '';
         }
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      * @param int $offset
      *
      * @return void
      */
-    private function bufferEndOfQuery(QueryCodeDto $dto, int $offset): void
+    private function bufferEndOfQuery(QueryStreamDto $stream, int $offset): void
     {
         // Copy the start of the line to the buffer.
-        $dto->queryLines[] = substr($dto->queryLine, 0, $offset);
+        $stream->queryBuffer[] = substr($stream->queryLine, 0, $offset);
         // Truncate the start of the line.
-        $offset += strlen($dto->queryDelimiter);
-        $dto->queryLine = substr($dto->queryLine, $offset);
-        $dto->inputLine = substr($dto->inputLine, $offset);
+        $offset += strlen($stream->queryDelimiter);
+        $stream->queryLine = substr($stream->queryLine, $offset);
+        $stream->inputLine = substr($stream->inputLine, $offset);
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
+     * @param int $offset
+     *
+     * @return void
+     */
+    private function truncateStartOfLine(QueryStreamDto $stream, int $offset): void
+    {
+        $stream->queryLine = substr($stream->queryLine, $offset);
+        $stream->inputLine = substr($stream->inputLine, $offset);
+    }
+
+    /**
+     * @param QueryStreamDto $stream
+     * @param int $offset
+     *
+     * @return void
+     */
+    private function truncateEndOfLine(QueryStreamDto $stream, int $offset): void
+    {
+        $stream->queryLine = substr($stream->queryLine, 0, $offset);
+        $stream->inputLine = substr($stream->inputLine, 0, $offset);
+    }
+
+    /**
+     * @param QueryStreamDto $stream
      * @param int $length
      *
      * @return void
      */
-    private function maskStartOfLine(QueryCodeDto $dto, int $length): void
+    private function maskStartOfLine(QueryStreamDto $stream, int $length): void
     {
         $spaces = str_repeat(' ', $length);
-        $dto->inputLine = substr_replace($dto->inputLine, $spaces, 0, $length);
+        $stream->inputLine = substr_replace($stream->inputLine, $spaces, 0, $length);
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      * @param int $offset
      *
      * @return void
      */
-    private function maskEndOfLine(QueryCodeDto $dto, int $offset): void
+    private function maskEndOfLine(QueryStreamDto $stream, int $offset): void
     {
-        $length = strlen($dto->inputLine) - $offset;
+        $length = strlen($stream->inputLine) - $offset;
         $spaces = str_repeat(' ', $length);
-        $dto->inputLine = substr_replace($dto->inputLine, $spaces, $offset, $length);
+        $stream->inputLine = substr_replace($stream->inputLine, $spaces, $offset, $length);
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return bool
      */
-    private function parseMultiLineStringEnd(QueryCodeDto $dto): bool
+    private function parseMultiLineStringEnd(QueryStreamDto $stream): bool
     {
-        if (!$dto->inMultilineString) {
+        if (!$stream->inMultilineString) {
             return true;
         }
 
         $regex = "/('\s*)/s";
         $flags = PREG_OFFSET_CAPTURE;
-        $found = preg_match($regex, $dto->inputLine, $matches, $flags);
+        $found = preg_match($regex, $stream->inputLine, $matches, $flags);
         if (!$found) {
             // Middle of a multiline string. Add the line to the buffer.
-            $this->bufferLineContent($dto);
+            $this->bufferLineContent($stream);
             return false;
         }
 
         // Last line of a multiline string.
-        $this->maskStartOfLine($dto, $matches[1][1] + strlen($matches[1][0]));
+        $this->maskStartOfLine($stream, $matches[1][1] + strlen($matches[1][0]));
 
         // Switch the string mode.
-        $dto->inMultilineString = false;
+        $stream->inMultilineString = false;
 
         return true;
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return bool
      */
-    private function parseMultiLineFunctionEnd(QueryCodeDto $dto): bool
+    private function parseMultiLineFunctionEnd(QueryStreamDto $stream): bool
     {
-        if (!$dto->inMultilineFunction) {
+        if (!$stream->inMultilineFunction) {
             return true;
         }
 
         // Find the end of function delimiter.
-        $regex = "/$dto->functionDelimiter/si";
+        $regex = "/$stream->functionDelimiterRegex/si";
         $flags = PREG_OFFSET_CAPTURE;
-        $found = preg_match($regex, $dto->inputLine, $matches, $flags);
+        $found = preg_match($regex, $stream->inputLine, $matches, $flags);
         if (!$found) {
             // Middle of a multiline function. Add the line to the buffer.
-            $this->bufferLineContent($dto);
+            $this->bufferLineContent($stream);
             return false;
         }
 
         // Last line of a multiline function.
-        $this->maskStartOfLine($dto, $matches[1][1] + strlen($matches[1][0]));
+        $this->maskStartOfLine($stream, $matches[1][1] + strlen($matches[1][0]));
 
         // Switch the function mode.
-        $dto->inMultilineFunction = false;
-        $dto->functionDelimiter = '';
+        $stream->inMultilineFunction = false;
+        $stream->functionDelimiterRegex = '';
 
         return true;
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return void
      */
-    private function parseEndOfLine(QueryCodeDto $dto): void
+    private function parseTokensAfterDelimiter(QueryStreamDto $stream): void
     {
         // Find the start of comment or multiline string.
         $regex = "/('|--|\/\*|#|BEGIN|{$this->functionDelimiterRegex})/si";
         $flags = PREG_OFFSET_CAPTURE;
-        $found = preg_match($regex, $dto->inputLine, $matches, $flags);
+        $found = preg_match($regex, $stream->inputLine, $matches, $flags);
         // Nothing found.
         if (!$found) {
             return;
@@ -244,71 +275,76 @@ trait SplitterTrait
         $delimiter = $matches[0][0];
         $offset = $matches[0][1];
 
-        // Mask the end of the line.
-        $this->maskEndOfLine($dto, $offset);
-
         // Start of multiline string found.
         if ($delimiter === "'") {
+            // Mask the end of the line.
+            $this->maskEndOfLine($stream, $offset);
             // Switch the string mode.
-            $dto->inMultilineString = true;
+            $stream->inMultilineString = true;
             return;
         }
 
         // Start of multiline comment found.
         if ($delimiter === '/*') {
+            // Truncate the end of the line.
+            $this->truncateEndOfLine($stream, $offset);
             // Switch the comment mode.
-            $dto->inMultilineComment = true;
+            $stream->inMultilineComment = true;
             return;
         }
 
         // Single line comment found.
         if ($delimiter === '--' || $delimiter === '#') {
+            // Truncate the end of the line.
+            $this->truncateEndOfLine($stream, $offset);
             return;
         }
 
         // Start of multiline function found
+        // Mask the end of the line.
+        $this->maskEndOfLine($stream, $offset);
         // Switch the comment mode.
-        $dto->inMultilineFunction = true;
+        $stream->inMultilineFunction = true;
         // "END" must always be followed by a delimiter. No "END IF", for example.
-        $dto->functionDelimiter = strtoupper($delimiter) === 'BEGIN' ?
-            "(END)\\s*{$dto->queryDelimiter}" : '(' . preg_quote($delimiter) . ')';
+        $stream->functionDelimiterRegex = strtoupper($delimiter) === 'BEGIN' ?
+            "(END)\\s*{$stream->pregQueryDelimiter}" : '(' . preg_quote($delimiter) . ')';
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      * @param array $regexes
      *
      * @return void
      */
-    private function maskTokens(QueryCodeDto $dto, array $regexes): void
+    private function maskTokens(QueryStreamDto $stream, array $regexes): void
     {
-        $callback = function(array $matches): string {
-            // Replace the matched string with same length spaces.
-            return str_repeat(' ', strlen($matches[0]));
-        };
+        // Make sure the delimiter is not masked.
+        $regexes = array_filter($regexes, fn($regex) => $regex !== $stream->pregQueryDelimiter);
+
+        $callback = fn(array $matches) => str_repeat(' ', strlen($matches[0]));
         $regex = implode('|', $regexes);
-        $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
+        $stream->inputLine = preg_replace_callback("/$regex/s", $callback, $stream->inputLine);
         // foreach ($regexes as $regex) {
-        //     $dto->inputLine = preg_replace_callback("/$regex/s", $callback, $dto->inputLine);
+        //     $stream->inputLine = preg_replace_callback("/$regex/s", $callback, $stream->inputLine);
         // }
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return bool
      */
-    private function setDelimiter(QueryCodeDto $dto): bool
+    private function setDelimiter(QueryStreamDto $stream): bool
     {
         // Delimiter queries are not sent to the server.
         // $copyRegex = "~^(\\s*+COPY\\s+)[^;]+\\s+FROM\\s+stdin;~i";
         // if ($this->_engine()->pgsql() && preg_match($copyRegex, $query, $matches)) {
-        //     $dto->queryDelimiters = ['' => "\n\\\\\\.\r?\n"];
+        //     $stream->queryDelimiters = ['' => "\n\\\\\\.\r?\n"];
         //     return true;
         // }
-        $delimiterRegex = "~^\\s*+DELIMITER\\s+(\\S+)~i";
-        if (preg_match($delimiterRegex, $dto->queryLine, $matches)) {
-            $dto->queryDelimiter = $matches[1];
+        if (preg_match($this->delimiterQueryRegex, $stream->queryLine, $matches)) {
+            $stream->queryDelimiter = $matches[1];
+            $stream->pregQueryDelimiter = preg_quote($stream->queryDelimiter);
             return true;
         }
 
@@ -316,21 +352,21 @@ trait SplitterTrait
     }
 
     /**
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return bool
      */
-    private function makeInputLine(QueryCodeDto $dto): bool
+    private function makeInputLine(QueryStreamDto $stream): bool
     {
-        if (trim($dto->queryLine) === '' || $this->setDelimiter($dto)) {
-            $dto->queryLine = '';
+        if ($this->setDelimiter($stream)) {
+            $stream->queryLine = '';
             return false;
         }
 
-        $dto->inputLine = $dto->queryLine;
+        $stream->inputLine = $stream->queryLine;
 
         // Mask double quotes and antislashed quotes.
-        $this->maskTokens($dto, [
+        $this->maskTokens($stream, [
             "''",
             "\\\\\\\\",
             "\\\\'",
@@ -338,36 +374,41 @@ trait SplitterTrait
             "\\\\\"",
         ]);
 
-        if (!$this->parseMultiLineStringEnd($dto)) {
+        if (!$this->parseMultiLineStringEnd($stream)) {
             return false;
         }
 
         // Mask quoted strings.
-        $this->maskTokens($dto, [
+        $this->maskTokens($stream, [
             "'[^']*'",
             "`[^`]*`",
             "\"[^\"]*\"",
         ]);
 
-        if (!$this->parseMultiLineFunctionEnd($dto)) {
+        if (!$this->parseMultiLineFunctionEnd($stream)) {
             return false;
         }
 
-        if (!$this->parseMultiLineCommentEnd($dto)) {
+        if (!$this->parseMultiLineCommentEnd($stream)) {
             return false;
         }
 
         // Mask comments in "/*  */".
-        $this->maskTokens($dto, [
+        $this->maskTokens($stream, [
             "\/\*.*?\*\/",
         ]);
 
         // Mask function in "$x$  $x$".
-        $this->maskTokens($dto, [
+        $this->maskTokens($stream, [
             "({$this->functionDelimiterRegex}).*?\\1",
         ]);
 
-        $this->parseEndOfLine($dto);
+        $this->parseTokensAfterDelimiter($stream);
+
+        if (trim($stream->queryLine) === '') {
+            $stream->queryLine = '';
+            return false;
+        }
 
         return true;
     }
@@ -375,34 +416,36 @@ trait SplitterTrait
     /**
      * Split a string or a file containing SQL queries.
      *
-     * @param QueryCodeDto $dto
+     * @param QueryStreamDto $stream
      *
      * @return Generator
      */
-    public function splitQueries(QueryCodeDto $dto): Generator
+    public function splitQueries(QueryStreamDto $stream): Generator
     {
-        while (($dto->queryLineReader)($dto)) {
-            if (!$this->makeInputLine($dto)) {
+        while (($stream->queryLineReader)($stream)) {
+            if (!$this->makeInputLine($stream)) {
                 continue;
             }
 
-            while (($offset = $this->findEndOfQuery($dto)) !== null) {
-                $this->bufferEndOfQuery($dto, $offset);
+            while (($offset = $this->findEndOfQuery($stream)) !== null) {
+                $this->bufferEndOfQuery($stream, $offset);
 
                 // Return the query for processing.
-                if (($query = $this->getBufferedQuery($dto)) !== '') {
-                    $dto->queryCount++;
+                if (($query = $this->getBufferedQuery($stream)) !== '') {
+                    $stream->queryCount++;
                     yield $query;
                 }
             }
 
-            // Add the remaining input line to the query buffer.
-            $this->bufferLineContent($dto);
+            if (trim($stream->queryLine) !== '') {
+                // Add the remaining input line to the query buffer.
+                $this->bufferLineContent($stream);
+            }
         }
 
         // Return the last query.
-        if (($query = $this->getBufferedQuery($dto)) !== '') {
-            $dto->queryCount++;
+        if (($query = $this->getBufferedQuery($stream)) !== '') {
+            $stream->queryCount++;
             yield $query;
         }
     }

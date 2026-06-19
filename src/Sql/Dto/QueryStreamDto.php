@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Sql\Dto;
 
 use Closure;
 
-class QueryCodeDto
+class QueryStreamDto
 {
     /**
      * @var string
@@ -24,7 +24,7 @@ class QueryCodeDto
     /**
      * @var array<string>
      */
-    public array $queryLines = [];
+    public array $queryBuffer = [];
 
     /**
      * @var int
@@ -32,14 +32,14 @@ class QueryCodeDto
     public int $queryCount = 0;
 
     /**
-     * @var int
+     * @var string
      */
-    public int $errorCount = 0;
+    public string $queryDelimiter = ';';
 
     /**
      * @var string
      */
-    public string $queryDelimiter = ';';
+    public string $pregQueryDelimiter = ';';
 
     /**
      * @var bool
@@ -59,7 +59,7 @@ class QueryCodeDto
     /**
      * @var string
      */
-    public string $functionDelimiter = '';
+    public string $functionDelimiterRegex = '';
 
     /**
      * @param Closure $queryLineReader
