@@ -92,12 +92,12 @@ abstract class TableDdDto
     /**
      * @var ColumnDdDto|null
      */
-    public ColumnDdDto|null $enabledAutoIncrementInput = null;
+    public ColumnDdDto|null $addedAutoIncrementInput = null;
 
     /**
      * @var ColumnDdDto|null
      */
-    public ColumnDdDto|null $disabledAutoIncrementInput = null;
+    public ColumnDdDto|null $removedAutoIncrementInput = null;
 
     /**
      * @param array $inputs
@@ -227,10 +227,10 @@ abstract class TableDdDto
             fn(ColumnDto $column) => $column->autoIncrement));
         $this->autoIncrementColumn = $autoIncrementColumns[0] ?? null;
         // Auto increment columns in the inputs.
-        $this->enabledAutoIncrementInput = $this->autoIncrementInputs()[0] ?? null;
-        $disabledAutoIncrementInputs = array_values(array_filter($this->columns(),
-            fn(ColumnDdDto $input) => $input->autoIncrementDisabled()));
-        $this->disabledAutoIncrementInput = $disabledAutoIncrementInputs[0] ?? null;
+        $this->addedAutoIncrementInput = $this->autoIncrementInputs()[0] ?? null;
+        $removedAutoIncrementInputs = array_values(array_filter($this->columns(),
+            fn(ColumnDdDto $input) => $input->autoIncrementRemoved()));
+        $this->removedAutoIncrementInput = $removedAutoIncrementInputs[0] ?? null;
 
         return $this->autoIncrementChanged();
     }
@@ -241,24 +241,24 @@ abstract class TableDdDto
     public function autoIncrementChanged(): bool
     {
         return $this->autoIncrementColumn !== null ||
-            $this->enabledAutoIncrementInput !== null ||
-            $this->disabledAutoIncrementInput !== null;
+            $this->addedAutoIncrementInput !== null ||
+            $this->removedAutoIncrementInput !== null;
     }
 
     /**
      * @return bool
      */
-    public function autoIncrementDisabled(): bool
+    public function autoIncrementRemoved(): bool
     {
-        return $this->disabledAutoIncrementInput !== null;
+        return $this->removedAutoIncrementInput !== null;
     }
 
     /**
      * @return bool
      */
-    public function autoIncrementEnabled(): bool
+    public function autoIncrementAdded(): bool
     {
-        return $this->enabledAutoIncrementInput !== null;
+        return $this->addedAutoIncrementInput !== null;
     }
 
     /**
@@ -266,8 +266,8 @@ abstract class TableDdDto
      */
     public function autoIncrementValueChanged(): bool
     {
-        return !$this->autoIncrementEnabled() &&
-            !$this->autoIncrementDisabled() &&
+        return !$this->autoIncrementAdded() &&
+            !$this->autoIncrementRemoved() &&
             $this->hasAutoIncrement() &&
             $this->autoIncrementColumn !== null;
     }

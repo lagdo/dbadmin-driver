@@ -59,7 +59,7 @@ class ColumnDdDto extends ColumnDto
     /**
      * @return bool
      */
-    public function autoIncrementDisabled(): bool
+    public function autoIncrementRemoved(): bool
     {
         return $this->autoIncrementChanged() &&
             $this->column->name !== '' && !$this->autoIncrement;
