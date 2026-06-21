@@ -47,6 +47,18 @@ class Utils
     }
 
     /**
+     * Format a decimal number
+     *
+     * @param int $number
+     *
+     * @return string
+     */
+    public function formatNumber(int $number): string
+    {
+        return $this->trans->formatNumber($number);
+    }
+
+    /**
      * Get a possibly missing item from a possibly missing array.
      * This is better than $row[$key] ?? null because PHP will report error for undefined $row.
      *

@@ -14,4 +14,13 @@ interface TranslatorInterface
      * @return string
      */
     public function lang(string $idf, $number = null): string;
+
+    /**
+     * Format a decimal number
+     *
+     * @param int $number
+     *
+     * @return string
+     */
+    public function formatNumber(int $number): string;
 }
