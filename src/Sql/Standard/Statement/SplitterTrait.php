@@ -237,7 +237,7 @@ trait SplitterTrait
         }
 
         // Find the end of function delimiter.
-        $regex = "/$stream->functionDelimiterRegex/si";
+        $regex = "/{$stream->functionDelimiterRegex}/si";
         $flags = PREG_OFFSET_CAPTURE;
         $found = preg_match($regex, $stream->inputLine, $matches, $flags);
         if (!$found) {
