@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectFilterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
 interface QueryInterface
@@ -37,13 +38,12 @@ interface QueryInterface
     /**
      * Convert column to be searchable
      *
-     * @param string $idf escaped column name
-     * @param array $value array("op" => , "val" => )
+     * @param SelectFilterDto $filter
      * @param ColumnDto $column
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $value, ColumnDto $column): string;
+    public function convertSearch(SelectFilterDto $filter, ColumnDto $column): string;
 
     /**
      * Get view SELECT

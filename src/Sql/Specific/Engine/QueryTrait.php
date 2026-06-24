@@ -3,6 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectFilterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
 trait QueryTrait
@@ -51,15 +52,14 @@ trait QueryTrait
     /**
      * Convert column to be searchable
      *
-     * @param string $idf Escaped column name
-     * @param array $value ["op" => , "val" => ]
+     * @param SelectFilterDto $filter
      * @param ColumnDto $column
      *
      * @return string
      */
-    public function convertSearch(string $idf, array $value, ColumnDto $column): string
+    public function convertSearch(SelectFilterDto $filter, ColumnDto $column): string
     {
-        return $this->_query()->convertSearch($idf, $value, $column);
+        return $this->_query()->convertSearch($filter, $column);
     }
 
     /**

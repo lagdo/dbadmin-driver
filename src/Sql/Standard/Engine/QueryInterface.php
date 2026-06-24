@@ -39,22 +39,6 @@ interface QueryInterface
     public function rollback(): bool;
 
     /**
-     * Select data from table
-     *
-     * @param string $table
-     * @param array $select Result of processSelectColumns()[0]
-     * @param array $where Result of processSelectWhere()
-     * @param array $group Result of processSelectColumns()[1]
-     * @param array $order Result of processSelectOrder()
-     * @param int $limit Result of processSelectLimit()
-     * @param int $page Index of page starting at zero
-     *
-     * @return QueryResultInterface
-     */
-    public function select(string $table, array $select, array $where, array $group = [],
-        array $order = [], int $limit = 1, int $page = 0): QueryResultInterface;
-
-    /**
      * Create SQL condition from parsed query string
      *
      * @param array $where Parsed query string

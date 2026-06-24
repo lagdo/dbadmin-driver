@@ -3,7 +3,8 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
-use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\QueryClauseDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectDto;
 
 use function array_filter;
 use function array_keys;
@@ -107,42 +108,22 @@ trait QueryTrait
      *
      * @param string $table
      * @param array $where
-     * @param bool $isGroup
-     * @param array $groups
+     * @param bool $grouped
+     * @param array $groupBy
      *
      * @return string
      */
-    public function getRowCountQuery(string $table, array $where, bool $isGroup, array $groups): string
+    public function getRowCountQuery(string $table, array $where, bool $grouped, array $groupBy): string
     {
         $query = ' FROM ' . $this->_statement()->escapeTableName($table);
         if (!empty($where)) {
             $query .= ' WHERE ' . implode(' AND ', $where);
         }
-        return ($isGroup && ($this->_engine()->sql() || count($groups) == 1) ?
-            'SELECT COUNT(DISTINCT ' . implode(', ', $groups) . ")$query" :
-            'SELECT COUNT(*)' . ($isGroup ? " FROM (SELECT 1$query GROUP BY " .
-            implode(', ', $groups) . ') x' : $query)
+        return ($grouped && ($this->_engine()->sql() || count($groupBy) == 1) ?
+            'SELECT COUNT(DISTINCT ' . implode(', ', $groupBy) . ")$query" :
+            'SELECT COUNT(*)' . ($grouped ? " FROM (SELECT 1$query GROUP BY " .
+            implode(', ', $groupBy) . ') x' : $query)
         );
-    }
-
-    /**
-     * Build a query to select data from table
-     *
-     * @param string $table
-     * @param array $columns Result of processSelectColumns()[0]
-     * @param array $where Result of processSelectWhere()
-     * @param array $group Result of processSelectColumns()[1]
-     * @param array $order Result of processSelectOrder()
-     * @param int $limit Result of processSelectLimit()
-     * @param int $page Index of page starting at zero
-     *
-     * @return string
-     */
-    public function getSelectRowQuery(string $table, array $columns, array $where, array $group = [],
-        array $order = [], int $limit = 1, int $page = 0): string
-    {
-        $input = new SelectInputDto($table, $columns, $where, $group, $order, $limit, $page);
-        return $this->_statement()->getTableSelectQuery($input);
     }
 
     /**
@@ -165,42 +146,6 @@ trait QueryTrait
         $columns = implode(', ', array_keys($values));
         $values = implode(', ', $values);
         return "INSERT INTO $table ($columns) VALUES ($values)";
-    }
-
-    /**
-     * Build a query to update data in table
-     *
-     * @param string $table
-     * @param array $values Escaped columns in keys, quoted data in values
-     * @param string $queryWhere " WHERE ..."
-     * @param int $limit 0 or 1
-     *
-     * @return string
-     */
-    public function getUpdateRowQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
-    {
-        $callback = fn(string $value, string $name) => "$name = $value";
-        $assignments = implode(', ', array_map($callback, $values, array_keys($values)));
-        $query = $this->_statement()->escapeTableName($table) . " SET $assignments";
-
-        return $limit <= 0 ? "UPDATE $query $queryWhere" : 'UPDATE' .
-            $this->_statement()->limitToOne($table, $query, $queryWhere);
-    }
-
-    /**
-     * Build a query to delete data from table
-     *
-     * @param string $table
-     * @param string $queryWhere " WHERE ..."
-     * @param int $limit 0 or 1
-     *
-     * @return string
-     */
-    public function getDeleteRowQuery(string $table, string $queryWhere, int $limit = 0): string
-    {
-        $query = 'FROM ' . $this->_statement()->escapeTableName($table);
-        return $limit <= 0 ? "DELETE $query $queryWhere" : 'DELETE' .
-            $this->_statement()->limitToOne($table, $query, $queryWhere);
     }
 
     /**

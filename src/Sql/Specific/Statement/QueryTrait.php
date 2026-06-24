@@ -3,7 +3,7 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\UpsertDto;
 
 trait QueryTrait
@@ -14,27 +14,13 @@ trait QueryTrait
     abstract protected function _query(): AbstractQuery;
 
     /**
-     * Build SQL update or delete query with limit 1
-     *
-     * @param string $table
-     * @param string $query Everything after UPDATE or DELETE
-     * @param string $where
-     *
-     * @return string
-     */
-    public function limitToOne(string $table, string $query, string $where): string
-    {
-        return $this->_query()->limitToOne($table, $query, $where);
-    }
-
-    /**
      * Select data from table
      *
-     * @param SelectInputDto $input
+     * @param SelectDto $input
      *
      * @return string
      */
-    public function getTableSelectQuery(SelectInputDto $input): string
+    public function getTableSelectQuery(SelectDto $input): string
     {
         return $this->_query()->getTableSelectQuery($input);
     }
@@ -49,6 +35,35 @@ trait QueryTrait
     public function getTableUpsertQueries(UpsertDto $input): array
     {
         return $this->_query()->getTableUpsertQueries($input);
+    }
+
+    /**
+     * Build a query to update data in table
+     *
+     * @param string $table
+     * @param array $values Escaped columns in keys, quoted data in values
+     * @param string $queryWhere " WHERE ..."
+     * @param int $limit 0 or 1
+     *
+     * @return string
+     */
+    public function getUpdateRowQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
+    {
+        return $this->_query()->getUpdateRowQuery($table, $values, $queryWhere, $limit);
+    }
+
+    /**
+     * Build a query to delete data from table
+     *
+     * @param string $table
+     * @param string $queryWhere " WHERE ..."
+     * @param int $limit 0 or 1
+     *
+     * @return string
+     */
+    public function getDeleteRowQuery(string $table, string $queryWhere, int $limit = 0): string
+    {
+        return $this->_query()->getDeleteRowQuery($table, $queryWhere, $limit);
     }
 
     /**

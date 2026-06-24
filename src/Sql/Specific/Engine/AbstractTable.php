@@ -56,7 +56,7 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     /**
      * @inheritDoc
      */
-    public function trigger(string $name, string $table = ''): TriggerDto|null
+    public function trigger(string $name, string $table): TriggerDto|null
     {
         return null;
     }

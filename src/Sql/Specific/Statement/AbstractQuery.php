@@ -4,13 +4,34 @@ namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\SelectInputDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\SelectDto;
 
+use function array_keys;
 use function array_map;
 use function implode;
 
 abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected function addLimitClause(string $query, int $limit, int $offset = 0): string
+    {
+        return match(true) {
+            $limit <= 0 => $query,
+            $offset <= 0 => "$query LIMIT $limit",
+            default => "$query LIMIT $limit OFFSET $offset",
+        };
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTableSelectQuery(SelectDto $select): string
+    {
+        return $this->addLimitClause($select->query(), $select->limit, $select->offset);
+    }
+
     /**
      * Build SQL update or delete query with limit 1
      *
@@ -20,31 +41,43 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
      *
      * @return string
      */
-    abstract public function limitToOne(string $table, string $query, string $where): string;
+    abstract protected function limitToOne(string $table, string $query, string $where): string;
 
     /**
-     * @inheritDoc
+     * Build a query to update data in table
+     *
+     * @param string $table
+     * @param array $values Escaped columns in keys, quoted data in values
+     * @param string $queryWhere " WHERE ..."
+     * @param int $limit 0 or 1
+     *
+     * @return string
      */
-    protected function getLimitClause(string $query, string $where, int $limit, int $offset = 0): string
+    public function getUpdateRowQuery(string $table, array $values, string $queryWhere, int $limit = 0): string
     {
-        return match(true) {
-            $limit <= 0 => " $query$where",
-            $offset <= 0 => " $query$where LIMIT $limit",
-            default => " $query$where LIMIT $limit OFFSET $offset",
-        };
+        $callback = fn(string $value, string $name) => "$name = $value";
+        $assignments = implode(', ', array_map($callback, $values, array_keys($values)));
+        $tableName = $this->_statement()->escapeTableName($table);
+        $query = "UPDATE $tableName SET $assignments";
+
+        return $limit <= 0 ? "$query $queryWhere" : $this->limitToOne($table, $query, $queryWhere);
     }
 
     /**
-     * @inheritDoc
+     * Build a query to delete data from table
+     *
+     * @param string $table
+     * @param string $queryWhere " WHERE ..."
+     * @param int $limit 0 or 1
+     *
+     * @return string
      */
-    public function getTableSelectQuery(SelectInputDto $input): string
+    public function getDeleteRowQuery(string $table, string $queryWhere, int $limit = 0): string
     {
-        $query = implode(', ', $input->columns) .
-            ' FROM ' . $this->_statement()->escapeTableName($input->table);
-        $limit = +$input->limit;
-        $offset = $input->page ? $limit * $input->page : 0;
+        $tableName = $this->_statement()->escapeTableName($table);
+        $query = "DELETE FROM $tableName";
 
-        return 'SELECT' . $this->getLimitClause($query, $input->clauses, $limit, $offset);
+        return $limit <= 0 ? "$query $queryWhere" : $this->limitToOne($table, $query, $queryWhere);
     }
 
     /**
@@ -75,6 +108,7 @@ abstract class AbstractQuery extends AbstractDbProxy implements QueryInterface
     protected function getUpdateClause(string $join, array $values, array $columns): string
     {
         $updateClause = fn(string $value, string $column) => "$column = $value";
+
         return implode($join, array_map($updateClause, $values, $columns));
     }
 }

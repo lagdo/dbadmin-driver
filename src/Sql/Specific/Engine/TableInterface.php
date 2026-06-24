@@ -117,7 +117,7 @@ interface TableInterface
      *
      * @return TriggerDto|null
      */
-    public function trigger(string $name, string $table = ''): TriggerDto|null;
+    public function trigger(string $name, string $table): TriggerDto|null;
 
     /**
      * Get defined triggers

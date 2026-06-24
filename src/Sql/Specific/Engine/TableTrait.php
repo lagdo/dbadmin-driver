@@ -155,7 +155,7 @@ trait TableTrait
      *
      * @return TriggerDto
      */
-    public function trigger(string $name, string $table = ''): TriggerDto|null
+    public function trigger(string $name, string $table): TriggerDto|null
     {
         return $this->_table()->trigger($name, $table);
     }

@@ -60,26 +60,6 @@ trait QueryTrait
     }
 
     /**
-     * Select data from table
-     *
-     * @param string $table
-     * @param array $select Result of processSelectColumns()[0]
-     * @param array $where Result of processSelectWhere()
-     * @param array $group Result of processSelectColumns()[1]
-     * @param array $order Result of processSelectOrder()
-     * @param int $limit Result of processSelectLimit()
-     * @param int $page Index of page starting at zero
-     *
-     * @return QueryResultInterface
-     */
-    public function select(string $table, array $select, array $where, array $group = [],
-        array $order = [], int $limit = 1, int $page = 0): QueryResultInterface
-    {
-        return $this->executeQuery($this->_statement()->getSelectRowQuery($table,
-            $select, $where, $group, $order, $limit, $page));
-    }
-
-    /**
      * @param ColumnDto $column
      * @param string $name
      * @param string $value
@@ -108,11 +88,15 @@ trait QueryTrait
     private function getWhereCollateClause(ColumnDto $column, string $name, string $value): string
     {
         $collate = $this->_engine()->sql() &&
-            preg_match('~char|text~', $column->type) &&
-            preg_match("~[^ -@]~", $value);
-        return !$collate ? '' :
-            // not just [a-z] to catch non-ASCII characters
-            "$name = " . $this->_engine()->quote($value) . ' COLLATE ' . $this->_engine()->charset() . '_bin';
+            preg_match('~char|text~', $column->type) && preg_match("~[^ -@]~", $value);
+        if (!$collate) {
+            return '';
+        }
+
+        $value = $this->_engine()->quote($value);
+        $charset = $this->_engine()->charset();
+        // not just [a-z] to catch non-ASCII characters
+        return "$name = $value COLLATE {$charset}_bin";
     }
 
     /**
