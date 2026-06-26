@@ -3,7 +3,6 @@
 namespace Lagdo\DbAdmin\Driver\Sql\Standard\Engine;
 
 use Lagdo\DbAdmin\Driver\Sql\DbProxyTrait;
-use Lagdo\DbAdmin\Driver\Sql\Connection\QueryResultInterface;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Closure;
 
