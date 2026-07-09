@@ -27,7 +27,7 @@ class SelectColumnDto
     public function isValid(array $functions, array $grouping): bool
     {
         return $this->func === 'count' ||
-            ($this->columnName !== '' && (!$this->func ||
+            ($this->columnName !== '' && ($this->func === '' ||
                 in_array($this->func, $functions) ||
                 in_array($this->func, $grouping)));
     }
