@@ -68,13 +68,6 @@ abstract class TableDdDto
     public string|null $error = null;
 
     /**
-     * Columns to add, edit or drop.
-     *
-     * @var array<string, array<string|ColumnDdDto>>
-     */
-    public array $columns = [];
-
-    /**
      * @var array<ColumnDdDto>
      */
     private array $autoIncrementInputs;
@@ -85,25 +78,22 @@ abstract class TableDdDto
     private array $primaryKeyInputs;
 
     /**
-     * @var ColumnDto|null
+     * @var ColumnDdDto|null
      */
-    public ColumnDto|null $autoIncrementColumn = null;
+    public readonly ColumnDdDto|null $addedAutoIncrementInput;
 
     /**
      * @var ColumnDdDto|null
      */
-    public ColumnDdDto|null $addedAutoIncrementInput = null;
-
-    /**
-     * @var ColumnDdDto|null
-     */
-    public ColumnDdDto|null $removedAutoIncrementInput = null;
+    public readonly ColumnDdDto|null $removedAutoIncrementInput;
 
     /**
      * @param array $inputs
-     * @param Closure $columnsGetter
+     * @param array<ColumnDdDto> $columns
+     * @param Closure $referencableColumnsGetter
      */
-    public function __construct(array $inputs, private Closure $columnsGetter)
+    public function __construct(array $inputs, public readonly array $columns,
+        private Closure $referencableColumnsGetter)
     {
         $this->name = $inputs['name'] ?? '';
         $this->engine = $inputs['engine'] ?? '';
@@ -117,38 +107,50 @@ abstract class TableDdDto
             $this->comment = $inputs['comment'] ?? '';
         }
         // $this->partitioning = $inputs['partitioning'] ?? '';
+
+        $this->setAutoIncrement();
     }
 
     /**
      * @return void
      */
-    public function clearColumns(): void
+    private function setAutoIncrement(): void
     {
-        $this->columns = [];
+        $addedAutoIncrementInput = null;
+        $removedAutoIncrementInput = null;
+        foreach ($this->columns as $input) {
+            if ($input->autoIncrement && !$input->column->autoIncrement) {
+                $addedAutoIncrementInput = $input;
+            }
+            if (!$input->autoIncrement && $input->column->autoIncrement) {
+                $removedAutoIncrementInput = $input;
+            }
+        }
+        $this->addedAutoIncrementInput = $addedAutoIncrementInput;
+        $this->removedAutoIncrementInput = $removedAutoIncrementInput;
     }
 
     /**
-     * @return array<ColumnDdDto>
+     * @param array<string> $foreignTables
+     *
+     * @return void
      */
-    public function addedColumns(): array
+    public function setForeignKeys(array $foreignTables): void
     {
-        return $this->columns[ColumnAction::ADD->value];
-    }
+        foreach ($this->columns as $column) {
+            $foreignTable = $foreignTables[$column->type] ?? '';
+            $column->typeColumn = $column->dropped() || $column->unchanged() ? null :
+                $this->getReferencableColumns()[$foreignTable] ?? null;
+            if ($column->typeColumn !== null) {
+                $fkColumn = new ForeignKeyDto();
+                $fkColumn->table = $foreignTable;
+                $fkColumn->source = [$column->name];
+                $fkColumn->target = [$column->typeColumn->name];
+                $fkColumn->onDelete = $column->onDelete;
 
-    /**
-     * @return array<ColumnDto>
-     */
-    public function getReferencableColumns(): array
-    {
-        return $this->referencableColumns ??= ($this->columnsGetter)($this->name);
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasAutoIncrement(): bool
-    {
-        return $this->autoIncrement > 0;
+                $this->foreignKeys[$column->name] = $fkColumn;
+            }
+        }
     }
 
     /**
@@ -162,14 +164,6 @@ abstract class TableDdDto
     abstract public function collationChanged(): bool;
 
     /**
-     * @return bool
-     */
-    public function hasComment(): bool
-    {
-        return $this->comment !== null;
-    }
-
-    /**
      * @return string
      */
     abstract public function statusName(): string;
@@ -178,6 +172,43 @@ abstract class TableDdDto
      * @return array<ColumnDto>
      */
     abstract public function statusColumns(): array;
+
+    /**
+     * @return bool
+     */
+    abstract public function primaryKeyChanged(): bool;
+
+    /**
+     * @return array<ColumnDdDto>
+     */
+    public function addedColumns(): array
+    {
+        return array_filter($this->columns, fn(ColumnDdDto $column) => $column->added());
+    }
+
+    /**
+     * @return array<ColumnDto>
+     */
+    public function getReferencableColumns(): array
+    {
+        return $this->referencableColumns ??= ($this->referencableColumnsGetter)($this->name);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAutoIncrement(): bool
+    {
+        return $this->autoIncrement > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasComment(): bool
+    {
+        return $this->comment !== null;
+    }
 
     /**
      * @return ColumnDto|null
@@ -194,18 +225,16 @@ abstract class TableDdDto
      */
     public function columns(): array
     {
-        return [
-            ...$this->columns[ColumnAction::ADD->value],
-            ...($this->columns[ColumnAction::EDIT->value] ?? []),
-        ];
+        return array_filter($this->columns,
+            fn(ColumnDdDto $column) => $column->added() || $column->edited());
     }
 
     /**
      * @return array<ColumnDdDto>
      */
-    public function autoIncrementInputs(): array
+    private function autoIncrementInputs(): array
     {
-        return $this->autoIncrementInputs ??= array_values(array_filter($this->columns(),
+        return $this->autoIncrementInputs ??= array_values(array_filter($this->columns,
             fn(ColumnDdDto $input) => $input->autoIncrement));
     }
 
@@ -218,21 +247,11 @@ abstract class TableDdDto
     }
 
     /**
-     * @return bool
+     * @return ColumnDdDto|null
      */
-    public function setupAutoIncrement(): bool
+    public function autoIncrementInput(): ColumnDdDto|null
     {
-        // Auto increment column in the table.
-        $autoIncrementColumns = array_values(array_filter($this->statusColumns(),
-            fn(ColumnDto $column) => $column->autoIncrement));
-        $this->autoIncrementColumn = $autoIncrementColumns[0] ?? null;
-        // Auto increment columns in the inputs.
-        $this->addedAutoIncrementInput = $this->autoIncrementInputs()[0] ?? null;
-        $removedAutoIncrementInputs = array_values(array_filter($this->columns(),
-            fn(ColumnDdDto $input) => $input->autoIncrementRemoved()));
-        $this->removedAutoIncrementInput = $removedAutoIncrementInputs[0] ?? null;
-
-        return $this->autoIncrementChanged();
+        return $this->autoIncrementInputs()[0] ?? null;
     }
 
     /**
@@ -240,8 +259,7 @@ abstract class TableDdDto
      */
     public function autoIncrementChanged(): bool
     {
-        return $this->autoIncrementColumn !== null ||
-            $this->addedAutoIncrementInput !== null ||
+        return $this->addedAutoIncrementInput !== null ||
             $this->removedAutoIncrementInput !== null;
     }
 
@@ -268,8 +286,7 @@ abstract class TableDdDto
     {
         return !$this->autoIncrementAdded() &&
             !$this->autoIncrementRemoved() &&
-            $this->hasAutoIncrement() &&
-            $this->autoIncrementColumn !== null;
+            $this->hasAutoIncrement();
     }
 
     /**
@@ -277,7 +294,7 @@ abstract class TableDdDto
      */
     public function primaryKeyInputs(): array
     {
-        return $this->primaryKeyInputs ??= array_values(array_filter($this->columns(),
+        return $this->primaryKeyInputs ??= array_values(array_filter($this->columns,
             fn(ColumnDdDto $input) => $input->primary));
     }
 

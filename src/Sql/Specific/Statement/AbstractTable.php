@@ -174,8 +174,8 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
      */
     protected function getDropColumnClauses(TableAlterDto $table): array
     {
-        $dropColumnCallback = fn(string $columnName) => 'DROP ' .
-            $this->_statement()->escapeId($columnName);
+        $dropColumnCallback = fn(ColumnDto $column) => 'DROP COLUMN ' .
+            $this->_statement()->escapeId($column->name);
         return array_map($dropColumnCallback, $table->droppedColumns());
     }
 }

@@ -35,4 +35,17 @@ class TableCreateDto extends TableDdDto
     {
         return $this->collation !== '';
     }
+
+    /**
+     * @return bool
+     */
+    public function primaryKeyChanged(): bool
+    {
+        foreach ($this->addedColumns() as $column) {
+            if ($column->primary) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

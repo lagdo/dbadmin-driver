@@ -17,12 +17,57 @@ class ColumnDdDto extends ColumnDto
     public string $after = '';
 
     /**
+     * @var ColumnDto|null
+     */
+    public ColumnDto|null $typeColumn;
+
+    /**
      * @param ColumnDto $column
-     * @param ColumnDto|null $typeColumn
+     * @param ColumnAction $action
      */
     public function __construct(public readonly ColumnDto $column,
-        public readonly ColumnDto|null $typeColumn)
+        public readonly ColumnAction $action)
     {}
+
+    /**
+     * @return bool
+     */
+    public function unchanged(): bool
+    {
+        return $this->action === ColumnAction::NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function added(): bool
+    {
+        return $this->action === ColumnAction::ADD;
+    }
+
+    /**
+     * @return bool
+     */
+    public function edited(): bool
+    {
+        return $this->action === ColumnAction::EDIT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function dropped(): bool
+    {
+        return $this->action === ColumnAction::DROP;
+    }
+
+    /**
+     * @return string
+     */
+    public function statusName(): string
+    {
+        return $this->column->name;
+    }
 
     /**
      * @return bool
