@@ -58,11 +58,6 @@ abstract class TableDdDto
     public array $foreignKeys = [];
 
     /**
-     * @var array<ColumnDto>
-     */
-    private array $referencableColumns;
-
-    /**
      * @var string|null
      */
     public string|null $error = null;
@@ -90,10 +85,8 @@ abstract class TableDdDto
     /**
      * @param array $inputs
      * @param array<ColumnDdDto> $columns
-     * @param Closure $referencableColumnsGetter
      */
-    public function __construct(array $inputs, public readonly array $columns,
-        private Closure $referencableColumnsGetter)
+    public function __construct(array $inputs, public readonly array $columns)
     {
         $this->name = $inputs['name'] ?? '';
         $this->engine = $inputs['engine'] ?? '';
@@ -132,15 +125,16 @@ abstract class TableDdDto
 
     /**
      * @param array<string> $foreignTables
+     * @param array<ColumnDto> $referencableColumns
      *
      * @return void
      */
-    public function setForeignKeys(array $foreignTables): void
+    public function setForeignKeys(array $foreignTables, array $referencableColumns): void
     {
         foreach ($this->columns as $column) {
             $foreignTable = $foreignTables[$column->type] ?? '';
             $column->typeColumn = $column->dropped() || $column->unchanged() ? null :
-                $this->getReferencableColumns()[$foreignTable] ?? null;
+                $referencableColumns[$foreignTable] ?? null;
             if ($column->typeColumn !== null) {
                 $fkColumn = new ForeignKeyDto();
                 $fkColumn->table = $foreignTable;
@@ -184,14 +178,6 @@ abstract class TableDdDto
     public function addedColumns(): array
     {
         return array_filter($this->columns, fn(ColumnDdDto $column) => $column->added());
-    }
-
-    /**
-     * @return array<ColumnDto>
-     */
-    public function getReferencableColumns(): array
-    {
-        return $this->referencableColumns ??= ($this->referencableColumnsGetter)($this->name);
     }
 
     /**
