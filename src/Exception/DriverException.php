@@ -4,7 +4,7 @@ namespace Lagdo\DbAdmin\Driver\Exception;
 
 use Exception;
 
-class DbException extends Exception
+class DriverException extends Exception
 {
     /**
      * The constructor
