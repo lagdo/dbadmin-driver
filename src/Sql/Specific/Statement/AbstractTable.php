@@ -2,14 +2,12 @@
 
 namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 
-use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableAlterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdDto;
-use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
 use function array_filter;
 use function array_map;
@@ -17,7 +15,7 @@ use function implode;
 use function preg_match;
 use function str_ireplace;
 
-abstract class AbstractTable extends AbstractDbProxy implements TableInterface
+abstract class AbstractTable extends AbstractStatement implements TableInterface
 {
     /**
      * @param TableDdDto $table
@@ -186,40 +184,6 @@ abstract class AbstractTable extends AbstractDbProxy implements TableInterface
     {
         return array_map(fn(ForeignKeyDto $fkColumn) => $prefix .
             $this->formatForeignKey($fkColumn), $table->foreignKeys);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getForeignKeyQueries(TableDto $table): array
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCreateIndexQuery(string $table, string $type, string $name, string $columns): string
-    {
-        return '';
-    }
-
-    /**
-     * Get default value clause
-     *
-     * @param ColumnDto $column
-     *
-     * @return string
-     */
-    protected function getDefaultValueClause(ColumnDto $column): string
-    {
-        return match(true) {
-            $column->default === null => '',
-            preg_match('~char|binary|text|enum|set~', $column->type) > 0,
-            preg_match('~^(?![a-z])~i', $column->default) > 0 => ' DEFAULT ' .
-                $this->_engine()->quote($column->default),
-            default => " DEFAULT {$column->default}",
-        };
     }
 
     /**
