@@ -53,11 +53,6 @@ abstract class TableDdDto
     public string $partitioning = '';
 
     /**
-     * @var array<ForeignKeyDto>
-     */
-    public array $foreignKeys = [];
-
-    /**
      * @var string|null
      */
     public string|null $error = null;
@@ -85,8 +80,10 @@ abstract class TableDdDto
     /**
      * @param array $inputs
      * @param array<ColumnDdDto> $columns
+     * @param array<ForeignKeyDdDto> $foreignKeys
      */
-    public function __construct(array $inputs, public readonly array $columns)
+    public function __construct(array $inputs = [], public readonly array $columns = [],
+        public readonly array $foreignKeys = [])
     {
         $this->name = $inputs['name'] ?? '';
         $this->engine = $inputs['engine'] ?? '';
@@ -124,30 +121,6 @@ abstract class TableDdDto
     }
 
     /**
-     * @param array<string> $foreignTables
-     * @param array<ColumnDto> $referencableColumns
-     *
-     * @return void
-     */
-    public function setForeignKeys(array $foreignTables, array $referencableColumns): void
-    {
-        foreach ($this->columns as $column) {
-            $foreignTable = $foreignTables[$column->type] ?? '';
-            $column->typeColumn = $column->dropped() || $column->unchanged() ? null :
-                $referencableColumns[$foreignTable] ?? null;
-            if ($column->typeColumn !== null) {
-                $fkColumn = new ForeignKeyDto();
-                $fkColumn->table = $foreignTable;
-                $fkColumn->source = [$column->name];
-                $fkColumn->target = [$column->typeColumn->name];
-                $fkColumn->onDelete = $column->onDelete;
-
-                $this->foreignKeys[$column->name] = $fkColumn;
-            }
-        }
-    }
-
-    /**
      * @return bool
      */
     abstract public function engineChanged(): bool;
@@ -178,6 +151,22 @@ abstract class TableDdDto
     public function addedColumns(): array
     {
         return array_filter($this->columns, fn(ColumnDdDto $column) => $column->added());
+    }
+
+    /**
+     * @return array<ColumnDdDto>
+     */
+    public function editedColumns(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<ColumnDdDto>
+     */
+    public function droppedColumns(): array
+    {
+        return [];
     }
 
     /**

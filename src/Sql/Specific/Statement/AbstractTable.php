@@ -5,11 +5,13 @@ namespace Lagdo\DbAdmin\Driver\Sql\Specific\Statement;
 use Lagdo\DbAdmin\Driver\Sql\AbstractDbProxy;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ColumnDto;
+use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\ForeignKeyDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableAlterDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDdDto;
 use Lagdo\DbAdmin\Driver\Sql\Dto\TableDto;
 
+use function array_filter;
 use function array_map;
 use function implode;
 use function preg_match;
@@ -17,6 +19,111 @@ use function str_ireplace;
 
 abstract class AbstractTable extends AbstractDbProxy implements TableInterface
 {
+    /**
+     * @param TableDdDto $table
+     *
+     * @return bool
+     */
+    protected function primaryKeyChanged(TableDdDto $table): bool
+    {
+        return $table->primaryKeyChanged();
+    }
+
+    /**
+     * @param TableDdDto $table
+     * @param string $prefix
+     *
+     * @return array
+     */
+    protected function getCreatePrimaryKeyClause(TableDdDto $table, string $prefix = ''): array
+    {
+        if (!$this->primaryKeyChanged($table)) {
+            return [];
+        }
+        $columns = array_filter($table->columns, fn(ColumnDto $column) => $column->primary);
+        if (count($columns) === 0) {
+            return [];
+        }
+
+        $columnNames = implode(', ', array_map(fn(ColumnDdDto $column) =>
+            $this->_statement()->escapeId($column->name), $columns));
+        return ["{$prefix}PRIMARY KEY ($columnNames)"];
+    }
+
+    /**
+     * @param TableDdDto $table
+     * @param ForeignKeyDdDto $foreignKey
+     *
+     * @return string
+     */
+    private function formatForeignKeyDd(TableDdDto $table, ForeignKeyDdDto $foreignKey): string
+    {
+        $source = $this->_statement()->escapeTableName($foreignKey->source);
+        $table = $this->_statement()->escapeTableName($foreignKey->table);
+        $target = $this->_statement()->escapeTableName($foreignKey->column);
+        $query = "FOREIGN KEY ($source) REFERENCES $table($target)";
+
+        $onActions = $this->_engine()->actions();
+        if (preg_match("~^($onActions)\$~", $foreignKey->onUpdate)) {
+            $query .= " ON UPDATE {$foreignKey->onUpdate}";
+        }
+        if (preg_match("~^($onActions)\$~", $foreignKey->onDelete)) {
+            $query .= " ON DELETE {$foreignKey->onDelete}";
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param TableDdDto $table
+     * @param string $prefix
+     *
+     * @return array<string>
+     */
+    protected function getCreateForeignKeyClauses(TableDdDto $table, string $prefix = ''): array
+    {
+        $filter = fn(ForeignKeyDdDto $foreignKey) =>
+            $foreignKey->added() || $foreignKey->edited();
+        $foreignKeys = array_filter($table->foreignKeys, $filter);
+        $formatter = fn(ForeignKeyDdDto $foreignKey) =>
+            $prefix . $this->formatForeignKeyDd($table, $foreignKey);
+        return array_map($formatter, $foreignKeys);
+    }
+
+    /**
+     * @param TableAlterDto $table
+     *
+     * @return array
+     */
+    abstract protected function getDropPrimaryKeyClause(TableAlterDto $table): array;
+
+    /**
+     * @param TableAlterDto $table
+     *
+     * @return array<string>
+     */
+    abstract protected function getDeleteForeignKeyClauses(TableAlterDto $table): array;
+
+    /**
+     * @param TableAlterDto $table
+     *
+     * @return array
+     */
+    protected function getDropConstraintsQuery(TableAlterDto $table): array
+    {
+        $clauses = [
+            ...$this->getDropPrimaryKeyClause($table),
+            ...$this->getDeleteForeignKeyClauses($table),
+        ];
+        if (count($clauses) === 0) {
+            return [];
+        }
+
+        // Use the previous table name.
+        $tableName = $this->_statement()->escapeTableName($table->statusName());
+        return ["ALTER TABLE $tableName\n  " . implode(",\n  ", $clauses)];
+    }
+
     /**
      * @param ForeignKeyDto $foreignKey
      *

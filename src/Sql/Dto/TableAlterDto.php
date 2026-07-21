@@ -10,6 +10,17 @@ class TableAlterDto extends TableDdDto
     public TableDto $status;
 
     /**
+     * @param TableDto $status
+     *
+     * @return self
+     */
+    public function setStatus(TableDto $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
      * @return array<ColumnDdDto>
      */
     public function editedColumns(): array
