@@ -110,7 +110,7 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     /**
      * @inheritDoc
      */
-    final public function withConnection(AbstractConnection $connection, Closure $function): void
+    final public function withConnection(AbstractConnection $connection, Closure $function): mixed
     {
         // Save the main connection, and use the provied one.
         $mainConnection = $this->connection;
@@ -118,11 +118,12 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
 
         // Run the provided function.
         try {
-            $function();
+            $value = $function();
         } finally {
             // Reset the main connection.
             $this->connection = $mainConnection;
         }
+        return $value;
     }
 
     /**

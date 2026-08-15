@@ -65,9 +65,9 @@ interface ServerInterface
      * @param AbstractConnection $connection
      * @param Closure $function
      *
-     * @return void
+     * @return mixed
      */
-    public function withConnection(AbstractConnection $connection, Closure $function): void;
+    public function withConnection(AbstractConnection $connection, Closure $function): mixed;
 
     /**
      * Close the connection to the server

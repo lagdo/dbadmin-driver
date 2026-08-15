@@ -91,11 +91,11 @@ trait ServerTrait
      * @param AbstractConnection $connection
      * @param Closure $function
      *
-     * @return void
+     * @return mixed
      */
-    public function withConnection(AbstractConnection $connection, Closure $function): void
+    public function withConnection(AbstractConnection $connection, Closure $function): mixed
     {
-        $this->_server()->withConnection($connection, $function);
+        return $this->_server()->withConnection($connection, $function);
     }
 
     /**
