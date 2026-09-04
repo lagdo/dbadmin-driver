@@ -165,7 +165,7 @@ trait TableTrait
      *
      * @param string $table
      *
-     * @return array
+     * @return array<TriggerDto>
      */
     public function triggers(string $table): array
     {
