@@ -19,12 +19,12 @@ trait ServerTrait
     /**
      * Check if connection has at least the given version
      *
-     * @param string $version required version
-     * @param string $mariaDb required MariaDB version
+     * @param string|float $version required version
+     * @param string|float $mariaDb required MariaDB version
      *
      * @return bool
      */
-    public function minVersion(string $version, string $mariaDb = ''): bool
+    public function minVersion(string|float $version, string|float $mariaDb = ''): bool
     {
         return $this->_server()->minVersion($version, $mariaDb);
     }

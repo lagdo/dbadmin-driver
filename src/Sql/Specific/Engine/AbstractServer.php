@@ -34,14 +34,14 @@ abstract class AbstractServer extends AbstractDbProxy implements ServerInterface
     /**
      * @inheritDoc
      */
-    public function minVersion(string $version, string $mariaDb = ''): bool
+    public function minVersion(string|float $version, string|float $mariaDb = ''): bool
     {
         $info = $this->_engine()->connection()?->serverInfo() ?? '';
         if ($mariaDb && preg_match('~([\d.]+)-MariaDB~', $info, $match)) {
             $info = $match[1];
             $version = $mariaDb;
         }
-        return $version && version_compare($info, $version) >= 0;
+        return $version && version_compare("$info", "$version") >= 0;
     }
 
     /**
