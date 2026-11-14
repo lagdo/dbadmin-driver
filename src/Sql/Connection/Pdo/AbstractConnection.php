@@ -17,7 +17,7 @@ abstract class AbstractConnection extends BaseConnection
      *
      * @var PDO|null
      */
-    protected PDO|null $client;
+    protected PDO|null $client = null;
 
     /**
      * Create a PDO connection
